@@ -185,6 +185,7 @@ public class Autofish {
          * (from Minecraft wiki)
          * */
         if(!modAutofish.getConfig().isOpenWaterDetectEnabled()) return;
+        if (bobber == null) return;
 
         int x = bobber.getBlockX();
         int y = bobber.getBlockY();
