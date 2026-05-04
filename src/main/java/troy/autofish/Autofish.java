@@ -7,7 +7,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.projectile.ProjectileEntity;
-import net.minecraft.entity.projectile.FishingBobberEntity;
 import net.minecraft.item.FishingRodItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -202,7 +201,7 @@ public class Autofish {
             )))){
                 // didn't pass the check
                 if(!alreadyAlertOP){
-                    Objects.requireNonNull((PlayerEntity) bobber.getOwner()).sendMessage(Text.translatable("info.autofish.open_water_detection.fail"),true);
+                    Objects.requireNonNull(Common.getPlayerOwner(bobber)).sendMessage(Text.translatable("info.autofish.open_water_detection.fail"),true);
                     alreadyAlertOP = true;
                     alreadyPassOP = false;
                 }
@@ -210,7 +209,7 @@ public class Autofish {
             }
         }
         if(flag && !alreadyPassOP) {
-            Objects.requireNonNull((PlayerEntity) bobber.getOwner()).sendMessage(Text.translatable("info.autofish.open_water_detection.success"),true);
+            Objects.requireNonNull(Common.getPlayerOwner(bobber)).sendMessage(Text.translatable("info.autofish.open_water_detection.success"),true);
             alreadyPassOP = true;
             alreadyAlertOP = false;
         }
@@ -254,6 +253,7 @@ public class Autofish {
     public boolean isBobberInWater(){
         ProjectileEntity bobber = Common.getPlayerBobber(client.player);
         if(client.player != null && client.world != null && bobber != null) {
+            // To do: consider custom liquids as well.
             return client.world.getBlockState(bobber.getBlockPos()).getBlock() == Blocks.WATER;
         } else{
             return false;

@@ -5,7 +5,9 @@ import java.util.Map;
 
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.projectile.ProjectileEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.FishingBobberEntity;
 import troy.autofish.Autofish;
 
@@ -34,6 +36,12 @@ public class Common {
 			bobber = Spectrum.getModdedBobber(player);
 			if (bobber != null) return bobber;
 		}
+		return null;
+	}
+	public static PlayerEntity getPlayerOwner(ProjectileEntity entity) {
+		if (entity == null) return null;
+		Entity owner = entity.getOwner();
+		if (owner instanceof PlayerEntity) return (PlayerEntity) owner;
 		return null;
 	}
 	public static boolean isBobber(ProjectileEntity entity) {
