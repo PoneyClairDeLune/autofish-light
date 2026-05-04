@@ -4,7 +4,9 @@ import net.minecraft.block.Blocks;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.entity.projectile.FishingBobberEntity;
 import net.minecraft.item.FishingRodItem;
 import net.minecraft.item.Item;
@@ -173,7 +175,7 @@ public class Autofish {
         });
     }
 
-    private void detectOpenWater(Entity bobber){
+    private void detectOpenWater(ProjectileEntity bobber){
         /*
          * To catch items in the treasure category, the bobber must be in open water,
          * defined as the 5×4×5 vicinity around the bobber resting on the water surface
@@ -199,7 +201,7 @@ public class Autofish {
             )))){
                 // didn't pass the check
                 if(!alreadyAlertOP){
-                    Objects.requireNonNull(bobber.getPlayerOwner()).sendMessage(Text.translatable("info.autofish.open_water_detection.fail"),true);
+                    Objects.requireNonNull((PlayerEntity) bobber.getOwner()).sendMessage(Text.translatable("info.autofish.open_water_detection.fail"),true);
                     alreadyAlertOP = true;
                     alreadyPassOP = false;
                 }
@@ -207,7 +209,7 @@ public class Autofish {
             }
         }
         if(flag && !alreadyPassOP) {
-            Objects.requireNonNull(bobber.getPlayerOwner()).sendMessage(Text.translatable("info.autofish.open_water_detection.success"),true);
+            Objects.requireNonNull((PlayerEntity) bobber.getOwner()).sendMessage(Text.translatable("info.autofish.open_water_detection.success"),true);
             alreadyPassOP = true;
             alreadyAlertOP = false;
         }

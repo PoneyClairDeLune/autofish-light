@@ -5,7 +5,7 @@ import java.util.Map;
 
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.entity.Entity;
+import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.entity.projectile.FishingBobberEntity;
 import troy.autofish.Autofish;
 
@@ -24,9 +24,9 @@ public class Common {
 			return modExistence;
 		}
 	}
-	public static Entity getPlayerBobber(ClientPlayerEntity player) {
+	public static ProjectileEntity getPlayerBobber(ClientPlayerEntity player) {
 		if (player == null) return null;
-		Entity bobber = player.fishHook;
+		ProjectileEntity bobber = player.fishHook;
 		// Vanilla Minecraft.
 		if (bobber != null) return bobber;
 		// Add more mods here.
@@ -36,7 +36,7 @@ public class Common {
 		}
 		return null;
 	}
-	public static boolean isBobber(Entity entity) {
+	public static boolean isBobber(ProjectileEntity entity) {
 		if (entity == null) return false;
 		return entity instanceof FishingBobberEntity ||
 			Spectrum.isModdedBobber(entity);

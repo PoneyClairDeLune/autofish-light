@@ -1,7 +1,7 @@
 package troy.autofish.monitor;
 
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.entity.projectile.FishingBobberEntity;
+import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.PlaySoundFromEntityS2CPacket;
 import net.minecraft.network.packet.s2c.play.PlaySoundS2CPacket;
@@ -13,7 +13,7 @@ public class FishMonitorMPSound implements FishMonitorMP {
     public static final double HOOKSOUND_DISTANCESQ_THRESHOLD = 25D;
 
     @Override
-    public void hookTick(Autofish autofish, MinecraftClient minecraft, FishingBobberEntity hook) {
+    public void hookTick(Autofish autofish, MinecraftClient minecraft, ProjectileEntity hook) {
     }
 
     @Override
@@ -42,7 +42,7 @@ public class FishMonitorMPSound implements FishMonitorMP {
 
             if (soundName.equalsIgnoreCase("minecraft:entity.fishing_bobber.splash") || soundName.equalsIgnoreCase("entity.fishing_bobber.splash")) {
                 if(minecraft.player != null) {
-                    FishingBobberEntity hook = minecraft.player.fishHook;
+                    ProjectileEntity hook = minecraft.player.fishHook;
                     if (hook != null) {
                         if (hook.squaredDistanceTo(x, y, z) < HOOKSOUND_DISTANCESQ_THRESHOLD) {
                             autofish.catchFish();
