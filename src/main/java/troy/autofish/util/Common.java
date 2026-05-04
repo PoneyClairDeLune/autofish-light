@@ -1,7 +1,6 @@
 package troy.autofish.util;
 
 import java.util.HashMap;
-import java.util.ArrayList;
 import java.util.Map;
 
 import net.fabricmc.loader.api.FabricLoader;
@@ -12,7 +11,6 @@ import troy.autofish.Autofish;
 public class Common {
 	public static final FabricLoader fabricInstance = FabricLoader.getInstance();
 	private static final Map<String, Boolean> modExistCache = new HashMap<>();
-	private static final ArrayList<Entity> testCases = new ArrayList<>();
 
 	// Just a simple cached detector of mods.
 	public static Boolean hasMod(String modId) {
@@ -27,14 +25,13 @@ public class Common {
 	}
 	public static Entity getPlayerBobber(ClientPlayerEntity player) {
 		if (player == null) return null;
-		if (testCases == null || testCases.size() <= 0) {
-			testCases.addLast(player.fishHook);
-			if (hasMod("spectrum")) testCases.addLast(Spectrum.getModdedBobber(player));
-		}
-		for (Entity testCase : testCases) {
-			if (testCase != null) {
-				return testCase;
-			}
+		Entity bobber = player.fishHook;
+		// Vanilla Minecraft.
+		if (bobber != null) return bobber;
+		// Add more mods here.
+		if (hasMod("spectrum")) {
+			bobber = Spectrum.getModdedBobber(player);
+			if (bobber != null) return bobber;
 		}
 		return null;
 	}
