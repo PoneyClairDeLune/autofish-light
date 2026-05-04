@@ -262,10 +262,14 @@ public class Autofish {
     }
 
     public boolean isBobberInWater(){
-        ProjectileEntity bobber = Common.getPlayerBobber(client.player);
-        if(client.player != null && client.world != null && bobber != null) {
-            // To do: consider custom liquids as well.
-            return client.world.getBlockState(bobber.getBlockPos()).getBlock() == Blocks.WATER;
+        if(client.player != null && client.world != null) {
+            ProjectileEntity bobber = Common.getPlayerBobber(client.player);
+            if (bobber != null) {
+                // To do: consider custom liquids as well.
+                return client.world.getBlockState(bobber.getBlockPos()).getBlock() == Blocks.WATER;
+            } else {
+                return false;
+            }
         } else{
             return false;
         }
