@@ -20,12 +20,11 @@ import net.minecraft.util.Util;
 import net.minecraft.util.math.BlockPos;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import troy.autofish.modded.Common;
 import troy.autofish.monitor.FishMonitorMP;
 import troy.autofish.monitor.FishMonitorMPMotion;
 import troy.autofish.monitor.FishMonitorMPSound;
 import troy.autofish.scheduler.ActionType;
-import troy.autofish.util.Common;
-
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

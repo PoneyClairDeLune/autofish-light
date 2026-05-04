@@ -1,4 +1,4 @@
-package troy.autofish.util;
+package troy.autofish.modded;
 
 import java.util.HashMap;
 import java.util.Map;

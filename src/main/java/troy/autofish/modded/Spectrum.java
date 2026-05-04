@@ -1,4 +1,4 @@
-package troy.autofish.util;
+package troy.autofish.modded;
 
 import java.lang.reflect.Method;
 
