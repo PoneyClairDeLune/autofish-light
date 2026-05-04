@@ -201,17 +201,27 @@ public class Autofish {
             )))){
                 // didn't pass the check
                 if(!alreadyAlertOP){
-                    Objects.requireNonNull(Common.getPlayerOwner(bobber)).sendMessage(Text.translatable("info.autofish.open_water_detection.fail"),true);
-                    alreadyAlertOP = true;
-                    alreadyPassOP = false;
+                    PlayerEntity clientPlayer = Common.getPlayerOwner(bobber);
+                    if (clientPlayer != null) {
+                        clientPlayer.sendMessage(Text.translatable("info.autofish.open_water_detection.fail"),true);
+                        alreadyAlertOP = true;
+                        alreadyPassOP = false;
+                    } else {
+                        logSession.warn(Text.translatable("info.autofish.open_water_detection.fail"));
+                    }
                 }
                 flag = false;
             }
         }
         if(flag && !alreadyPassOP) {
-            Objects.requireNonNull(Common.getPlayerOwner(bobber)).sendMessage(Text.translatable("info.autofish.open_water_detection.success"),true);
-            alreadyPassOP = true;
-            alreadyAlertOP = false;
+            PlayerEntity clientPlayer = Common.getPlayerOwner(bobber);
+            if (clientPlayer != null) {
+                clientPlayer.sendMessage(Text.translatable("info.autofish.open_water_detection.success"),true);
+                alreadyPassOP = true;
+                alreadyAlertOP = false;
+            } else {
+                logSession.warn(Text.translatable("info.autofish.open_water_detection.success"));
+            }
         }
 
 
