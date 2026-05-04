@@ -42,5 +42,8 @@
   "depends": {
     "fabric": "*",
     "cloth-config": "*"
+  },
+  "suggests": {
+   "spectrum": ">=1.9.0"
   }
 }
