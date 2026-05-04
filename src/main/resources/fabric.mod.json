@@ -44,6 +44,6 @@
     "cloth-config": "*"
   },
   "suggests": {
-   "spectrum": ">=1.9.0"
+    "spectrum": ">=1.9.0"
   }
 }

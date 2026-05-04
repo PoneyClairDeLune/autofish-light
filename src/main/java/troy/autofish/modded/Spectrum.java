@@ -7,16 +7,20 @@ import net.minecraft.entity.projectile.ProjectileEntity;
 import troy.autofish.Autofish;
 
 public class Spectrum {
+	private static Class<?> moddedAccessor = null;
 	private static final String moddedAccessorClassId = "de.dafuqs.spectrum.api.entity.PlayerEntityAccessor";
-	private static final String moddedBobberClassId = "de.dafuqs.spectrum.entity.entity.SpectrumFishingBobberEntity";
+	private static Class<?> moddedBobber = null;
+	private static final String moddedBobberId = "de.dafuqs.spectrum.entity.entity.SpectrumFishingBobberEntity";
 	public static ProjectileEntity getModdedBobber(ClientPlayerEntity player) {
 		if (!Common.hasMod("spectrum")) return null;
 		// This should immediately cause a crash if it throws.
 		try {
 			//Object playerAccessor = player;
-			Class<?> playerAccessorClass = Class.forName(moddedAccessorClassId);
-			if (playerAccessorClass.isInstance(player)) {
-				Method bobberRetriever = playerAccessorClass.getMethod("getSpectrumBobber");
+			if (moddedAccessor == null) {
+				moddedAccessor = Class.forName(moddedAccessorClassId);
+			}
+			if (moddedAccessor.isInstance(player)) {
+				Method bobberRetriever = moddedAccessor.getMethod("getSpectrumBobber");
 				return (ProjectileEntity) bobberRetriever.invoke(player);
 			}
 		} catch (Exception err) {
@@ -27,8 +31,10 @@ public class Spectrum {
 	public static boolean isModdedBobber(ProjectileEntity entity) {
 		if (!Common.hasMod("spectrum")) return false;
 		try {
-			Class<?> spectrumBobberClass = Class.forName(moddedBobberClassId);
-			return spectrumBobberClass.isInstance(entity);
+			if (moddedBobber == null) {
+				moddedBobber = Class.forName(moddedBobberId);
+			}
+			return moddedBobber.isInstance(entity);
 		} catch (Exception err) {
 			Autofish.logSession.error("Spectrum bobber detection error: " + err.getMessage());
 		}
