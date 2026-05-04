@@ -68,14 +68,15 @@ public class Autofish {
 
         if (client.world != null && client.player != null && modAutofish.getConfig().isAutofishEnabled()) {
 
-           timeMillis = Util.getMeasuringTimeMs(); //update current working time for this tick
+            timeMillis = Util.getMeasuringTimeMs(); //update current working time for this tick
 
+            ProjectileEntity bobber = Common.getPlayerBobber(client.player);
             if (isHoldingFishingRod()) {
-                if (Common.getPlayerBobber(client.player) != null) {
+                if (bobber != null) {
                     hookExists = true;
                     //MP catch listener
                     if (shouldUseMPDetection()) {//multiplayer only, send tick event to monitor
-                        fishMonitorMP.hookTick(this, client, Common.getPlayerBobber(client.player));
+                        fishMonitorMP.hookTick(this, client, bobber);
                     }
                 } else {
                     removeHook();
@@ -251,8 +252,9 @@ public class Autofish {
     }
 
     public boolean isBobberInWater(){
-        if(client.player != null && client.world != null && Common.getPlayerBobber(client.player) != null) {
-            return client.world.getBlockState(Common.getPlayerBobber(client.player).getBlockPos()).getBlock() == Blocks.WATER;
+        ProjectileEntity bobber = Common.getPlayerBobber(client.player);
+        if(client.player != null && client.world != null && bobber != null) {
+            return client.world.getBlockState(bobber.getBlockPos()).getBlock() == Blocks.WATER;
         } else{
             return false;
         }
