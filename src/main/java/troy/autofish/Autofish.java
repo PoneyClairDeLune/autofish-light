@@ -221,7 +221,7 @@ public class Autofish {
                 alreadyPassOP = true;
                 alreadyAlertOP = false;
             } else {
-                logSession.warn(Text.translatable("info.autofish.open_water_detection.success"));
+                logSession.info(Text.translatable("info.autofish.open_water_detection.success"));
             }
         }
 
@@ -264,12 +264,9 @@ public class Autofish {
     public boolean isBobberInWater(){
         if(client.player != null && client.world != null) {
             ProjectileEntity bobber = Common.getPlayerBobber(client.player);
-            if (bobber != null) {
-                // To do: consider custom liquids as well.
-                return client.world.getBlockState(bobber.getBlockPos()).getBlock() == Blocks.WATER;
-            } else {
-                return false;
-            }
+            if (bobber == null) return false;
+            // To do: consider custom liquids as well.
+            return client.world.getBlockState(bobber.getBlockPos()).getBlock() == Blocks.WATER;
         } else{
             return false;
         }
