@@ -24,6 +24,7 @@ import troy.autofish.monitor.FishMonitorMP;
 import troy.autofish.monitor.FishMonitorMPMotion;
 import troy.autofish.monitor.FishMonitorMPSound;
 import troy.autofish.scheduler.ActionType;
+import troy.autofish.util.Common;
 
 import java.util.Objects;
 import java.util.regex.Matcher;
@@ -69,11 +70,11 @@ public class Autofish {
            timeMillis = Util.getMeasuringTimeMs(); //update current working time for this tick
 
             if (isHoldingFishingRod()) {
-                if (client.player.fishHook != null) {
+                if (Common.getPlayerBobber(client.player) != null) {
                     hookExists = true;
                     //MP catch listener
                     if (shouldUseMPDetection()) {//multiplayer only, send tick event to monitor
-                        fishMonitorMP.hookTick(this, client, client.player.fishHook);
+                        fishMonitorMP.hookTick(this, client, Common.getPlayerBobber(client.player));
                     }
                 } else {
                     removeHook();
@@ -93,7 +94,7 @@ public class Autofish {
         client.execute(() -> {
             if (modAutofish.getConfig().isAutofishEnabled() && !shouldUseMPDetection()) {
                 //null checks for sanity
-                if (client.player != null && client.player.fishHook != null) {
+                if (client.player != null && Common.getPlayerBobber(client.player) != null) {
                     //hook is catchable and player is correct
                     if (ticksCatchable > 0 && owner.getUuid().compareTo(client.player.getUuid()) == 0) {
                         catchFish();
@@ -143,7 +144,7 @@ public class Autofish {
     public void catchFish() {
             if(!modAutofish.getScheduler().isRecastQueued()) { //prevents double reels
                 if (client.player != null) {
-                    detectOpenWater(client.player.fishHook);
+                    detectOpenWater(Common.getPlayerBobber(client.player));
                 }
                 //queue actions
                 queueRodSwitch();
@@ -173,7 +174,7 @@ public class Autofish {
         });
     }
 
-    private void detectOpenWater(FishingBobberEntity bobber){
+    private void detectOpenWater(Entity bobber){
         /*
          * To catch items in the treasure category, the bobber must be in open water,
          * defined as the 5×4×5 vicinity around the bobber resting on the water surface
@@ -249,8 +250,8 @@ public class Autofish {
     }
 
     public boolean isBobberInWater(){
-        if(client.player != null && client.world != null && client.player.fishHook != null) {
-            return client.world.getBlockState(client.player.fishHook.getBlockPos()).getBlock() == Blocks.WATER;
+        if(client.player != null && client.world != null && Common.getPlayerBobber(client.player) != null) {
+            return client.world.getBlockState(Common.getPlayerBobber(client.player).getBlockPos()).getBlock() == Blocks.WATER;
         } else{
             return false;
         }
