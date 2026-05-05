@@ -26,6 +26,10 @@ public class Common {
 	public static final FabricLoader fabricInstance = FabricLoader.getInstance();
 	private static final Map<String, Boolean> modExistCache = new HashMap<>();
 
+	public static final int damageSafeMargin = 1;
+	private static ProjectileEntity lastBobber = null;
+	private static ProjectileEntity lastPlayerBobber = null;
+
 	// Just a simple cached detector of mods.
 	public static Boolean hasMod(String modId) {
 		if (modExistCache.containsKey(modId)) {
@@ -37,7 +41,7 @@ public class Common {
 			return modExistence;
 		}
 	}
-	public static ProjectileEntity getPlayerBobber(ClientPlayerEntity player) {
+	private static ProjectileEntity getPlayerBobberInternal(ClientPlayerEntity player) {
 		if (player == null) return null;
 		ProjectileEntity bobber = player.fishHook;
 		// Vanilla Minecraft.
@@ -48,6 +52,18 @@ public class Common {
 			if (bobber != null) return bobber;
 		}
 		return null;
+	}
+	public static ProjectileEntity getPlayerBobber(ClientPlayerEntity player) {
+		ProjectileEntity bobber = getPlayerBobberInternal(player);
+		if (bobber != lastPlayerBobber) {
+			if (bobber == null) {
+				LogSession.info("No bobber has been found.");
+			} else {
+				LogSession.info("Found player bobber: " + getRegistryKey(bobber) + ".");
+			}
+		}
+		lastPlayerBobber = bobber;
+		return bobber;
 	}
 	public static PlayerEntity getPlayerOwner(ProjectileEntity entity) {
 		if (entity == null) return null;
@@ -67,7 +83,6 @@ public class Common {
 		if (entity == null) return null;
 		return Registries.ENTITY_TYPE.getId(entity.getType()).toString();
 	}
-	private static ProjectileEntity lastBobber = null;
 	public static boolean isBobber(ProjectileEntity entity) {
 		if (entity == null) {
 			lastBobber = null;
@@ -80,7 +95,6 @@ public class Common {
 		lastBobber = entity;
 		return bobberVerdict;
 	}
-	public static final int damageSafeMargin = 1;
 	public static boolean shouldNotReel(ItemStack itemStack) {
 		ItemStack selectedItem = itemStack;
 		int currentDamage = selectedItem.getDamage();
