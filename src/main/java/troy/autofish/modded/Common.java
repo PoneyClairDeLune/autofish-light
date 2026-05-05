@@ -119,6 +119,7 @@ public class Common {
 		String itemId = getRegistryKey(rodItem);
 		if (itemId == "minecraft:fishing_rod") return true;
 		boolean isRod = false;
+		// Tags can go here.
 		// Modded section here.
 		if (!isRod && hasMod("spectrum")) {
 			isRod = Spectrum.isModdedRod(itemId);

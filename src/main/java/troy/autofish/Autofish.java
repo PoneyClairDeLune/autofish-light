@@ -201,7 +201,7 @@ public class Autofish {
         for(int yi = -2; yi <= 2; yi++){
             if(!(BlockPos.stream(x - 2, y + yi, z - 2, x + 2, y + yi, z + 2).allMatch((blockPos ->
                     // every block is water
-                        bobber.getEntityWorld().getBlockState(blockPos).getBlock() == Blocks.WATER
+                         Common.isFishableLiquid(bobber.getEntityWorld().getBlockState(blockPos).getBlock())
                     )) || BlockPos.stream(x - 2, y + yi, z - 2, x + 2, y + yi, z + 2).allMatch((blockPos ->
                     // or every block is air or lily pad
                         bobber.getEntityWorld().getBlockState(blockPos).getBlock() == Blocks.AIR
@@ -244,27 +244,26 @@ public class Autofish {
         }
     }
 
-    public void switchToFirstRod(ClientPlayerEntity player) {
-        if(player != null) {
-            PlayerInventory inventory = player.getInventory();
-            for (int i = 0; i < inventory.main.size(); i++) {
-                ItemStack slot = inventory.main.get(i);
-                if (slot.getItem() == Items.FISHING_ROD) {
-                    if (i < 9) { //hotbar only
-                        if (modAutofish.getConfig().isNoBreak()) {
-                            if (slot.getDamage() + Common.damageSafeMargin < slot.getMaxDamage()) {
-                                inventory.selectedSlot = i;
-                                return;
-                            }
-                        } else {
-                            inventory.selectedSlot = i;
-                            return;
-                        }
-                    }
-                }
-            }
-        }
-    }
+	public void switchToFirstRod(ClientPlayerEntity player) {
+		if (player == null) return;
+		PlayerInventory inventory = player.getInventory();
+		int inventorySize = inventory.main.size();
+		for (int i = 0; i < inventorySize; i++) {
+			if (i >= 9) break; // Hotbar only.
+			ItemStack slot = inventory.main.get(i);
+			if (Common.isFishingRod(slot.getItem())) {
+				if (modAutofish.getConfig().isNoBreak()) {
+					if (slot.getDamage() + Common.damageSafeMargin < slot.getMaxDamage()) {
+						inventory.selectedSlot = i;
+						return;
+					}
+				} else {
+					inventory.selectedSlot = i;
+					return;
+				}
+			}
+		}
+	}
 
 	private Block lastBlock = null;
 	public boolean isBobberInWater(){
