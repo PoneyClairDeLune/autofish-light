@@ -100,7 +100,12 @@ public class Common {
 		int currentDamage = selectedItem.getDamage();
 		int breakThreshold = selectedItem.getMaxDamage();
 		LogSession.info("Item " + Common.getRegistryKey(selectedItem.getItem()) + " has damage at " + currentDamage + "/" + (breakThreshold) + ".");
-		if (breakThreshold <= 0) return false; // It's unbreakable!
-		return (modInstance.getConfig().isNoBreak() && currentDamage + damageSafeMargin >= breakThreshold);
+		boolean noReelingVerdict = false;
+		if (breakThreshold > 0) {
+			// There's little sense to not use rods that are unbreakable, right?
+			noReelingVerdict = modInstance.getConfig().isNoBreak() && currentDamage + damageSafeMargin >= breakThreshold;
+		}
+		LogSession.info("The fishing rod shoul" + (noReelingVerdict ? "dn't" : "d") + " reel.");
+		return noReelingVerdict;
 	}
 }
