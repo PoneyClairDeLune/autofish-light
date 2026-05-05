@@ -1,5 +1,6 @@
 package troy.autofish;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -48,6 +49,7 @@ public class Autofish {
         this.modAutofish = modAutofish;
         this.client = MinecraftClient.getInstance();
         setDetection();
+        logSession.debug("Autofish is now activated!");
 
         //Initiate the repeating action for persistent mode casting
         modAutofish.getScheduler().scheduleRepeatingAction(10000, () -> {
@@ -207,9 +209,8 @@ public class Autofish {
                         clientPlayer.sendMessage(Text.translatable("info.autofish.open_water_detection.fail"),true);
                         alreadyAlertOP = true;
                         alreadyPassOP = false;
-                    } else {
-                        logSession.warn(Text.translatable("info.autofish.open_water_detection.fail"));
                     }
+                    logSession.warn(Text.translatable("info.autofish.open_water_detection.fail"));
                 }
                 flag = false;
             }
@@ -220,9 +221,8 @@ public class Autofish {
                 clientPlayer.sendMessage(Text.translatable("info.autofish.open_water_detection.success"),true);
                 alreadyPassOP = true;
                 alreadyAlertOP = false;
-            } else {
-                logSession.info(Text.translatable("info.autofish.open_water_detection.success"));
             }
+            logSession.info(Text.translatable("info.autofish.open_water_detection.success"));
         }
 
 
@@ -261,16 +261,31 @@ public class Autofish {
         }
     }
 
-    public boolean isBobberInWater(){
-        if(client.player != null && client.world != null) {
-            ProjectileEntity bobber = Common.getPlayerBobber(client.player);
-            if (bobber == null) return false;
-            // To do: consider custom liquids as well.
-            return client.world.getBlockState(bobber.getBlockPos()).getBlock() == Blocks.WATER;
-        } else{
-            return false;
-        }
-    }
+	private Block lastBlock = null;
+	public boolean isBobberInWater(){
+		if (client.player == null || client.world == null) {
+			lastBlock = null;
+			return false;
+		}
+		ProjectileEntity bobber = Common.getPlayerBobber(client.player);
+		if (bobber == null) return false;
+		Block currentBlock = client.world.getBlockState(bobber.getBlockPos()).getBlock();
+		String currentBlockId = Common.getRegistryKey(currentBlock);
+		boolean waterVerdict = false;
+		switch (currentBlockId) {
+			case "minecraft:water": {
+				waterVerdict = true;
+				break;
+			}
+			default: {}
+		}
+		if (currentBlock != lastBlock) {
+			logSession.debug("Block " + currentBlockId + (waterVerdict ? " is" : " isn't") + " water.");
+		}
+		lastBlock = currentBlock;
+		// To do: consider custom liquids as well.
+		return waterVerdict;
+	}
 
     public void useRod() {
         if(client.player != null && client.world != null) {
@@ -288,8 +303,13 @@ public class Autofish {
         }
     }
 
+    private boolean lastHeldFishingRod = false;
     public boolean isHoldingFishingRod() {
-        return isItemFishingRod(getHeldItem().getItem());
+    	Item heldItem = getHeldItem().getItem();
+        boolean heldRod = isItemFishingRod(heldItem);
+        if (lastHeldFishingRod != heldRod) logSession.debug((heldRod ? "H" : "Not h") + "olding fishing rod: " + Common.getRegistryKey(heldItem) + ".");
+        lastHeldFishingRod = heldRod;
+        return heldRod;
     }
 
     private Hand getCorrectHand() {

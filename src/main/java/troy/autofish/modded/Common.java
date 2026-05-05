@@ -4,11 +4,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.block.Block;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.FishingBobberEntity;
+import net.minecraft.item.Item;
+import net.minecraft.registry.Registries;
 import troy.autofish.Autofish;
 
 public class Common {
@@ -44,9 +47,29 @@ public class Common {
 		if (owner instanceof PlayerEntity) return (PlayerEntity) owner;
 		return null;
 	}
+	public static String getRegistryKey(Block block) {
+		if (block == null) return null;
+		return Registries.BLOCK.getId(block).toString();
+	}
+	public static String getRegistryKey(Item item) {
+		if (item == null) return null;
+		return Registries.ITEM.getId(item).toString();
+	}
+	public static String getRegistryKey(Entity entity) {
+		if (entity == null) return null;
+		return Registries.ENTITY_TYPE.getId(entity.getType()).toString();
+	}
+	private static ProjectileEntity lastBobber = null;
 	public static boolean isBobber(ProjectileEntity entity) {
-		if (entity == null) return false;
-		return entity instanceof FishingBobberEntity ||
-			Spectrum.isModdedBobber(entity);
+		if (entity == null) {
+			lastBobber = null;
+			return false;
+		};
+		boolean bobberVerdict = entity instanceof FishingBobberEntity || Spectrum.isModdedBobber(entity);
+		if (lastBobber != entity) {
+			Autofish.logSession.debug("Entity " + getRegistryKey(entity) + (bobberVerdict ? " is" : " is not") + " a bobber.");
+		}
+		lastBobber = entity;
+		return bobberVerdict;
 	}
 }
