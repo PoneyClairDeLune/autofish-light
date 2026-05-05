@@ -11,7 +11,8 @@ import troy.autofish.LogSession;
 public class Spectrum {
 	private static Class<?> moddedAccessor = null;
 	private static final String moddedAccessorClassId = "de.dafuqs.spectrum.api.entity.PlayerEntityAccessor";
-	private static final HashSet<String> moddedBobbers = new HashSet<>(Arrays.asList("spectrum:lagoon_rod", "spectrum:bedrock_fishing_rod", "spectrum:molten_rod"));
+	private static final HashSet<String> moddedBobbers = new HashSet<>(Arrays.asList("spectrum:lagoon_fishing_bobber", "spectrum:bedrock_fishing_bobber", "spectrum:molten_fishing_bobber"));
+	private static final HashSet<String> moddedRods = new HashSet<>(Arrays.asList("spectrum:lagoon_rod", "spectrum:bedrock_fishing_rod", "spectrum:molten_rod"));
 	public static ProjectileEntity getModdedBobber(ClientPlayerEntity player) {
 		if (!Common.hasMod("spectrum")) return null;
 		// This should immediately cause a crash if it throws.
