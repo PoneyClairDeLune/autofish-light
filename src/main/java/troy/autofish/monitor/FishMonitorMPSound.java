@@ -7,6 +7,7 @@ import net.minecraft.network.packet.s2c.play.PlaySoundFromEntityS2CPacket;
 import net.minecraft.network.packet.s2c.play.PlaySoundS2CPacket;
 import net.minecraft.sound.SoundEvent;
 import troy.autofish.Autofish;
+import troy.autofish.modded.Common;
 
 public class FishMonitorMPSound implements FishMonitorMP {
 
@@ -20,37 +21,31 @@ public class FishMonitorMPSound implements FishMonitorMP {
     public void handleHookRemoved() {
     }
 
-    @Override
-    public void handlePacket(Autofish autofish, Packet<?> packet, MinecraftClient minecraft) {
-
-        if (packet instanceof PlaySoundS2CPacket || packet instanceof PlaySoundFromEntityS2CPacket) {
-            //TODO investigate PlaySoundFromEntityS2CPacket; i dont think its ever used for fishing but whatever
-
-            String soundName;
-            double x, y, z;
-
-            if (packet instanceof PlaySoundS2CPacket) {
-                PlaySoundS2CPacket soundPacket = (PlaySoundS2CPacket) packet;
-                SoundEvent soundEvent = soundPacket.getSound().value();
-                soundName = soundEvent.getId().toString();
-                x = soundPacket.getX();
-                y = soundPacket.getY();
-                z = soundPacket.getZ();
-            } else {
-                return;
-            }
-
-            if (soundName.equalsIgnoreCase("minecraft:entity.fishing_bobber.splash") || soundName.equalsIgnoreCase("entity.fishing_bobber.splash")) {
-                if(minecraft.player != null) {
-                    ProjectileEntity hook = minecraft.player.fishHook;
-                    if (hook != null) {
-                        if (hook.squaredDistanceTo(x, y, z) < HOOKSOUND_DISTANCESQ_THRESHOLD) {
-                            autofish.catchFish();
-                        }
-                    }
-                }
-            }
-        }
-
-    }
+	@Override
+	public void handlePacket(Autofish autofish, Packet<?> packet, MinecraftClient minecraft) {
+		if (minecraft.player == null) return;
+		ProjectileEntity bobber = Common.getPlayerBobber(minecraft.player);
+		if (bobber == null) return;
+		if (!(
+			packet instanceof PlaySoundS2CPacket || packet instanceof PlaySoundFromEntityS2CPacket
+		)) return;
+		//TODO investigate PlaySoundFromEntityS2CPacket; i dont think its ever used for fishing but whatever
+		if (!(packet instanceof PlaySoundS2CPacket)) return;
+		String soundName;
+		double x, y, z;
+		PlaySoundS2CPacket soundPacket = (PlaySoundS2CPacket) packet;
+		SoundEvent soundEvent = soundPacket.getSound().value();
+		soundName = soundEvent.getId().toString();
+		x = soundPacket.getX();
+		y = soundPacket.getY();
+		z = soundPacket.getZ();
+		if (
+			soundName.equalsIgnoreCase("minecraft:entity.fishing_bobber.splash") ||
+			soundName.equalsIgnoreCase("entity.fishing_bobber.splash")
+		) {
+			if (bobber.squaredDistanceTo(x, y, z) < HOOKSOUND_DISTANCESQ_THRESHOLD) {
+				autofish.catchFish();
+			}
+		}
+	}
 }
