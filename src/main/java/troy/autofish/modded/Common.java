@@ -105,7 +105,7 @@ public class Common {
 	public static boolean isFishableLiquid(Block block) {
 		if (block == null) return false;
 		String blockId = getRegistryKey(block);
-		if (blockId == "minecraft:water") return true;
+		if (blockId.equals("minecraft:water")) return true;
 		boolean isFishable = false;
 		// Modded section here.
 		if (!isFishable && hasMod("spectrum")) {
@@ -117,7 +117,7 @@ public class Common {
 	public static boolean isFishingRod(Item rodItem) {
 		if (rodItem == null) return false;
 		String itemId = getRegistryKey(rodItem);
-		if (itemId == "minecraft:fishing_rod") return true;
+		if (itemId.equals("minecraft:fishing_rod")) return true;
 		boolean isRod = false;
 		// Tags can go here.
 		// Modded section here.
