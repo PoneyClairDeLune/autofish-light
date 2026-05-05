@@ -11,10 +11,18 @@ import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.FishingBobberEntity;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
+import troy.autofish.FabricModAutofish;
 import troy.autofish.LogSession;
+import troy.autofish.config.Config;
 
 public class Common {
+	private static FabricModAutofish modInstance = null;
+	public static void initialize(FabricModAutofish mod) {
+		modInstance = mod;
+	}
+
 	public static final FabricLoader fabricInstance = FabricLoader.getInstance();
 	private static final Map<String, Boolean> modExistCache = new HashMap<>();
 
@@ -71,5 +79,13 @@ public class Common {
 		}
 		lastBobber = entity;
 		return bobberVerdict;
+	}
+	public static boolean shouldReel(ItemStack itemStack) {
+		ItemStack selectedItem = itemStack;
+		int currentDamage = selectedItem.getDamage();
+		int safeMargin = 1;
+		int breakThreshold = selectedItem.getMaxDamage();
+		LogSession.info("Item " + Common.getRegistryKey(selectedItem.getItem()) + " has damage at " + currentDamage + "/" + (breakThreshold) + ".");
+		return (modInstance.getConfig().isNoBreak() && currentDamage + safeMargin >= breakThreshold);
 	}
 }

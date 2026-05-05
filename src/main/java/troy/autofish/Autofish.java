@@ -42,28 +42,26 @@ public class Autofish {
 
     public long timeMillis = 0L;
 
-    public Autofish(FabricModAutofish modAutofish) {
-        this.modAutofish = modAutofish;
-        this.client = MinecraftClient.getInstance();
-        setDetection();
-        LogSession.error("Autofish is now activated!");
-        LogSession.warn("Autofish is now activated!");
-        LogSession.info("Autofish is now activated!");
-        LogSession.debug("Autofish is now activated!");
+	public Autofish(FabricModAutofish modAutofish) {
+		this.modAutofish = modAutofish;
+		this.client = MinecraftClient.getInstance();
+		setDetection();
+		Common.initialize(modAutofish);
+		LogSession.info("Autofish is now activated!");
 
-        //Initiate the repeating action for persistent mode casting
-        modAutofish.getScheduler().scheduleRepeatingAction(10000, () -> {
-            if(!modAutofish.getConfig().isPersistentMode()) return;
-            if(modAutofish.getConfig().isNoBreak() && getHeldItem().getDamage() >= 63) return;
-            if(!isHoldingFishingRod()) return;
-            if(hookExists){
-                if(isBobberInWater()) return;
-                else useRod();
-            }
-            if(modAutofish.getScheduler().isRecastQueued()) return;
-            useRod();
-        });
-    }
+		// Initiate the repeating action for persistent mode casting.
+		modAutofish.getScheduler().scheduleRepeatingAction(10000, () -> {
+			if (!modAutofish.getConfig().isPersistentMode()) return;
+			if (modAutofish.getConfig().isNoBreak() && getHeldItem().getDamage() >= 63) return;
+			if (!isHoldingFishingRod()) return;
+			if (hookExists){
+				if (isBobberInWater()) return;
+				else useRod();
+			}
+			if (modAutofish.getScheduler().isRecastQueued()) return;
+			useRod();
+		});
+	}
 
     public void tick(MinecraftClient client) {
 
@@ -164,17 +162,7 @@ public class Autofish {
 				if (hookExists) return;
 				if (!isHoldingFishingRod()) return;
 				ItemStack heldOnHand = getHeldItem();
-				int currentDamage = heldOnHand.getDamage();
-				int breakThreshold = heldOnHand.getMaxDamage() - 1;
-				String messagePrefix = "Rod " + Common.getRegistryKey(heldOnHand.getItem()) + " has damage at " + currentDamage + "/" + (breakThreshold + 1) + ". ";
-				if (
-					modAutofish.getConfig().isNoBreak() &&
-					currentDamage >= breakThreshold
-				) {
-					LogSession.info(messagePrefix + "Skipped.");
-					return;
-				};
-				LogSession.info(messagePrefix + "Recasting.");
+				if (Common.shouldReel(heldOnHand)) return;
 				useRod();
 			}
 		);
@@ -236,7 +224,7 @@ public class Autofish {
                 alreadyPassOP = true;
                 alreadyAlertOP = false;
             }
-            LogSession.warn("Bobber wasn't in open water.");
+            LogSession.info("Bobber was in open water.");
         }
 
 
@@ -294,28 +282,29 @@ public class Autofish {
 			default: {}
 		}
 		if (currentBlock != lastBlock) {
-			LogSession.info("Block " + currentBlockId + (waterVerdict ? " is" : " isn't") + " water.");
+			LogSession.info("Block " + currentBlockId + (waterVerdict ? " is" : " isn't") + " fishable liquid.");
 		}
 		lastBlock = currentBlock;
 		// To do: consider custom liquids as well.
 		return waterVerdict;
 	}
 
-    public void useRod() {
-        if(client.player != null && client.world != null) {
-            Hand hand = getCorrectHand();
-            ActionResult actionResult = null;
-            if (client.interactionManager != null) {
-                actionResult = client.interactionManager.interactItem(client.player, hand);
-            }
-            if (actionResult != null && actionResult.isAccepted()) {
-                if (actionResult.shouldSwingHand()) {
-                    client.player.swingHand(hand);
-                }
-                client.gameRenderer.firstPersonRenderer.resetEquipProgress(hand);
-            }
-        }
-    }
+	public void useRod() {
+		if (client.player != null && client.world != null) {
+			Hand hand = getCorrectHand();
+			ActionResult actionResult = null;
+			if (client.interactionManager != null) {
+				actionResult = client.interactionManager.interactItem(client.player, hand);
+			}
+			if (actionResult != null && actionResult.isAccepted()) {
+				if (actionResult.shouldSwingHand()) {
+					client.player.swingHand(hand);
+				}
+				client.gameRenderer.firstPersonRenderer.resetEquipProgress(hand);
+			}
+			LogSession.info("Current rod has been used.");
+		}
+	}
 
     private boolean lastHeldFishingRod = false;
     public boolean isHoldingFishingRod() {
