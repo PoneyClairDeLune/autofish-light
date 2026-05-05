@@ -58,9 +58,9 @@ public class Common {
 		ProjectileEntity bobber = getPlayerBobberInternal(player);
 		if (bobber != lastPlayerBobber) {
 			if (bobber == null) {
-				LogSession.info("No bobber has been found.");
+				LogSession.debug("No bobber has been found.");
 			} else {
-				LogSession.info("Found player bobber: " + getRegistryKey(bobber) + ".");
+				LogSession.debug("Found player bobber: " + getRegistryKey(bobber) + ".");
 			}
 		}
 		lastPlayerBobber = bobber;
@@ -88,7 +88,7 @@ public class Common {
 		if (entity == null) return null;
 		return Registries.ENTITY_TYPE.getId(entity.getType()).toString();
 	}
-	/** Returns if the entity is a fishing bobber. */
+	/** Returns true if the entity is a fishing bobber. */
 	public static boolean isBobber(ProjectileEntity entity) {
 		if (entity == null) {
 			lastBobber = null;
@@ -100,6 +100,35 @@ public class Common {
 		}
 		lastBobber = entity;
 		return bobberVerdict;
+	}
+	/** Returns true if the liquid is fishable. */
+	public static boolean isFishableLiquid(Block block) {
+		if (block == null) return false;
+		String blockId = getRegistryKey(block);
+		if (blockId == "minecraft:water") return true;
+		boolean isFishable = false;
+		// Modded section here.
+		if (!isFishable && hasMod("spectrum")) {
+			isFishable = Spectrum.isFishableLiquid(blockId);
+		}
+		return isFishable;
+	}
+	/** Returns true if the item is a fishing rod. */
+	public static boolean isFishingRod(Item rodItem) {
+		if (rodItem == null) return false;
+		String itemId = getRegistryKey(rodItem);
+		if (itemId == "minecraft:fishing_rod") return true;
+		boolean isRod = false;
+		// Modded section here.
+		if (!isRod && hasMod("spectrum")) {
+			isRod = Spectrum.isModdedRod(itemId);
+		}
+		return isRod;
+	}
+	/** Returns true if the liquid is fishable with the given rod. */
+	public static boolean isLiquidFishableIn(Item rodItem, Block block) {
+		// WIP
+		return false;
 	}
 	/**
 	* If true, the rod should not be either reeled or thrown.

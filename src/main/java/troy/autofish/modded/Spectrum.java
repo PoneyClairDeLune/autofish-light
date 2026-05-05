@@ -6,6 +6,7 @@ import java.util.HashSet;
 
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
+import net.minecraft.item.Item;
 import troy.autofish.LogSession;
 
 public class Spectrum {
@@ -20,7 +21,7 @@ public class Spectrum {
 			//Object playerAccessor = player;
 			if (moddedAccessor == null) {
 				moddedAccessor = Class.forName(moddedAccessorClassId);
-				LogSession.info("Created a modded accessor for Spectrum.");
+				LogSession.info("Created a modded accessor for \"spectrum\".");
 			}
 			Method bobberRetriever = moddedAccessor.getMethod("getSpectrumBobber");
 			if (bobberRetriever != null) {
@@ -31,8 +32,29 @@ public class Spectrum {
 		}
 		return null;
 	}
+	public static boolean isFishableLiquid(String blockId) {
+		// No idea how to retrieve tags yet, so hardcoding for now.
+		switch (blockId) {
+			case "minecraft:lava":
+			case "spectrum:dragonrot":
+			case "spectrum:liquid_crystal":
+			case "spectrum:midnight_solution":
+			case "spectrum:sludge": {
+				return true;
+			}
+		}
+		return false;
+	}
+	public static boolean isLiquidFishableIn(String itemId, String blockId) {
+		// WIP
+		return false;
+	}
 	public static boolean isModdedBobber(ProjectileEntity entity) {
 		if (!Common.hasMod("spectrum")) return false;
 		return moddedBobbers.contains(Common.getRegistryKey(entity));
+	}
+	public static boolean isModdedRod(String itemId) {
+		if (!Common.hasMod("spectrum")) return false;
+		return moddedRods.contains(itemId);
 	}
 }

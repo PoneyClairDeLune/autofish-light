@@ -305,7 +305,7 @@ public class Autofish {
 				}
 				client.gameRenderer.firstPersonRenderer.resetEquipProgress(hand);
 			}
-			LogSession.info("Current rod has been used.");
+			LogSession.debug("Current rod has been used.");
 		}
 	}
 
