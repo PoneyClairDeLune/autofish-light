@@ -20,8 +20,8 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.StringHelper;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.BlockPos;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import troy.autofish.modded.Common;
 import troy.autofish.monitor.FishMonitorMP;
 import troy.autofish.monitor.FishMonitorMPMotion;
@@ -43,7 +43,7 @@ public class Autofish {
     private long hookRemovedAt = 0L;
 
     public long timeMillis = 0L;
-    public static final Logger logSession = LogManager.getLogger("XPlus Autofish");
+    public static final Logger logSession = LoggerFactory.getLogger("Autofish");
 
     public Autofish(FabricModAutofish modAutofish) {
         this.modAutofish = modAutofish;
@@ -206,11 +206,11 @@ public class Autofish {
                 if(!alreadyAlertOP){
                     PlayerEntity clientPlayer = Common.getPlayerOwner(bobber);
                     if (clientPlayer != null) {
-                        clientPlayer.sendMessage(Text.translatable("info.autofish.open_water_detection.fail"),true);
+                        clientPlayer.sendMessage(Text.translatable("info.autofish.open_water_detection.fail"), true);
                         alreadyAlertOP = true;
                         alreadyPassOP = false;
                     }
-                    logSession.warn(Text.translatable("info.autofish.open_water_detection.fail"));
+                    logSession.warn(Text.translatable("info.autofish.open_water_detection.fail").getString());
                 }
                 flag = false;
             }
@@ -218,11 +218,11 @@ public class Autofish {
         if(flag && !alreadyPassOP) {
             PlayerEntity clientPlayer = Common.getPlayerOwner(bobber);
             if (clientPlayer != null) {
-                clientPlayer.sendMessage(Text.translatable("info.autofish.open_water_detection.success"),true);
+                clientPlayer.sendMessage(Text.translatable("info.autofish.open_water_detection.success"), true);
                 alreadyPassOP = true;
                 alreadyAlertOP = false;
             }
-            logSession.info(Text.translatable("info.autofish.open_water_detection.success"));
+            logSession.info(Text.translatable("info.autofish.open_water_detection.success").getString());
         }
 
 
