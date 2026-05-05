@@ -1,6 +1,8 @@
 package troy.autofish.modded;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.HashSet;
 
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
@@ -9,8 +11,7 @@ import troy.autofish.LogSession;
 public class Spectrum {
 	private static Class<?> moddedAccessor = null;
 	private static final String moddedAccessorClassId = "de.dafuqs.spectrum.api.entity.PlayerEntityAccessor";
-	private static Class<?> moddedBobber = null;
-	private static final String moddedBobberId = "de.dafuqs.spectrum.entity.entity.SpectrumFishingBobberEntity";
+	private static final HashSet<String> moddedBobbers = new HashSet<>(Arrays.asList("spectrum:lagoon_rod", "spectrum:bedrock_fishing_rod", "spectrum:molten_rod"));
 	public static ProjectileEntity getModdedBobber(ClientPlayerEntity player) {
 		if (!Common.hasMod("spectrum")) return null;
 		// This should immediately cause a crash if it throws.
@@ -18,9 +19,10 @@ public class Spectrum {
 			//Object playerAccessor = player;
 			if (moddedAccessor == null) {
 				moddedAccessor = Class.forName(moddedAccessorClassId);
+				LogSession.info("Created a modded accessor.");
 			}
-			if (moddedAccessor.isInstance(player)) {
-				Method bobberRetriever = moddedAccessor.getMethod("getSpectrumBobber");
+			Method bobberRetriever = moddedAccessor.getMethod("getSpectrumBobber");
+			if (bobberRetriever != null) {
 				return (ProjectileEntity) bobberRetriever.invoke(player);
 			}
 		} catch (Exception err) {
@@ -30,14 +32,6 @@ public class Spectrum {
 	}
 	public static boolean isModdedBobber(ProjectileEntity entity) {
 		if (!Common.hasMod("spectrum")) return false;
-		try {
-			if (moddedBobber == null) {
-				moddedBobber = Class.forName(moddedBobberId);
-			}
-			return moddedBobber.isInstance(entity);
-		} catch (Exception err) {
-			LogSession.error("Spectrum bobber detection error: " + err.getMessage());
-		}
-		return false;
+		return moddedBobbers.contains(Common.getRegistryKey(entity));
 	}
 }
