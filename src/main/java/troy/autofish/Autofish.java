@@ -46,6 +46,9 @@ public class Autofish {
         this.modAutofish = modAutofish;
         this.client = MinecraftClient.getInstance();
         setDetection();
+        LogSession.error("Autofish is now activated!");
+        LogSession.warn("Autofish is now activated!");
+        LogSession.info("Autofish is now activated!");
         LogSession.debug("Autofish is now activated!");
 
         //Initiate the repeating action for persistent mode casting
@@ -153,26 +156,40 @@ public class Autofish {
             }
     }
 
-    public void queueRecast() {
-        modAutofish.getScheduler().scheduleAction(ActionType.RECAST, getRandomDelay()
-                + modAutofish.getConfig().getReelInDelay(), () -> {
-            //State checks to ensure we can still fish once this runs
-            if(hookExists) return;
-            if(!isHoldingFishingRod()) return;
-            if(modAutofish.getConfig().isNoBreak() && getHeldItem().getDamage() >= 63) return;
+	public void queueRecast() {
+		modAutofish.getScheduler().scheduleAction(
+			ActionType.RECAST,
+			getRandomDelay() + modAutofish.getConfig().getReelInDelay(),
+			() -> {
+				if (hookExists) return;
+				if (!isHoldingFishingRod()) return;
+				ItemStack heldOnHand = getHeldItem();
+				int currentDamage = heldOnHand.getDamage();
+				int breakThreshold = heldOnHand.getMaxDamage() - 1;
+				String messagePrefix = "Rod " + Common.getRegistryKey(heldOnHand.getItem()) + " has damage at " + currentDamage + "/" + (breakThreshold + 1) + ". ";
+				if (
+					modAutofish.getConfig().isNoBreak() &&
+					currentDamage >= breakThreshold
+				) {
+					LogSession.info(messagePrefix + "Skipped.");
+					return;
+				};
+				LogSession.info(messagePrefix + "Recasting.");
+				useRod();
+			}
+		);
+	}
 
-            useRod();
-        });
-    }
-
-    private void queueRodSwitch(){
-        modAutofish.getScheduler().scheduleAction(ActionType.ROD_SWITCH, (long) (getRandomDelay() * 0.83)
-                + modAutofish.getConfig().getReelInDelay(), () -> {
-            if(!modAutofish.getConfig().isMultiRod()) return;
-
-            switchToFirstRod(client.player);
-        });
-    }
+	private void queueRodSwitch(){
+		modAutofish.getScheduler().scheduleAction(
+			ActionType.ROD_SWITCH,
+			(long) (getRandomDelay() * 0.83) + modAutofish.getConfig().getReelInDelay(),
+			() -> {
+				if (!modAutofish.getConfig().isMultiRod()) return;
+				switchToFirstRod(client.player);
+			}
+		);
+	}
 
     private void detectOpenWater(ProjectileEntity bobber){
         /*
@@ -277,7 +294,7 @@ public class Autofish {
 			default: {}
 		}
 		if (currentBlock != lastBlock) {
-			LogSession.debug("Block " + currentBlockId + (waterVerdict ? " is" : " isn't") + " water.");
+			LogSession.info("Block " + currentBlockId + (waterVerdict ? " is" : " isn't") + " water.");
 		}
 		lastBlock = currentBlock;
 		// To do: consider custom liquids as well.
@@ -304,7 +321,7 @@ public class Autofish {
     public boolean isHoldingFishingRod() {
     	Item heldItem = getHeldItem().getItem();
         boolean heldRod = isItemFishingRod(heldItem);
-        if (lastHeldFishingRod != heldRod) LogSession.debug((heldRod ? "H" : "Not h") + "olding fishing rod: " + Common.getRegistryKey(heldItem) + ".");
+        if (lastHeldFishingRod != heldRod) LogSession.info((heldRod ? "H" : "Not h") + "olding fishing rod: " + Common.getRegistryKey(heldItem) + ".");
         lastHeldFishingRod = heldRod;
         return heldRod;
     }

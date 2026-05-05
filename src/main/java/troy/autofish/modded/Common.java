@@ -25,7 +25,7 @@ public class Common {
 		} else {
 			boolean modExistence = fabricInstance.isModLoaded(modId);
 			modExistCache.put(modId, modExistence);
-			LogSession.debug("Mod \"" + modId + "\" " + (modExistence ? "exists" : "does not exist") + ".");
+			LogSession.info("Mod \"" + modId + "\" " + (modExistence ? "exists" : "does not exist") + ".");
 			return modExistence;
 		}
 	}
@@ -67,7 +67,7 @@ public class Common {
 		};
 		boolean bobberVerdict = entity instanceof FishingBobberEntity || Spectrum.isModdedBobber(entity);
 		if (lastBobber != entity) {
-			LogSession.debug("Entity " + getRegistryKey(entity) + (bobberVerdict ? " is" : " is not") + " a bobber.");
+			LogSession.info("Entity " + getRegistryKey(entity) + (bobberVerdict ? " is" : " is not") + " a bobber.");
 		}
 		lastBobber = entity;
 		return bobberVerdict;
