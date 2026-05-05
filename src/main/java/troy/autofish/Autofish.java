@@ -142,17 +142,20 @@ public class Autofish {
         }
     }
 
-    public void catchFish() {
-            if(!modAutofish.getScheduler().isRecastQueued()) { //prevents double reels
-                if (client.player != null) {
-                    detectOpenWater(Common.getPlayerBobber(client.player));
-                }
-                //queue actions
-                queueRodSwitch();
-                queueRecast();
-                modAutofish.getScheduler().scheduleAction(ActionType.REEL_IN, modAutofish.getConfig().getReelInDelay(), this::useRod);
-            }
-    }
+	public void catchFish() {
+		if (!modAutofish.getScheduler().isRecastQueued()) { // Prevents double reels.
+			if (client.player != null) {
+				detectOpenWater(Common.getPlayerBobber(client.player));
+			}
+			LogSession.info("Reeling scheduled.");
+			// Queue actions.
+			queueRodSwitch();
+			queueRecast();
+			modAutofish.getScheduler().scheduleAction(ActionType.REEL_IN, modAutofish.getConfig().getReelInDelay(), this::useRod);
+		} else {
+			LogSession.info("Reeling prevented.");
+		}
+	}
 
 	public void queueRecast() {
 		modAutofish.getScheduler().scheduleAction(
