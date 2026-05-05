@@ -52,7 +52,7 @@ public class Autofish {
 		// Initiate the repeating action for persistent mode casting.
 		modAutofish.getScheduler().scheduleRepeatingAction(10000, () -> {
 			if (!modAutofish.getConfig().isPersistentMode()) return;
-			if (modAutofish.getConfig().isNoBreak() && getHeldItem().getDamage() >= 63) return;
+			if (Common.shouldNotReel(getHeldItem())) return;
 			if (!isHoldingFishingRod()) return;
 			if (hookExists){
 				if (isBobberInWater()) return;
@@ -162,7 +162,7 @@ public class Autofish {
 				if (hookExists) return;
 				if (!isHoldingFishingRod()) return;
 				ItemStack heldOnHand = getHeldItem();
-				if (Common.shouldReel(heldOnHand)) return;
+				if (Common.shouldNotReel(heldOnHand)) return;
 				useRod();
 			}
 		);
@@ -249,7 +249,7 @@ public class Autofish {
                 if (slot.getItem() == Items.FISHING_ROD) {
                     if (i < 9) { //hotbar only
                         if (modAutofish.getConfig().isNoBreak()) {
-                            if (slot.getDamage() < 63) {
+                            if (slot.getDamage() + Common.damageSafeMargin < slot.getMaxDamage()) {
                                 inventory.selectedSlot = i;
                                 return;
                             }

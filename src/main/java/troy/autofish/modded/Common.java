@@ -80,12 +80,12 @@ public class Common {
 		lastBobber = entity;
 		return bobberVerdict;
 	}
-	public static boolean shouldReel(ItemStack itemStack) {
+	public static final int damageSafeMargin = 1;
+	public static boolean shouldNotReel(ItemStack itemStack) {
 		ItemStack selectedItem = itemStack;
 		int currentDamage = selectedItem.getDamage();
-		int safeMargin = 1;
 		int breakThreshold = selectedItem.getMaxDamage();
 		LogSession.info("Item " + Common.getRegistryKey(selectedItem.getItem()) + " has damage at " + currentDamage + "/" + (breakThreshold) + ".");
-		return (modInstance.getConfig().isNoBreak() && currentDamage + safeMargin >= breakThreshold);
+		return (modInstance.getConfig().isNoBreak() && currentDamage + damageSafeMargin >= breakThreshold);
 	}
 }
