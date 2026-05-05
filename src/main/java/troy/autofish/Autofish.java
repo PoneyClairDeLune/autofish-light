@@ -51,10 +51,10 @@ public class Autofish {
 
 		// Initiate the repeating action for persistent mode casting.
 		modAutofish.getScheduler().scheduleRepeatingAction(10000, () -> {
+			if (!isHoldingFishingRod()) return;
 			if (!modAutofish.getConfig().isPersistentMode()) return;
 			if (Common.shouldNotReel(getHeldItem())) return;
-			if (!isHoldingFishingRod()) return;
-			if (hookExists){
+			if (hookExists) {
 				if (isBobberInWater()) return;
 				else useRod();
 			}
@@ -310,7 +310,7 @@ public class Autofish {
     public boolean isHoldingFishingRod() {
     	Item heldItem = getHeldItem().getItem();
         boolean heldRod = isItemFishingRod(heldItem);
-        if (lastHeldFishingRod != heldRod) LogSession.info((heldRod ? "H" : "Not h") + "olding fishing rod: " + Common.getRegistryKey(heldItem) + ".");
+        if (lastHeldFishingRod != heldRod) LogSession.debug((heldRod ? "H" : "Not h") + "olding fishing rod: " + Common.getRegistryKey(heldItem) + ".");
         lastHeldFishingRod = heldRod;
         return heldRod;
     }

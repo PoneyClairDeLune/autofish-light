@@ -19,7 +19,7 @@ public class Spectrum {
 			//Object playerAccessor = player;
 			if (moddedAccessor == null) {
 				moddedAccessor = Class.forName(moddedAccessorClassId);
-				LogSession.info("Created a modded accessor.");
+				LogSession.info("Created a modded accessor for Spectrum.");
 			}
 			Method bobberRetriever = moddedAccessor.getMethod("getSpectrumBobber");
 			if (bobberRetriever != null) {
