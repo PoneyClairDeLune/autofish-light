@@ -101,7 +101,7 @@ public class Common {
 		lastBobber = entity;
 		return bobberVerdict;
 	}
-	/** Returns true if the liquid is fishable. */
+	/** Returns true if the liquid is fishable. Should be superceded, as different fishing rods have different allowed liquids to fish in. */
 	public static boolean isFishableLiquid(Block block) {
 		if (block == null) return false;
 		String blockId = getRegistryKey(block);

@@ -281,7 +281,9 @@ public class Autofish {
 				waterVerdict = true;
 				break;
 			}
-			default: {}
+			default: {
+				waterVerdict = Common.isFishableLiquid(currentBlock);
+			}
 		}
 		if (currentBlock != lastBlock) {
 			LogSession.info("Block " + currentBlockId + (waterVerdict ? " is" : " isn't") + " fishable liquid.");
@@ -311,7 +313,7 @@ public class Autofish {
     private boolean lastHeldFishingRod = false;
     public boolean isHoldingFishingRod() {
     	Item heldItem = getHeldItem().getItem();
-        boolean heldRod = isItemFishingRod(heldItem);
+        boolean heldRod = Common.isFishingRod(heldItem);
         if (lastHeldFishingRod != heldRod) LogSession.debug((heldRod ? "H" : "Not h") + "olding fishing rod: " + Common.getRegistryKey(heldItem) + ".");
         lastHeldFishingRod = heldRod;
         return heldRod;
@@ -319,7 +321,7 @@ public class Autofish {
 
     private Hand getCorrectHand() {
         if (!modAutofish.getConfig().isMultiRod()) {
-            if (client.player != null && isItemFishingRod(client.player.getOffHandStack().getItem()))
+            if (client.player != null && Common.isFishingRod(client.player.getOffHandStack().getItem()))
                 return Hand.OFF_HAND;
         }
         return Hand.MAIN_HAND;
@@ -329,15 +331,15 @@ public class Autofish {
         if (client.player == null) return ItemStack.EMPTY;
 
         if (!modAutofish.getConfig().isMultiRod()) {
-            if (isItemFishingRod(client.player.getOffHandStack().getItem()))
+            if (Common.isFishingRod(client.player.getOffHandStack().getItem()))
                 return client.player.getOffHandStack();
         }
         return client.player.getMainHandStack();
     }
 
-    private boolean isItemFishingRod(Item item) {
+    /*private boolean isItemFishingRod(Item item) {
         return item == Items.FISHING_ROD || item instanceof FishingRodItem;
-    }
+    }*/
 
     public void setDetection() {
         if (modAutofish.getConfig().isUseSoundDetection()) {
