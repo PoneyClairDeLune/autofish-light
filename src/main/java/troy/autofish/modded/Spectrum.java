@@ -6,7 +6,6 @@ import java.util.HashSet;
 
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
-import net.minecraft.item.Item;
 import troy.autofish.LogSession;
 
 public class Spectrum {
