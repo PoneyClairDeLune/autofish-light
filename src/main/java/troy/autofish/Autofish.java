@@ -20,8 +20,6 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.StringHelper;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.BlockPos;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import troy.autofish.modded.Common;
 import troy.autofish.monitor.FishMonitorMP;
 import troy.autofish.monitor.FishMonitorMPMotion;
@@ -43,13 +41,12 @@ public class Autofish {
     private long hookRemovedAt = 0L;
 
     public long timeMillis = 0L;
-    public static final Logger logSession = LoggerFactory.getLogger("Autofish");
 
     public Autofish(FabricModAutofish modAutofish) {
         this.modAutofish = modAutofish;
         this.client = MinecraftClient.getInstance();
         setDetection();
-        logSession.debug("Autofish is now activated!");
+        LogSession.debug("Autofish is now activated!");
 
         //Initiate the repeating action for persistent mode casting
         modAutofish.getScheduler().scheduleRepeatingAction(10000, () -> {
@@ -210,7 +207,7 @@ public class Autofish {
                         alreadyAlertOP = true;
                         alreadyPassOP = false;
                     }
-                    logSession.warn(Text.translatable("info.autofish.open_water_detection.fail").getString());
+                    LogSession.warn("Bobber wasn't in open water.");
                 }
                 flag = false;
             }
@@ -222,7 +219,7 @@ public class Autofish {
                 alreadyPassOP = true;
                 alreadyAlertOP = false;
             }
-            logSession.info(Text.translatable("info.autofish.open_water_detection.success").getString());
+            LogSession.warn("Bobber wasn't in open water.");
         }
 
 
@@ -280,7 +277,7 @@ public class Autofish {
 			default: {}
 		}
 		if (currentBlock != lastBlock) {
-			logSession.debug("Block " + currentBlockId + (waterVerdict ? " is" : " isn't") + " water.");
+			LogSession.debug("Block " + currentBlockId + (waterVerdict ? " is" : " isn't") + " water.");
 		}
 		lastBlock = currentBlock;
 		// To do: consider custom liquids as well.
@@ -307,7 +304,7 @@ public class Autofish {
     public boolean isHoldingFishingRod() {
     	Item heldItem = getHeldItem().getItem();
         boolean heldRod = isItemFishingRod(heldItem);
-        if (lastHeldFishingRod != heldRod) logSession.debug((heldRod ? "H" : "Not h") + "olding fishing rod: " + Common.getRegistryKey(heldItem) + ".");
+        if (lastHeldFishingRod != heldRod) LogSession.debug((heldRod ? "H" : "Not h") + "olding fishing rod: " + Common.getRegistryKey(heldItem) + ".");
         lastHeldFishingRod = heldRod;
         return heldRod;
     }

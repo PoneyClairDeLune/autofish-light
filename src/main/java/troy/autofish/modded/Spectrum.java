@@ -4,7 +4,7 @@ import java.lang.reflect.Method;
 
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
-import troy.autofish.Autofish;
+import troy.autofish.LogSession;
 
 public class Spectrum {
 	private static Class<?> moddedAccessor = null;
@@ -24,7 +24,7 @@ public class Spectrum {
 				return (ProjectileEntity) bobberRetriever.invoke(player);
 			}
 		} catch (Exception err) {
-			Autofish.logSession.error("Spectrum bobber retrieval error: " + err.getMessage());
+			LogSession.error("Spectrum bobber retrieval error: " + err.getMessage());
 		}
 		return null;
 	}
@@ -36,7 +36,7 @@ public class Spectrum {
 			}
 			return moddedBobber.isInstance(entity);
 		} catch (Exception err) {
-			Autofish.logSession.error("Spectrum bobber detection error: " + err.getMessage());
+			LogSession.error("Spectrum bobber detection error: " + err.getMessage());
 		}
 		return false;
 	}

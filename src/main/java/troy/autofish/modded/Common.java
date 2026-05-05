@@ -12,7 +12,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.FishingBobberEntity;
 import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
-import troy.autofish.Autofish;
+import troy.autofish.LogSession;
 
 public class Common {
 	public static final FabricLoader fabricInstance = FabricLoader.getInstance();
@@ -25,7 +25,7 @@ public class Common {
 		} else {
 			boolean modExistence = fabricInstance.isModLoaded(modId);
 			modExistCache.put(modId, modExistence);
-			Autofish.logSession.debug("Mod \"" + modId + "\" " + (modExistence ? "exists" : "does not exist") + ".");
+			LogSession.debug("Mod \"" + modId + "\" " + (modExistence ? "exists" : "does not exist") + ".");
 			return modExistence;
 		}
 	}
@@ -67,7 +67,7 @@ public class Common {
 		};
 		boolean bobberVerdict = entity instanceof FishingBobberEntity || Spectrum.isModdedBobber(entity);
 		if (lastBobber != entity) {
-			Autofish.logSession.debug("Entity " + getRegistryKey(entity) + (bobberVerdict ? " is" : " is not") + " a bobber.");
+			LogSession.debug("Entity " + getRegistryKey(entity) + (bobberVerdict ? " is" : " is not") + " a bobber.");
 		}
 		lastBobber = entity;
 		return bobberVerdict;
