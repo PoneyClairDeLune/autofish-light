@@ -1,7 +1,6 @@
 package troy.autofish.modded;
 
 import java.util.HashMap;
-import java.util.Map;
 
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.Block;
@@ -15,8 +14,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
 import troy.autofish.FabricModAutofish;
 import troy.autofish.LogSession;
-import troy.autofish.config.Config;
 
+/** Common methods used for allowing mod support. */
 public class Common {
 	private static FabricModAutofish modInstance = null;
 	public static void initialize(FabricModAutofish mod) {
@@ -24,13 +23,14 @@ public class Common {
 	}
 
 	public static final FabricLoader fabricInstance = FabricLoader.getInstance();
-	private static final Map<String, Boolean> modExistCache = new HashMap<>();
+	private static final HashMap<String, Boolean> modExistCache = new HashMap<>();
 
+	/** How much durability should be left for rods to be safe. */
 	public static final int damageSafeMargin = 1;
 	private static ProjectileEntity lastBobber = null;
 	private static ProjectileEntity lastPlayerBobber = null;
 
-	// Just a simple cached detector of mods.
+	/** A cached detector of mods' presence. */
 	public static Boolean hasMod(String modId) {
 		if (modExistCache.containsKey(modId)) {
 			return modExistCache.get(modId);
@@ -53,6 +53,7 @@ public class Common {
 		}
 		return null;
 	}
+	/** Grabs the bobber of a player. */
 	public static ProjectileEntity getPlayerBobber(ClientPlayerEntity player) {
 		ProjectileEntity bobber = getPlayerBobberInternal(player);
 		if (bobber != lastPlayerBobber) {
@@ -65,24 +66,29 @@ public class Common {
 		lastPlayerBobber = bobber;
 		return bobber;
 	}
+	/** Returns the owner of the bobber. */
 	public static PlayerEntity getPlayerOwner(ProjectileEntity entity) {
 		if (entity == null) return null;
 		Entity owner = entity.getOwner();
 		if (owner instanceof PlayerEntity) return (PlayerEntity) owner;
 		return null;
 	}
+	/** Utility method for returning registry keys. */
 	public static String getRegistryKey(Block block) {
 		if (block == null) return null;
 		return Registries.BLOCK.getId(block).toString();
 	}
+	/** Utility method for returning registry keys. */
 	public static String getRegistryKey(Item item) {
 		if (item == null) return null;
 		return Registries.ITEM.getId(item).toString();
 	}
+	/** Utility method for returning registry keys. */
 	public static String getRegistryKey(Entity entity) {
 		if (entity == null) return null;
 		return Registries.ENTITY_TYPE.getId(entity.getType()).toString();
 	}
+	/** Returns if the entity is a fishing bobber. */
 	public static boolean isBobber(ProjectileEntity entity) {
 		if (entity == null) {
 			lastBobber = null;
@@ -95,6 +101,9 @@ public class Common {
 		lastBobber = entity;
 		return bobberVerdict;
 	}
+	/**
+	* If true, the rod should not be either reeled or thrown.
+	*/
 	public static boolean shouldNotReel(ItemStack itemStack) {
 		ItemStack selectedItem = itemStack;
 		int currentDamage = selectedItem.getDamage();
