@@ -11,6 +11,7 @@ import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import troy.autofish.Autofish;
+import troy.autofish.modded.Common;
 
 
 public class FishMonitorMPMotion implements FishMonitorMP {
@@ -43,34 +44,40 @@ public class FishMonitorMPMotion implements FishMonitorMP {
         bobberRiseTimestamp = 0;
     }
 
-    @Override
-    public void handlePacket(Autofish autofish, Packet<?> packet, MinecraftClient minecraft) {
-        if (packet instanceof EntityVelocityUpdateS2CPacket velocityPacket) {
-            if (minecraft.player != null && minecraft.player.fishHook != null && minecraft.player.fishHook.getId() == velocityPacket.getId()) {
-                // Wait until the bobber has rose in the water.
-                // Prevent remarking the bobber rise timestamp until it is reset by catching.
-                if (hasHitWater && bobberRiseTimestamp == 0 && velocityPacket.getVelocityY() > 0) {
-                    // Mark the time in which the bobber began to rise.
-                    bobberRiseTimestamp = autofish.timeMillis;
-                }
-
-                // Calculate the time in which the bobber has been in the water
-                long timeInWater = autofish.timeMillis - bobberRiseTimestamp;
-
-                // If the bobber has been in the water long enough, start detecting the bobber movement.
-                if (hasHitWater && bobberRiseTimestamp != 0 && timeInWater > START_CATCHING_AFTER_THRESHOLD) {
-                    // minecraft.player.sendMessage(Text.of("Y: "+ velocityPacket.getVelocityY()),true);
-                    if (velocityPacket.getVelocityX() == 0.0 && velocityPacket.getVelocityZ() == 0.0 && velocityPacket.getVelocityY() < PACKET_MOTION_Y_THRESHOLD) {
-                        // Catch the fish
-                        autofish.catchFish();
-
-                        // Reset the class attributes to default.
-                        this.handleHookRemoved();
-                    }
-                }
-            }
-        }
-    }
+	@Override
+	public void handlePacket(Autofish autofish, Packet<?> packet, MinecraftClient minecraft) {
+		if (packet instanceof EntityVelocityUpdateS2CPacket velocityPacket) {
+			if (minecraft.player == null) return;
+			ProjectileEntity bobber = Common.getPlayerBobber(minecraft.player);
+			if (bobber == null) return;
+			if (bobber.getId() == velocityPacket.getId()) {
+				// Wait until the bobber has rose in the water.
+				// Prevent remarking the bobber rise timestamp until it is reset by catching.
+				if (
+					hasHitWater && bobberRiseTimestamp == 0 &&
+					velocityPacket.getVelocityY() > 0
+				) {
+					// Mark the time in which the bobber began to rise.
+					bobberRiseTimestamp = autofish.timeMillis;
+				}
+				// Calculate the time in which the bobber has been in the water
+				long timeInWater = autofish.timeMillis - bobberRiseTimestamp;
+				// If the bobber has been in the water long enough, start detecting the bobber movement.
+				if (
+					hasHitWater && bobberRiseTimestamp != 0 &&
+					timeInWater > START_CATCHING_AFTER_THRESHOLD
+				) {
+					// minecraft.player.sendMessage(Text.of("Y: "+ velocityPacket.getVelocityY()),true);
+					if (velocityPacket.getVelocityX() == 0.0 && velocityPacket.getVelocityZ() == 0.0 && velocityPacket.getVelocityY() < PACKET_MOTION_Y_THRESHOLD) {
+						// Catch the fish
+						autofish.catchFish();
+						// Reset the class attributes to default.
+						this.handleHookRemoved();
+					}
+				}
+			}
+		}
+	}
 
     public static boolean worldContainsBlockWithMaterial(World world, Box box, Block block) {
         int i = MathHelper.floor(box.minX);
