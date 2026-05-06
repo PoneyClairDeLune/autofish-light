@@ -27,8 +27,8 @@ public class Common {
 
 	/** How much durability should be left for rods to be safe. */
 	public static final int damageSafeMargin = 1;
-	private static ProjectileEntity lastBobber = null;
-	private static ProjectileEntity lastPlayerBobber = null;
+	private static int lastBobberId = 0;
+	private static int lastPlayerBobberId = 0;
 
 	/** A cached detector of mods' presence. */
 	public static Boolean hasMod(String modId) {
@@ -56,14 +56,15 @@ public class Common {
 	/** Grabs the bobber of a player. */
 	public static ProjectileEntity getPlayerBobber(ClientPlayerEntity player) {
 		ProjectileEntity bobber = getPlayerBobberInternal(player);
-		if (bobber != lastPlayerBobber) {
+		int bobberId = bobber == null ? 0 : bobber.getId();
+		if (bobberId != lastPlayerBobberId) {
 			if (bobber == null) {
 				LogSession.debug("No bobber has been found.");
 			} else {
 				LogSession.debug("Found player bobber: " + getRegistryKey(bobber) + ".");
 			}
 		}
-		lastPlayerBobber = bobber;
+		lastPlayerBobberId = bobberId;
 		return bobber;
 	}
 	/** Returns the owner of the bobber. */
@@ -91,14 +92,15 @@ public class Common {
 	/** Returns true if the entity is a fishing bobber. */
 	public static boolean isBobber(ProjectileEntity entity) {
 		if (entity == null) {
-			lastBobber = null;
+			lastBobberId = 0;
 			return false;
 		};
 		boolean bobberVerdict = entity instanceof FishingBobberEntity || Spectrum.isModdedBobber(entity);
-		if (lastBobber != entity) {
+		int entityId = entity.getId();
+		if (entityId != lastBobberId) {
 			LogSession.info("Entity " + getRegistryKey(entity) + (bobberVerdict ? " is" : " is not") + " a bobber.");
 		}
-		lastBobber = entity;
+		lastBobberId = entityId;
 		return bobberVerdict;
 	}
 	/** Returns true if the liquid is fishable. Should be superceded, as different fishing rods have different allowed liquids to fish in. */

@@ -48,6 +48,7 @@ public class Autofish {
 		LogSession.info("Autofish is now activated!");
 
 		// Initiate the repeating action for persistent mode casting.
+		// Honestly, this needs a better implementation...
 		modAutofish.getScheduler().scheduleRepeatingAction(10000, () -> {
 			if (!isHoldingFishingRod()) return;
 			if (!modAutofish.getConfig().isPersistentMode()) return;
