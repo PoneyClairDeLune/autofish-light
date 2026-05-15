@@ -30,13 +30,12 @@ public class FishMonitorMPMotion implements FishMonitorMP {
     private long bobberRiseTimestamp = 0;
 
 
-    @Override
-    public void hookTick(Autofish autofish, MinecraftClient minecraft, ProjectileEntity hook) {
-        if (worldContainsBlockWithMaterial(hook.getWorld(), hook.getBoundingBox(), Blocks.WATER)) {
-            hasHitWater = true;
-
-        }
-    }
+	@Override
+	public void hookTick(Autofish autofish, MinecraftClient minecraft, ProjectileEntity hook) {
+		if (worldContainsBlockWithFishableLiquid(hook.getWorld(), hook.getBoundingBox())) {
+			hasHitWater = true;
+		}
+	}
 
     @Override
     public void handleHookRemoved() {
@@ -79,13 +78,13 @@ public class FishMonitorMPMotion implements FishMonitorMP {
 		}
 	}
 
-    public static boolean worldContainsBlockWithMaterial(World world, Box box, Block block) {
+    public static boolean worldContainsBlockWithFishableLiquid(World world, Box box) {
         int i = MathHelper.floor(box.minX);
         int j = MathHelper.ceil(box.maxX);
         int k = MathHelper.floor(box.minY);
         int l = MathHelper.ceil(box.maxY);
         int m = MathHelper.floor(box.minZ);
         int n = MathHelper.ceil(box.maxZ);
-        return BlockPos.stream(i, k, m, j - 1, l - 1, n - 1).anyMatch((blockPos) -> world.getBlockState(blockPos).getBlock() == block);
+        return BlockPos.stream(i, k, m, j - 1, l - 1, n - 1).anyMatch((blockPos) -> Common.isFishableLiquid(world.getBlockState(blockPos).getBlock()));
     }
 }

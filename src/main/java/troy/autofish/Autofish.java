@@ -204,7 +204,7 @@ public class Autofish {
                     )) || BlockPos.stream(x - 2, y + yi, z - 2, x + 2, y + yi, z + 2).allMatch((blockPos ->
                     // or every block is air or lily pad
                         bobber.getEntityWorld().getBlockState(blockPos).getBlock() == Blocks.AIR
-                        || bobber.getEntityWorld().getBlockState(blockPos).getBlock() == Blocks.LILY_PAD
+                        || Common.isFishableFlora(bobber.getEntityWorld().getBlockState(blockPos).getBlock())
             )))){
                 // didn't pass the check
                 if(!alreadyAlertOP){

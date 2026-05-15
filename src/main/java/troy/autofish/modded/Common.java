@@ -103,6 +103,13 @@ public class Common {
 		lastBobberId = entityId;
 		return bobberVerdict;
 	}
+	/** Returns true if the block does not obstruct fishing, like a lily pad. */
+	public static boolean isFishableFlora(Block block) {
+		if (block == null) return false;
+		String blockId = getRegistryKey(block);
+		if (blockId.equals("minecraft:lily_pad")) return true;
+		return false;
+	}
 	/** Returns true if the liquid is fishable. Should be superceded, as different fishing rods have different allowed liquids to fish in. */
 	public static boolean isFishableLiquid(Block block) {
 		if (block == null) return false;
