@@ -1,15 +1,8 @@
-## XPlus Autofish
+## Light's Autofish
+> Download from [Modrinth](https://modrinth.com/mod/autofish-light)!
 
-XPlus Autofish is a temp update of [MrTroot's Autofish mod](https://www.curseforge.com/minecraft/mc-mods/autofish) to 1.19.4+.
+> This mod only provides Fabric support. Direct support of either NeoForge or Quilt is not in consideration.
 
-In short, just cast the fishing rod into the water once, and it will automatically reel in at the correct time and recast after a couple second wait. You can open the config screen of the mod via hotkey (V by default).
+Let the mod handle fishing rod reeling for you on long idling sessions, guaranteeing catches at the correct time and a few seconds of wait. Convenient configs available in the mod menu or by pressing a hotkey (default is `v`). Explicit support for modded rods and liquids, like those in [Spectrum](https://github.com/DaFuqs/Spectrum).
 
-### Download
-
-You can download the mod from:
-
-| Link type  | Link                                                         |
-| ---------- | ------------------------------------------------------------ |
-| Modrinth   | [https://modrinth.com/mod/x+-autofish](https://modrinth.com/mod/x+-autofish) |
-| Curseforge | [https://www.curseforge.com/minecraft/mc-mods/x-autofish](https://www.curseforge.com/minecraft/mc-mods/x-autofish) |
-
+Light's Autofish is a soft fork of [X+ Autofish](https://github.com/Wudji/XPlus-AutoFish), which in turn is an updated fork of [MrTroot's Autofish mod](https://www.curseforge.com/minecraft/mc-mods/autofish) for Minecraft 1.19.4+.
