@@ -1,50 +1,50 @@
 {
-  "schemaVersion": 1,
-  "id": "autofish",
-  "version": "${version}",
-  "name": "XPlus Autofish",
-  "description": "Automatically reels in and recasts your fishing rod when you catch a fish. Now for 1.19.4+.",
-  "authors": [
-    "troyboy50",
-    "Wudji"
-  ],
-  "contributors": [
-    "7coil",
-    "VriskaSerket51",
-    "5HT2",
-    "DrakoTrogdor",
-    "Q2297045667",
-    "cbackas",
-    "ChloeDawn",
-    "DrakoTrogdor",
-    "myl7",
-    "PoneyClairDeLune"
-  ],
-  "contact": {
-    "homepage": "https://www.curseforge.com/minecraft/mc-mods/x-autofish",
-    "sources": "https://github.com/Wudji/XPlus-AutoFish"
-  },
+	"schemaVersion": 1,
+	"id": "autofish",
+	"version": "${version}",
+	"name": "Light's Autofish",
+	"description": "Automatically reels in and recasts your fishing rod when fish is caught. Now with explicit mod support.",
+	"authors": [
+		"troyboy50",
+		"Wudji",
+		"PoneyClairDeLune"
+	],
+	"contributors": [
+		"7coil",
+		"VriskaSerket51",
+		"5HT2",
+		"DrakoTrogdor",
+		"Q2297045667",
+		"cbackas",
+		"ChloeDawn",
+		"DrakoTrogdor",
+		"myl7"
+	],
+	"contact": {
+		"homepage": "https://modrinth.com/mod/autofish-light",
+		"sources": "https://github.com/PoneyClairDeLune/autofish-light"
+	},
 
-  "icon": "assets/autofish/icon.png",
+	"icon": "assets/autofish/icon.png",
 
-  "environment": "client",
-  "entrypoints": {
-    "client": [
-      "troy.autofish.FabricModAutofish"
-    ],
-    "modmenu": [
-      "troy.autofish.modmenu.ModMenuApiAutofish"
-    ]
-  },
-  "mixins": [
-    "autofish.mixins.json"
-  ],
+	"environment": "client",
+	"entrypoints": {
+		"client": [
+			"troy.autofish.FabricModAutofish"
+		],
+		"modmenu": [
+			"troy.autofish.modmenu.ModMenuApiAutofish"
+		]
+	},
+	"mixins": [
+		"autofish.mixins.json"
+	],
 
-  "depends": {
-    "fabric": "*",
-    "cloth-config": "*"
-  },
-  "suggests": {
-    "spectrum": ">=1.9.0"
-  }
+	"depends": {
+		"fabric": "*",
+		"cloth-config": "*"
+	},
+	"suggests": {
+		"spectrum": ">=1.9.0"
+	}
 }
