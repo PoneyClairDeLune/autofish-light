@@ -15,14 +15,14 @@ public class ConfigManager {
 
     private Config config;
 
-    private FabricModAutofish modAutofish;
+    //private FabricModAutofish modAutofish;
     private Gson gson;
     private File configFile;
 
     private Executor executor = Executors.newSingleThreadExecutor();
 
     public ConfigManager(FabricModAutofish modAutofish) {
-        this.modAutofish = modAutofish;
+        //this.modAutofish = modAutofish;
         this.gson = new GsonBuilder().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation().create();
         this.configFile = new File(FabricLoader.getInstance().getConfigDir().toFile(), "autofish.config");
         //run synchronously on first run so our options are available for the Autofish instance

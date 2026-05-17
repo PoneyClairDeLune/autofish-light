@@ -41,29 +41,29 @@ public class FabricModAutofish implements ClientModInitializer {
 
     }
 
-    public void tick(MinecraftClient client) {
-        if (this.autofish != null){
-            if (autofishGuiKey.wasPressed()) {
-                client.setScreen(AutofishScreenBuilder.buildScreen(this, client.currentScreen));
-            }
-            autofish.tick(client);
-            scheduler.tick(client);
-        }
-    }
+	public void tick(MinecraftClient client) {
+		if (this.autofish != null) {
+			if (autofishGuiKey.wasPressed()) {
+				client.setScreen(AutofishScreenBuilder.buildScreen(this, client.currentScreen));
+			}
+			autofish.tick(client);
+			scheduler.tick(client);
+		}
+	}
 
-    /**
-     * Mixin callback for Sound and EntityVelocity packets (multiplayer detection)
-     */
-    public void handlePacket(Packet<?> packet) {
-        autofish.handlePacket(packet);
-    }
+	/**
+	* Mixin callback for Sound and EntityVelocity packets (multiplayer detection).
+	*/
+	public void handlePacket(Packet<?> packet) {
+		autofish.handlePacket(packet);
+	}
 
-    /**
-     * Mixin callback for chat packets
-     */
-    public void handleChat(GameMessageS2CPacket packet) {
-        autofish.handleChat(packet);
-    }
+	/**
+	* Mixin callback for chat packets.
+	*/
+	public void handleChat(GameMessageS2CPacket packet) {
+		autofish.handleChat(packet);
+	}
 
     /**
      * Mixin callback for catchingFish method of EntityFishHook (singleplayer detection)

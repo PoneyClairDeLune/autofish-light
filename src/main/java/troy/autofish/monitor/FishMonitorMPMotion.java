@@ -1,7 +1,5 @@
 package troy.autofish.monitor;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.network.packet.Packet;
