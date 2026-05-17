@@ -16,6 +16,9 @@ Light's Autofish is a soft fork of [X+ Autofish](https://github.com/Wudji/XPlus-
 ### Versions
 - 1.20.1 (WIP)
 - 1.21.1
+- 1.21.11 (WIP)
+
+Except for versions released in the last 3 months, only versions with major mod support on Modrinth are considered.
 
 ## FAQ
 ### Modded content doesn't work in single player!
@@ -32,7 +35,7 @@ Sure! With caveats.
   - (**Required**) Enough downloads on Modrinth (35+ for the past week). This is to avoid implementing integrations that few people will use.
   - Pass checks on VirusTotal.
   - Pass manual audits from at least one of the maintainers.
-- If the mod has zero source code available, **all** of the following criteria must be met.
+- If the mod has zero source code available, **all** following criteria must be met.
   - Enough downloads on Modrinth (1050+ for the past week). 
   - Pass checks on VirusTotal.
   - Zero obfuscation. This mod avoids compile-time dependencies by using reflections, which requires unobfuscated class and method paths to work.
