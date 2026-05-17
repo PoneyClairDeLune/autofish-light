@@ -11,6 +11,8 @@ Light's Autofish is a soft fork of [X+ Autofish](https://github.com/Wudji/XPlus-
 
 ## Support coverage
 ### Mods
+Crossed out entries indicate WIP status.
+
 - [~~Fishing Frenzy~~](https://github.com/Vg34100/Minecraft-FishingFrenzy) (~~1.21.1~~) ([Modrinth](https://modrinth.com/mod/fishingfrenzy))
 - [~~More Rod Variants~~](https://github.com/pnk2u/More-Fishing-Rod-Variants) (~~1.20.1~~, ~~1.21.1~~) ([Modrinth](https://modrinth.com/mod/more-fishing-rod-variants))
 - [~~Nether Depths Upgrade~~](https://github.com/Scouter456/Nether_Depths_Upgrade) (~~1.20.1~~, ~~1.21.1~~) ([Modrinth](https://modrinth.com/mod/nether-depths-upgrade))
@@ -37,7 +39,7 @@ It's caused by the very old code in persistent mode that disregards the past sta
 ### Can I request explicit mod support?
 Sure! With caveats.
 
-- The mod should **not** largely deviate vanilla fishing mechanics (e.g. [Fishing for Stars](https://modrinth.com/mod/forstars), [Steve Goes Fishing](https://modrinth.com/mod/steve-goes-fishing)).
+- The mod should **not** implement mechanics that largely deviates from vanilla fishing (e.g. [Fishing for Stars](https://modrinth.com/mod/forstars), [Steve Goes Fishing](https://modrinth.com/mod/steve-goes-fishing)).
 - The mod has to fail with at least one of the two multi-player detection modes (bobber motion, bobber splash sound).
 - If the mod is open-source or source available, **two** of the following two criteria must be met at the time of the request.
   - (**Required**) Enough downloads on Modrinth (35+ for the past week). This is to avoid implementing integrations that few people will use.
