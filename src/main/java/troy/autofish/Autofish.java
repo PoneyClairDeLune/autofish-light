@@ -78,7 +78,6 @@ public class Autofish {
 					fishMonitorMP.hookTick(this, client, bobber);
 				}
 			} else {
-				// Fishing rod is not being held.
 				removeHook();
 			}
 		}
