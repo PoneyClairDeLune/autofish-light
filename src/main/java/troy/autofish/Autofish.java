@@ -26,6 +26,8 @@ import troy.autofish.scheduler.ActionType;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.StringUtils;
+
 public class Autofish {
 	private MinecraftClient client;
 	private FabricModAutofish modAutofish;
@@ -133,7 +135,7 @@ public class Autofish {
 		if (hookExists || (timeMillis - hookRemovedAt < 2000)) {
 			//make sure there is actually something there in the regex field
 			if (
-				org.apache.commons.lang3.StringUtils.deleteWhitespace(
+				StringUtils.deleteWhitespace(
 					modAutofish.getConfig().getClearLagRegex()
 				).isEmpty()
 			) return;
