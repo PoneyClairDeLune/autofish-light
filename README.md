@@ -9,12 +9,15 @@ Convenient configs are available in the mod menu or by pressing a hotkey (`v` by
 
 Light's Autofish is a soft fork of [X+ Autofish](https://github.com/Wudji/XPlus-AutoFish), which in turn is an updated fork of [MrTroot's Autofish mod](https://www.curseforge.com/minecraft/mc-mods/autofish) for Minecraft 1.19.4+.
 
+![use-fabric](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/supported/fabric_64h.png)![no-forge](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/unsupported/forge_64h.png)![dep-fabric-api](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/requires/fabric-api_64h.png)![dep-cloth-config-api](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/requires/cloth-config-api_64h.png)
+[![dist-github](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/available/github_64h.png)](https://github.com/PoneyClairDeLune/autofish-light)[![dist-codeberg](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/available/codeberg_64h.png)](https://codeberg.org/PoneyClairDeLune/autofish-light)
+
 ## Support coverage
 ### Mods
 Crossed out entries indicate WIP status.
 
 - [~~Fishing Frenzy~~](https://github.com/Vg34100/Minecraft-FishingFrenzy) (~~1.21.1~~) ([Modrinth](https://modrinth.com/mod/fishingfrenzy))
-- [~~More Rod Variants~~](https://github.com/pnk2u/More-Fishing-Rod-Variants) (~~1.20.1~~, ~~1.21.1~~) ([Modrinth](https://modrinth.com/mod/more-fishing-rod-variants))
+- [~~More Rod Variants~~](https://github.com/pnk2u/More-Fishing-Rod-Variants) (~~1.20.1~~, ~~1.21.1~~, ~~1.21.11~~) ([Modrinth](https://modrinth.com/mod/more-fishing-rod-variants))
 - [~~Nether Depths Upgrade~~](https://github.com/Scouter456/Nether_Depths_Upgrade) (~~1.20.1~~, ~~1.21.1~~) ([Modrinth](https://modrinth.com/mod/nether-depths-upgrade))
 - [Spectrum](https://github.com/DaFuqs/Spectrum) (~~1.20.1~~, 1.21.1) ([Modrinth](https://modrinth.com/mod/spectrum))
 
@@ -24,11 +27,11 @@ Crossed out entries indicate WIP status.
 - 1.21.11 (WIP)
 
 ## FAQ
-### Can I include this mod in my modpack?
+### Can I include this mod in my mod pack?
 Of course! Give proper credits and you should be fine.
 
 ### Will this mod support Minecraft version XXX?
-Except for versions released in the last 3 months, only non-snapshot versions with major mod support on Modrinth are considered. The same rule applies to backporting to older versions, however no version prior to Minecraft version 1.18 will be supported.
+Except for versions released in the last 3 months, only non-snapshot versions with major mod support on Modrinth are considered. The same rule applies to backporting to older versions, however no version prior to Minecraft version 1.18 will be supported. The built versions of the mod may already work on other versions, although it's neither tested nor guaranteed.
 
 ### Modded content doesn't work in single player!
 Due to mixin requirements, support for modded fishing rods and liquids are only available via multi-player detection. Please enforce multi-player detection whenever you can.
