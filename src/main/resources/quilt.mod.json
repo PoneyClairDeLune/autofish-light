@@ -6,14 +6,21 @@
 		"version": "${version}",
 		"intermediate_mappings": "net.fabricmc:intermediary",
 		"breaks": [{
+			"id": "java",
+			"versions": "*",
+			"reason": "This is a Fabric mod. Please run this mod in Fabric."
+		}, {
 			"id": "fabric",
-			"versions": "*"
+			"versions": "*",
+			"reason": "This is a Fabric mod. Please run this mod in Fabric."
 		}, {
 			"id": "fabric-api",
-			"versions": "*"
+			"versions": "*",
+			"reason": "This is a Fabric mod. Please run this mod in Fabric."
 		}, {
 			"id": "cloth-config",
-			"versions": "*" 
+			"versions": "*",
+			"reason": "This is a Fabric mod. Please run this mod in Fabric."
 		}]
 	}
 }

@@ -1,0 +1,25 @@
+modLoader = "javafml"
+loaderVersion = "[1,)"
+license = "AGPL-3.0-or-later"
+
+[[mods]]
+modId = "autofish"
+version = "0.0.0"
+
+[[dependencies.autofish]]
+modId = "neoforge"
+type = "incompatible"
+versionRange = "*"
+reason = "This is a Fabric mod. Please run this mod in Fabric."
+
+[[dependencies.autofish]]
+modId = "fabric"
+type = "incompatible"
+versionRange = "*"
+reason = "This is a Fabric mod. Please run this mod in Fabric."
+
+[[dependencies.autofish]]
+modId = "fabric_api"
+type = "incompatible"
+versionRange = "*"
+reason = "This is a Fabric mod. Please run this mod in Fabric."
