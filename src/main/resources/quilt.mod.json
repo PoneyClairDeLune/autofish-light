@@ -1,9 +1,14 @@
 {
 	"schema_version": 1,
 	"quilt_loader": {
+		"group": "troy.autofish",
 		"id": "autofish",
 		"version": "${version}",
+		"intermediate_mappings": "net.fabricmc:intermediary",
 		"breaks": [{
+			"id": "fabric",
+			"versions": "*"
+		}, {
 			"id": "fabric-api",
 			"versions": "*"
 		}, {
