@@ -24,9 +24,7 @@
 		"homepage": "https://modrinth.com/mod/autofish-light",
 		"sources": "https://github.com/PoneyClairDeLune/autofish-light"
 	},
-
 	"icon": "assets/autofish/icon.png",
-
 	"environment": "client",
 	"entrypoints": {
 		"client": [
@@ -39,12 +37,11 @@
 	"mixins": [
 		"autofish.mixins.json"
 	],
-
 	"depends": {
 		"fabric": "*",
 		"cloth-config": "*"
 	},
 	"suggests": {
-		"spectrum": ">=1.9.0"
+		"spectrum": ">=1.10.2"
 	}
 }

@@ -1,0 +1,14 @@
+{
+	"schema_version": 1,
+	"quilt_loader": {
+		"id": "autofish",
+		"version": "${version}",
+		"breaks": [{
+			"id": "fabric-api",
+			"versions": "*"
+		}, {
+			"id": "cloth-config",
+			"versions": "*" 
+		}]
+	}
+}
