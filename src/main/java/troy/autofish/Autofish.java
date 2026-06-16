@@ -17,6 +17,7 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.StringHelper;
 import net.minecraft.util.Util;
+import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import troy.autofish.modded.Common;
 import troy.autofish.monitor.FishMonitorMP;
@@ -212,12 +213,12 @@ public class Autofish {
 			if (!(
 				BlockPos.stream(x - 2, y + yi, z - 2, x + 2, y + yi, z + 2).allMatch((blockPos ->
 					// Every block is water.
-					Common.isFishableLiquid(bobber.getWorld().getBlockState(blockPos).getBlock())
+					Common.isFishableLiquid(bobber.getEntityWorld().getBlockState(blockPos).getBlock())
 				)) ||
 				BlockPos.stream(x - 2, y + yi, z - 2, x + 2, y + yi, z + 2).allMatch((blockPos ->
 					// Or every block is air or lily pad.
-					bobber.getWorld().getBlockState(blockPos).getBlock() == Blocks.AIR ||
-					Common.isFishableFlora(bobber.getWorld().getBlockState(blockPos).getBlock())
+					bobber.getEntityWorld().getBlockState(blockPos).getBlock() == Blocks.AIR ||
+					Common.isFishableFlora(bobber.getEntityWorld().getBlockState(blockPos).getBlock())
 				))
 			)) {
 				// Didn't pass the open water check.
@@ -264,18 +265,19 @@ public class Autofish {
 	public void switchToFirstRod(ClientPlayerEntity player) {
 		if (player == null) return;
 		PlayerInventory inventory = player.getInventory();
-		int inventorySize = inventory.main.size();
+		DefaultedList<ItemStack> mainInventory = inventory.getMainStacks();
+		int inventorySize = mainInventory.size();
 		for (int i = 0; i < inventorySize; i ++) {
 			if (i >= 9) break; // Hotbar only.
-			ItemStack slot = inventory.main.get(i);
+			ItemStack slot = mainInventory.get(i);
 			if (Common.isFishingRod(slot.getItem())) {
 				if (modAutofish.getConfig().isNoBreak()) {
 					if (slot.getDamage() + Common.damageSafeMargin < slot.getMaxDamage()) {
-						inventory.selectedSlot = i;
+						inventory.setSelectedSlot(i);
 						return;
 					}
 				} else {
-					inventory.selectedSlot = i;
+					inventory.setSelectedSlot(i);
 					return;
 				}
 			}
@@ -318,9 +320,6 @@ public class Autofish {
 			actionResult = client.interactionManager.interactItem(client.player, hand);
 		}
 		if (actionResult != null && actionResult.isAccepted()) {
-			if (actionResult.shouldSwingHand()) {
-				client.player.swingHand(hand);
-			}
 			client.gameRenderer.firstPersonRenderer.resetEquipProgress(hand);
 		}
 		LogSession.debug("Current rod has been used.");

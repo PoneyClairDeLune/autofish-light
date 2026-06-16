@@ -7,6 +7,7 @@ import net.minecraft.network.packet.s2c.play.EntityVelocityUpdateS2CPacket;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import troy.autofish.Autofish;
 import troy.autofish.modded.Common;
@@ -30,7 +31,7 @@ public class FishMonitorMPMotion implements FishMonitorMP {
 
 	@Override
 	public void hookTick(Autofish autofish, MinecraftClient minecraft, ProjectileEntity hook) {
-		if (worldContainsBlockWithFishableLiquid(hook.getWorld(), hook.getBoundingBox())) {
+		if (worldContainsBlockWithFishableLiquid(hook.getEntityWorld(), hook.getBoundingBox())) {
 			hasHitWater = true;
 		}
 	}
@@ -47,12 +48,13 @@ public class FishMonitorMPMotion implements FishMonitorMP {
 			if (minecraft.player == null) return;
 			ProjectileEntity bobber = Common.getPlayerBobber(minecraft.player);
 			if (bobber == null) return;
-			if (bobber.getId() != velocityPacket.getId()) return;
+			if (bobber.getId() != velocityPacket.getEntityId()) return;
 			// Wait until the bobber has rose in the water.
 			// Prevent remarking the bobber rise timestamp until it is reset by catching.
+			Vec3d bobberMovement = velocityPacket.getVelocity();
 			if (
 				hasHitWater && bobberRiseTimestamp == 0 &&
-				velocityPacket.getVelocityY() > 0
+				bobberMovement.getY() > 0
 			) {
 				// Mark the time in which the bobber began to rise.
 				bobberRiseTimestamp = autofish.timeMillis;
@@ -64,8 +66,8 @@ public class FishMonitorMPMotion implements FishMonitorMP {
 				hasHitWater && bobberRiseTimestamp != 0 &&
 				timeInWater > START_CATCHING_AFTER_THRESHOLD
 			) {
-				// minecraft.player.sendMessage(Text.of("Y: "+ velocityPacket.getVelocityY()),true);
-				if (velocityPacket.getVelocityX() == 0.0 && velocityPacket.getVelocityZ() == 0.0 && velocityPacket.getVelocityY() < PACKET_MOTION_Y_THRESHOLD) {
+				// minecraft.player.sendMessage(Text.of("Y: "+ bobberMovement.getY()),true);
+				if (bobberMovement.getX() == 0.0 && bobberMovement.getZ() == 0.0 && bobberMovement.getY() < PACKET_MOTION_Y_THRESHOLD) {
 					// Catch the fish
 					autofish.catchFish();
 					// Reset the class attributes to default.

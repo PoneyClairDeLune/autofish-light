@@ -152,7 +152,7 @@ public class Common {
 	}
 	/** Returns true if the sound event is bobber splash. */
 	public static boolean isSplashSound(SoundEvent soundEvent) {
-		String soundName = soundEvent.getId().toString();
+		String soundName = soundEvent.id().toString();
 		return bobberSplashSoundList.contains(soundName.toLowerCase());
 	}
 	/** If true, the rod should not be either reeled or thrown. */

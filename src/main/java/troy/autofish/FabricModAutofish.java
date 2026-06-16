@@ -9,6 +9,7 @@ import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.GameMessageS2CPacket;
+import net.minecraft.util.Identifier;
 import org.lwjgl.glfw.GLFW;
 import troy.autofish.config.Config;
 import troy.autofish.config.ConfigManager;
@@ -21,12 +22,21 @@ public class FabricModAutofish implements ClientModInitializer {
 	private AutofishScheduler scheduler;
 	private KeyBinding autofishGuiKey;
 	private ConfigManager configManager;
+	public static final String modId = "autofish";
 
 	@Override
 	public void onInitializeClient() {
 		if (instance == null) instance = this;
 		this.configManager = new ConfigManager(this);
-		autofishGuiKey = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.autofish.open_gui", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_V, "Autofish"));
+		KeyBinding.Category keymapCategory = new KeyBinding.Category(
+			Identifier.of(modId, "Autofish")
+		);
+		autofishGuiKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+			"key.autofish.open_gui",
+			InputUtil.Type.KEYSYM,
+			GLFW.GLFW_KEY_V,
+			keymapCategory
+		));
 		ClientTickEvents.END_CLIENT_TICK.register(this::tick);
 		this.scheduler = new AutofishScheduler(this);
 		this.autofish = new Autofish(this);
