@@ -3,7 +3,7 @@
 	"id": "autofish",
 	"version": "${version}",
 	"name": "Light's Autofish",
-	"description": "Automatically reels in and recasts your fishing rod when fish is caught. Now with explicit mod support.",
+	"description": "Automatically catches fish for you when holding a fishing rod. Now with explicit mod support.",
 	"authors": [
 		"troyboy50",
 		"Wudji",
@@ -38,8 +38,8 @@
 		"autofish.mixins.json"
 	],
 	"depends": {
-		"fabric": "*",
-		"cloth-config": "*"
+		"fabric-api": ">=0.145.4",
+		"cloth-config": ">=26.1.154"
 	},
 	"suggests": {
 		"spectrum": ">=1.10.2"
