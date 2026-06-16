@@ -35,9 +35,9 @@ jar {
 }
 
 repositories {
-	maven { url "https://maven.shedaniel.me/" }
-	maven { url "https://maven.terraformersmc.com/" }
-	maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
+	maven { url = "https://maven.shedaniel.me/" }
+	maven { url = "https://maven.terraformersmc.com/" }
+	maven { url = "https://oss.sonatype.org/content/repositories/snapshots" }
 }
 
 dependencies {
