@@ -10,16 +10,13 @@ import troy.autofish.Autofish;
 import troy.autofish.modded.Common;
 
 public class FishMonitorMPSound implements FishMonitorMP {
+	public static final double HOOKSOUND_DISTANCESQ_THRESHOLD = 25D;
 
-    public static final double HOOKSOUND_DISTANCESQ_THRESHOLD = 25D;
+	@Override
+	public void handleHookRemoved() {}
 
-    @Override
-    public void hookTick(Autofish autofish, MinecraftClient minecraft, ProjectileEntity hook) {
-    }
-
-    @Override
-    public void handleHookRemoved() {
-    }
+	@Override
+	public void hookTick(Autofish autofish, MinecraftClient minecraft, ProjectileEntity hook) {}
 
 	@Override
 	public void handlePacket(Autofish autofish, Packet<?> packet, MinecraftClient minecraft) {
@@ -31,18 +28,13 @@ public class FishMonitorMPSound implements FishMonitorMP {
 		)) return;
 		//TODO investigate PlaySoundFromEntityS2CPacket; i dont think its ever used for fishing but whatever
 		if (!(packet instanceof PlaySoundS2CPacket)) return;
-		String soundName;
 		double x, y, z;
 		PlaySoundS2CPacket soundPacket = (PlaySoundS2CPacket) packet;
 		SoundEvent soundEvent = soundPacket.getSound().value();
-		soundName = soundEvent.getId().toString();
 		x = soundPacket.getX();
 		y = soundPacket.getY();
 		z = soundPacket.getZ();
-		if (
-			soundName.equalsIgnoreCase("minecraft:entity.fishing_bobber.splash") ||
-			soundName.equalsIgnoreCase("entity.fishing_bobber.splash")
-		) {
+		if (Common.isSplashSound(soundEvent)) {
 			if (bobber.squaredDistanceTo(x, y, z) < HOOKSOUND_DISTANCESQ_THRESHOLD) {
 				autofish.catchFish();
 			}

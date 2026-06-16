@@ -6,11 +6,7 @@ import net.minecraft.network.packet.Packet;
 import troy.autofish.Autofish;
 
 public interface FishMonitorMP {
-
-    void hookTick(Autofish autofish, MinecraftClient minecraft, ProjectileEntity hook);
-
-    void handleHookRemoved();
-
-    void handlePacket(Autofish autofish, Packet<?> packet, MinecraftClient minecraft);
-
+	void handleHookRemoved();
+	void hookTick(Autofish autofish, MinecraftClient minecraft, ProjectileEntity hook);
+	void handlePacket(Autofish autofish, Packet<?> packet, MinecraftClient minecraft);
 }
