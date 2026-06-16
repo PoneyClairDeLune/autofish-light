@@ -30,7 +30,7 @@ Crossed out entries indicate WIP status.
 
 - ~~1.20.1~~ (`fabric-1.20.1`) [LTS]
 - 1.21.1 (`fabric-1.21.1`) [LTS]
-- ~~1.21.11~~ (`fabric-1.21.11`) [LTS]
+- 1.21.11 (`fabric-1.21.11`) [LTS]
 - 26.1.x (`fabric-1.22.x`) [LTS]
 - ~~26.2.x~~ (`fabric-1.23.x`)
 
