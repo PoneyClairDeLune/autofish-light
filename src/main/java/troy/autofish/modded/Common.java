@@ -3,15 +3,15 @@ package troy.autofish.modded;
 import java.util.HashMap;
 
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.block.Block;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.projectile.ProjectileEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.projectile.FishingBobberEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.registry.Registries;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.FishingHook;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.core.registries.BuiltInRegistries;
 import troy.autofish.FabricModAutofish;
 import troy.autofish.LogSession;
 
@@ -41,9 +41,9 @@ public class Common {
 			return modExistence;
 		}
 	}
-	private static ProjectileEntity getPlayerBobberInternal(ClientPlayerEntity player) {
+	private static Projectile getPlayerBobberInternal(LocalPlayer player) {
 		if (player == null) return null;
-		ProjectileEntity bobber = player.fishHook;
+		Projectile bobber = player.fishing;
 		// Vanilla Minecraft.
 		if (bobber != null) return bobber;
 		// Add more mods here.
@@ -54,8 +54,8 @@ public class Common {
 		return null;
 	}
 	/** Grabs the bobber of a player. */
-	public static ProjectileEntity getPlayerBobber(ClientPlayerEntity player) {
-		ProjectileEntity bobber = getPlayerBobberInternal(player);
+	public static Projectile getPlayerBobber(LocalPlayer player) {
+		Projectile bobber = getPlayerBobberInternal(player);
 		int bobberId = bobber == null ? 0 : bobber.getId();
 		if (bobberId != lastPlayerBobberId) {
 			if (bobber == null) {
@@ -68,34 +68,34 @@ public class Common {
 		return bobber;
 	}
 	/** Returns the owner of the bobber. */
-	public static PlayerEntity getPlayerOwner(ProjectileEntity entity) {
+	public static Player getPlayerOwner(Projectile entity) {
 		if (entity == null) return null;
 		Entity owner = entity.getOwner();
-		if (owner instanceof PlayerEntity) return (PlayerEntity) owner;
+		if (owner instanceof Player) return (Player) owner;
 		return null;
 	}
 	/** Utility method for returning registry keys. */
 	public static String getRegistryKey(Block block) {
 		if (block == null) return null;
-		return Registries.BLOCK.getId(block).toString();
+		return BuiltInRegistries.BLOCK.getKey(block).toString();
 	}
 	/** Utility method for returning registry keys. */
 	public static String getRegistryKey(Item item) {
 		if (item == null) return null;
-		return Registries.ITEM.getId(item).toString();
+		return BuiltInRegistries.ITEM.getKey(item).toString();
 	}
 	/** Utility method for returning registry keys. */
 	public static String getRegistryKey(Entity entity) {
 		if (entity == null) return null;
-		return Registries.ENTITY_TYPE.getId(entity.getType()).toString();
+		return BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType()).toString();
 	}
 	/** Returns true if the entity is a fishing bobber. */
-	public static boolean isBobber(ProjectileEntity entity) {
+	public static boolean isBobber(Projectile entity) {
 		if (entity == null) {
 			lastBobberId = 0;
 			return false;
 		};
-		boolean bobberVerdict = entity instanceof FishingBobberEntity || Spectrum.isModdedBobber(entity);
+		boolean bobberVerdict = entity instanceof FishingHook || Spectrum.isModdedBobber(entity);
 		int entityId = entity.getId();
 		if (entityId != lastBobberId) {
 			LogSession.info("Entity " + getRegistryKey(entity) + (bobberVerdict ? " is" : " is not") + " a bobber.");
@@ -145,7 +145,7 @@ public class Common {
 	*/
 	public static boolean shouldNotReel(ItemStack itemStack) {
 		ItemStack selectedItem = itemStack;
-		int currentDamage = selectedItem.getDamage();
+		int currentDamage = selectedItem.getDamageValue();
 		int breakThreshold = selectedItem.getMaxDamage();
 		LogSession.debug("Item " + Common.getRegistryKey(selectedItem.getItem()) + " has damage at " + currentDamage + "/" + (breakThreshold) + ".");
 		boolean noReelingVerdict = false;

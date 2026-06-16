@@ -1,13 +1,16 @@
 package troy.autofish;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.entity.projectile.ProjectileEntity;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.packet.Packet;
@@ -23,13 +26,11 @@ import troy.autofish.monitor.FishMonitorMP;
 import troy.autofish.monitor.FishMonitorMPMotion;
 import troy.autofish.monitor.FishMonitorMPSound;
 import troy.autofish.scheduler.ActionType;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 
 public class Autofish {
-	private MinecraftClient client;
+	private Minecraft client;
 	private FabricModAutofish modAutofish;
 	private FishMonitorMP fishMonitorMP;
 
@@ -41,7 +42,7 @@ public class Autofish {
 
 	public Autofish(FabricModAutofish modAutofish) {
 		this.modAutofish = modAutofish;
-		this.client = MinecraftClient.getInstance();
+		this.client = Minecraft.getInstance();
 		setDetection();
 		Common.initialize(modAutofish);
 		LogSession.info("Autofish is now activated!");
@@ -61,13 +62,13 @@ public class Autofish {
 		});
 	}
 
-	public void tick(MinecraftClient client) {
+	public void tick(Minecraft client) {
 		if (client.world == null || client.player == null) return;
 		if (
 			modAutofish.getConfig().isAutofishEnabled()
 		) {
 			timeMillis = Util.getMeasuringTimeMs(); // Update current working time for this tick.
-			ProjectileEntity bobber = Common.getPlayerBobber(client.player);
+			Projectile bobber = Common.getPlayerBobber(client.player);
 			if (isHoldingFishingRod()) {
 				if (bobber == null) {
 					removeHook();
@@ -192,7 +193,7 @@ public class Autofish {
 		);
 	}
 
-	private void detectOpenWater(ProjectileEntity bobber) {
+	private void detectOpenWater(Projectile bobber) {
 		/*
 		* To catch items in the treasure category, the bobber must be in open water,
 		* defined as the 5×4×5 vicinity around the bobber resting on the water surface
@@ -222,7 +223,7 @@ public class Autofish {
 			)) {
 				// Didn't pass the open water check.
 				if (!playerAlreadyAlerted) {
-					PlayerEntity clientPlayer = Common.getPlayerOwner(bobber);
+					Player clientPlayer = Common.getPlayerOwner(bobber);
 					if (clientPlayer != null) {
 						clientPlayer.sendMessage(
 							Text.translatable("info.autofish.open_water_detection.fail"),
@@ -237,7 +238,7 @@ public class Autofish {
 			}
 		}
 		if (flag && !playerOpenCheckAlreadyPassed) {
-			PlayerEntity clientPlayer = Common.getPlayerOwner(bobber);
+			Player clientPlayer = Common.getPlayerOwner(bobber);
 			if (clientPlayer != null) {
 				clientPlayer.sendMessage(
 					Text.translatable("info.autofish.open_water_detection.success"),
@@ -261,9 +262,9 @@ public class Autofish {
 		}
 	}
 
-	public void switchToFirstRod(ClientPlayerEntity player) {
+	public void switchToFirstRod(LocalPlayer player) {
 		if (player == null) return;
-		PlayerInventory inventory = player.getInventory();
+		Inventory inventory = player.getInventory();
 		int inventorySize = inventory.main.size();
 		for (int i = 0; i < inventorySize; i ++) {
 			if (i >= 9) break; // Hotbar only.
@@ -288,7 +289,7 @@ public class Autofish {
 			lastBlock = null;
 			return false;
 		}
-		ProjectileEntity bobber = Common.getPlayerBobber(client.player);
+		Projectile bobber = Common.getPlayerBobber(client.player);
 		if (bobber == null) return false;
 		Block currentBlock = client.world.getBlockState(bobber.getBlockPos()).getBlock();
 		String currentBlockId = Common.getRegistryKey(currentBlock);
