@@ -11,16 +11,17 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.projectile.Projectile;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.s2c.play.GameMessageS2CPacket;
-import net.minecraft.text.Text;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.StringHelper;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientboundSystemChatPacket;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.util.StringUtil;
 import net.minecraft.util.Util;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.NonNullList;
 import troy.autofish.modded.Common;
 import troy.autofish.monitor.FishMonitorMP;
 import troy.autofish.monitor.FishMonitorMPMotion;
@@ -63,11 +64,11 @@ public class Autofish {
 	}
 
 	public void tick(Minecraft client) {
-		if (client.world == null || client.player == null) return;
+		if (client.level == null || client.player == null) return;
 		if (
 			modAutofish.getConfig().isAutofishEnabled()
 		) {
-			timeMillis = Util.getMeasuringTimeMs(); // Update current working time for this tick.
+			timeMillis = Util.getMillis(); // Update current working time for this tick.
 			Projectile bobber = Common.getPlayerBobber(client.player);
 			if (isHoldingFishingRod()) {
 				if (bobber == null) {
@@ -102,7 +103,7 @@ public class Autofish {
 			// The hook can be caught with the correct player.
 			if (
 				ticksCatchable > 0 &&
-				owner.getUuid().compareTo(client.player.getUuid()) == 0
+				owner.getUUID().compareTo(client.player.getUUID()) == 0
 			) {
 				catchFish();
 			}
@@ -125,10 +126,10 @@ public class Autofish {
 	* Callback from mixin when chat packets are received
 	* For multiplayer detection only
 	*/
-	public void handleChat(GameMessageS2CPacket packet) {
+	public void handleChat(ClientboundSystemChatPacket packet) {
 		if (
 			!modAutofish.getConfig().isAutofishEnabled() ||
-			client.isInSingleplayer() ||
+			client.isLocalServer() ||
 			!isHoldingFishingRod()
 		) return;
 		// Check if the hook either exists or was just removed.
@@ -144,7 +145,7 @@ public class Autofish {
 			Matcher matcher = Pattern.compile(
 				modAutofish.getConfig().getClearLagRegex(),
 				Pattern.CASE_INSENSITIVE
-			).matcher(StringHelper.stripTextFormat(
+			).matcher(StringUtil.stripColor(
 				packet.content().getString()
 			));
 			if (matcher.find()) {
@@ -211,23 +212,22 @@ public class Autofish {
 		// Refactor note: It seems like not all blocks listed were matched. Perhaps time to look at later?
 		for (int yi = -2; yi <= 2; yi ++) {
 			if (!(
-				BlockPos.stream(x - 2, y + yi, z - 2, x + 2, y + yi, z + 2).allMatch((blockPos ->
+				BlockPos.betweenClosedStream(x - 2, y + yi, z - 2, x + 2, y + yi, z + 2).allMatch((blockPos ->
 					// Every block is water.
-					Common.isFishableLiquid(bobber.getEntityWorld().getBlockState(blockPos).getBlock())
+					Common.isFishableLiquid(bobber.level().getBlockState(blockPos).getBlock())
 				)) ||
-				BlockPos.stream(x - 2, y + yi, z - 2, x + 2, y + yi, z + 2).allMatch((blockPos ->
+				BlockPos.betweenClosedStream(x - 2, y + yi, z - 2, x + 2, y + yi, z + 2).allMatch((blockPos ->
 					// Or every block is air or lily pad.
-					bobber.getEntityWorld().getBlockState(blockPos).getBlock() == Blocks.AIR ||
-					Common.isFishableFlora(bobber.getEntityWorld().getBlockState(blockPos).getBlock())
+					bobber.level().getBlockState(blockPos).getBlock() == Blocks.AIR ||
+					Common.isFishableFlora(bobber.level().getBlockState(blockPos).getBlock())
 				))
 			)) {
 				// Didn't pass the open water check.
 				if (!playerAlreadyAlerted) {
 					Player clientPlayer = Common.getPlayerOwner(bobber);
 					if (clientPlayer != null) {
-						clientPlayer.sendMessage(
-							Text.translatable("info.autofish.open_water_detection.fail"),
-							true
+						clientPlayer.sendOverlayMessage(
+							Component.translatable("info.autofish.open_water_detection.fail")
 						);
 						playerAlreadyAlerted = true;
 						playerOpenCheckAlreadyPassed = false;
@@ -240,9 +240,8 @@ public class Autofish {
 		if (flag && !playerOpenCheckAlreadyPassed) {
 			Player clientPlayer = Common.getPlayerOwner(bobber);
 			if (clientPlayer != null) {
-				clientPlayer.sendMessage(
-					Text.translatable("info.autofish.open_water_detection.success"),
-					true
+				clientPlayer.sendOverlayMessage(
+					Component.translatable("info.autofish.open_water_detection.success")
 				);
 				playerOpenCheckAlreadyPassed = true;
 				playerAlreadyAlerted = false;
@@ -265,18 +264,19 @@ public class Autofish {
 	public void switchToFirstRod(LocalPlayer player) {
 		if (player == null) return;
 		Inventory inventory = player.getInventory();
-		int inventorySize = inventory.main.size();
+		NonNullList<ItemStack> mainInventory = inventory.getNonEquipmentItems();
+		int inventorySize = mainInventory.size();
 		for (int i = 0; i < inventorySize; i ++) {
 			if (i >= 9) break; // Hotbar only.
-			ItemStack slot = inventory.main.get(i);
+			ItemStack slot = mainInventory.get(i);
 			if (Common.isFishingRod(slot.getItem())) {
 				if (modAutofish.getConfig().isNoBreak()) {
-					if (slot.getDamage() + Common.damageSafeMargin < slot.getMaxDamage()) {
-						inventory.selectedSlot = i;
+					if (slot.getDamageValue() + Common.damageSafeMargin < slot.getMaxDamage()) {
+						inventory.setSelectedSlot(i);
 						return;
 					}
 				} else {
-					inventory.selectedSlot = i;
+					inventory.setSelectedSlot(i);
 					return;
 				}
 			}
@@ -285,13 +285,13 @@ public class Autofish {
 
 	private Block lastBlock = null;
 	public boolean isBobberInWater() {
-		if (client.player == null || client.world == null) {
+		if (client.player == null || client.level == null) {
 			lastBlock = null;
 			return false;
 		}
 		Projectile bobber = Common.getPlayerBobber(client.player);
 		if (bobber == null) return false;
-		Block currentBlock = client.world.getBlockState(bobber.getBlockPos()).getBlock();
+		Block currentBlock = client.level.getBlockState(bobber.blockPosition()).getBlock();
 		String currentBlockId = Common.getRegistryKey(currentBlock);
 		boolean waterVerdict = false;
 		switch (currentBlockId) {
@@ -311,20 +311,18 @@ public class Autofish {
 	}
 
 	public void useRod() {
-		if (client.player != null && client.world != null) {
-			Hand hand = getCorrectHand();
-			ActionResult actionResult = null;
-			if (client.interactionManager != null) {
-				actionResult = client.interactionManager.interactItem(client.player, hand);
-			}
-			if (actionResult != null && actionResult.isAccepted()) {
-				if (actionResult.shouldSwingHand()) {
-					client.player.swingHand(hand);
-				}
-				client.gameRenderer.firstPersonRenderer.resetEquipProgress(hand);
-			}
-			LogSession.debug("Current rod has been used.");
+		if (client.player == null) return;
+		if (client.level == null) return;
+		InteractionHand hand = getCorrectHand();
+		InteractionResult InteractionResult = null;
+		if (client.gameMode != null) {
+			InteractionResult = client.gameMode.useItem(client.player, hand);
 		}
+		if (InteractionResult != null && InteractionResult.consumesAction()) {
+			client.player.swing(hand);
+			client.gameRenderer.itemInHandRenderer.itemUsed(hand);
+		}
+		LogSession.debug("Current rod has been used.");
 	}
 
 	private boolean lastHeldFishingRod = false;
@@ -338,24 +336,24 @@ public class Autofish {
 		return heldRod;
 	}
 
-	private Hand getCorrectHand() {
+	private InteractionHand getCorrectHand() {
 		if (!modAutofish.getConfig().isMultiRod()) {
 			if (
 				client.player != null &&
-				Common.isFishingRod(client.player.getOffHandStack().getItem())
-			) return Hand.OFF_HAND;
+				Common.isFishingRod(client.player.getOffhandItem().getItem())
+			) return InteractionHand.OFF_HAND;
 		}
-		return Hand.MAIN_HAND;
+		return InteractionHand.MAIN_HAND;
 	}
 
 	private ItemStack getHeldItem() {
 		if (client.player == null) return ItemStack.EMPTY;
 		if (!modAutofish.getConfig().isMultiRod()) {
 			if (
-				Common.isFishingRod(client.player.getOffHandStack().getItem())
-			) return client.player.getOffHandStack();
+				Common.isFishingRod(client.player.getOffhandItem().getItem())
+			) return client.player.getOffhandItem();
 		}
-		return client.player.getMainHandStack();
+		return client.player.getMainHandItem();
 	}
 
 	public void setDetection() {
@@ -368,7 +366,7 @@ public class Autofish {
 
 	private boolean shouldUseMPDetection(){
 		if (modAutofish.getConfig().isForceMPDetection()) return true;
-		return !client.isInSingleplayer();
+		return !client.isLocalServer();
 	}
 
 	private long getRandomDelay(){
