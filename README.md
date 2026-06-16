@@ -28,10 +28,10 @@ Crossed out entries indicate WIP status. Content of some mods might be offered v
 ### Versions
 Crossed out entries indicate WIP status.
 
-- ~~1.20.1~~ (`fabric-1.20.1`)
-- 1.21.1 (`fabric-1.21.1`)
-- ~~1.21.11~~ (`fabric-1.21.11`)
-- 26.1.x (`fabric-1.22.x`)
+- ~~1.20.1~~ (`fabric-1.20.1`) [LTS]
+- 1.21.1 (`fabric-1.21.1`) [LTS]
+- ~~1.21.11~~ (`fabric-1.21.11`) [LTS]
+- 26.1.x (`fabric-1.22.x`) [LTS]
 - ~~26.2.x~~ (`fabric-1.23.x`)
 
 ## FAQ
@@ -62,3 +62,7 @@ Sure! With caveats.
   - Enough downloads on Modrinth (1050+ for the past week). 
   - Pass checks on VirusTotal.
   - Zero obfuscation. This mod avoids compile-time dependencies by using reflections, which requires unobfuscated class and method paths to work.
+
+## Technical details
+### Constraints
+- Touch mixins as little as possible.
