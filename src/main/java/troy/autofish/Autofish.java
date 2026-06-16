@@ -212,12 +212,12 @@ public class Autofish {
 			if (!(
 				BlockPos.stream(x - 2, y + yi, z - 2, x + 2, y + yi, z + 2).allMatch((blockPos ->
 					// Every block is water.
-					Common.isFishableLiquid(bobber.getEntityWorld().getBlockState(blockPos).getBlock())
+					Common.isFishableLiquid(bobber.getWorld().getBlockState(blockPos).getBlock())
 				)) ||
 				BlockPos.stream(x - 2, y + yi, z - 2, x + 2, y + yi, z + 2).allMatch((blockPos ->
 					// Or every block is air or lily pad.
-					bobber.getEntityWorld().getBlockState(blockPos).getBlock() == Blocks.AIR ||
-					Common.isFishableFlora(bobber.getEntityWorld().getBlockState(blockPos).getBlock())
+					bobber.getWorld().getBlockState(blockPos).getBlock() == Blocks.AIR ||
+					Common.isFishableFlora(bobber.getWorld().getBlockState(blockPos).getBlock())
 				))
 			)) {
 				// Didn't pass the open water check.
@@ -310,20 +310,20 @@ public class Autofish {
 	}
 
 	public void useRod() {
-		if (client.player != null && client.world != null) {
-			Hand hand = getCorrectHand();
-			ActionResult actionResult = null;
-			if (client.interactionManager != null) {
-				actionResult = client.interactionManager.interactItem(client.player, hand);
-			}
-			if (actionResult != null && actionResult.isAccepted()) {
-				if (actionResult.shouldSwingHand()) {
-					client.player.swingHand(hand);
-				}
-				client.gameRenderer.firstPersonRenderer.resetEquipProgress(hand);
-			}
-			LogSession.debug("Current rod has been used.");
+		if (client.player == null) return;
+		if (client.world == null) return;
+		Hand hand = getCorrectHand();
+		ActionResult actionResult = null;
+		if (client.interactionManager != null) {
+			actionResult = client.interactionManager.interactItem(client.player, hand);
 		}
+		if (actionResult != null && actionResult.isAccepted()) {
+			if (actionResult.shouldSwingHand()) {
+				client.player.swingHand(hand);
+			}
+			client.gameRenderer.firstPersonRenderer.resetEquipProgress(hand);
+		}
+		LogSession.debug("Current rod has been used.");
 	}
 
 	private boolean lastHeldFishingRod = false;
