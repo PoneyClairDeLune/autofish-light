@@ -17,9 +17,10 @@ Light's Autofish is a hard fork of [X+ Autofish](https://github.com/Wudji/XPlus-
 
 ## Support coverage
 ### Mods
-Crossed out entries indicate WIP status.
+Crossed out entries indicate WIP status. Content of some mods might be offered via [Polymer](https://modrinth.com/mod/polymer).
 
 - [~~Fishing Frenzy~~](https://github.com/Vg34100/Minecraft-FishingFrenzy) (~~1.21.1~~) ([Modrinth](https://modrinth.com/mod/fishingfrenzy))
+- [Go Fish](https://github.com/Draylar/go-fish) (~~1.20.1~~, 26.1.x) ([CurseForge](https://www.curseforge.com/minecraft/mc-mods/go-fish))
 - [~~More Rod Variants~~](https://github.com/pnk2u/More-Fishing-Rod-Variants) (~~1.20.1~~, ~~1.21.1~~, ~~1.21.11~~) ([Modrinth](https://modrinth.com/mod/more-fishing-rod-variants))
 - [~~Nether Depths Upgrade~~](https://github.com/Scouter456/Nether_Depths_Upgrade) (~~1.20.1~~, ~~1.21.1~~) ([Modrinth](https://modrinth.com/mod/nether-depths-upgrade))
 - [Spectrum](https://github.com/DaFuqs/Spectrum) (~~1.20.1~~, 1.21.1) ([Modrinth](https://modrinth.com/mod/spectrum))
@@ -28,7 +29,7 @@ Crossed out entries indicate WIP status.
 Crossed out entries indicate WIP status.
 
 - ~~1.20.1~~ (`fabric-1.20.1`)
-- 1.21.1 (`fabric-1.21.1.`)
+- 1.21.1 (`fabric-1.21.1`)
 - ~~1.21.11~~ (`fabric-1.21.11`)
 - 26.1.x (`fabric-1.22.x`)
 - ~~26.2.x~~ (`fabric-1.23.x`)
@@ -38,7 +39,9 @@ Crossed out entries indicate WIP status.
 Of course! Give proper credits and you should be fine.
 
 ### Will this mod support Minecraft version XXX?
-Except for versions released in the last 3 months, only non-snapshot versions with major mod support on Modrinth are considered. The same rule applies to backporting to older versions, however no version prior to Minecraft version 1.18 will be supported. The built versions of the mod may already work on other versions, although it's neither tested nor guaranteed.
+New versions of Minecraft will be supported with best effort, and old versions with major mod support on Modrinth have LTS support considered. The same rule applies to backporting to older versions, however no version prior to Minecraft version 1.18 will be supported.
+
+The built versions of the mod may already work on other versions, although it's neither tested nor guaranteed.
 
 ### Modded content doesn't work in single player!
 Due to mixin requirements, support for modded fishing rods and liquids are only available via multi-player detection. Please enforce multi-player detection whenever you can.
