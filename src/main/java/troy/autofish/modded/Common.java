@@ -137,10 +137,10 @@ public class Common {
 		boolean isRod = false;
 		// Tags can go here.
 		// Modded section here.
-		if (!isRod && hasMod("spectrum")) {
+		if (!isRod) {
 			isRod = Spectrum.isModdedRod(itemId);
 		}
-		if (!isRod && hasMod("gofish")) {
+		if (!isRod) {
 			isRod = GoFish.isModdedRod(itemId);
 		}
 		return isRod;
