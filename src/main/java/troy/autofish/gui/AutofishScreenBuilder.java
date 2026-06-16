@@ -194,7 +194,6 @@ public class AutofishScreenBuilder {
 			})
 			.build();
 
-
 		SubCategoryBuilder subCatBuilderBasic = entryBuilder.startSubCategory(Component.translatable("options.autofish.basic.title"));
 		subCatBuilderBasic.add(toggleAutofish);
 		subCatBuilderBasic.add(toggleMultiRod);
