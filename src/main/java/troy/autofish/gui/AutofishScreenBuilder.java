@@ -39,7 +39,7 @@ public class AutofishScreenBuilder {
 
 
         //Enable Autofish
-        AbstractConfigListEntry toggleAutofish = entryBuilder.startBooleanToggle(Text.translatable("options.autofish.enable.title"), config.isAutofishEnabled())
+        AbstractConfigListEntry<Boolean> toggleAutofish = entryBuilder.startBooleanToggle(Text.translatable("options.autofish.enable.title"), config.isAutofishEnabled())
                 .setDefaultValue(defaults.isAutofishEnabled())
                 .setTooltip(Text.translatable("options.autofish.enable.tooltip"))
                 .setSaveConsumer(newValue -> {
@@ -49,7 +49,7 @@ public class AutofishScreenBuilder {
                 .build();
 
         //Enable MultiRod
-        AbstractConfigListEntry toggleMultiRod = entryBuilder.startBooleanToggle(Text.translatable("options.autofish.multirod.title"), config.isMultiRod())
+        AbstractConfigListEntry<Boolean> toggleMultiRod = entryBuilder.startBooleanToggle(Text.translatable("options.autofish.multirod.title"), config.isMultiRod())
                 .setDefaultValue(defaults.isMultiRod())
                 .setTooltip(
                         Text.translatable("options.autofish.multirod.tooltip_0"),
@@ -63,7 +63,7 @@ public class AutofishScreenBuilder {
                 .build();
 
         //Enable Open Water Detection
-        AbstractConfigListEntry toggleOpenWaterDetection = entryBuilder.startBooleanToggle(Text.translatable("options.autofish.open_water_detection.title"), config.isOpenWaterDetectEnabled())
+        AbstractConfigListEntry<Boolean> toggleOpenWaterDetection = entryBuilder.startBooleanToggle(Text.translatable("options.autofish.open_water_detection.title"), config.isOpenWaterDetectEnabled())
                 .setDefaultValue(defaults.isOpenWaterDetectEnabled())
                 .setTooltip(
                         Text.translatable("options.autofish.open_water_detection.tooltip_0"),
@@ -76,7 +76,7 @@ public class AutofishScreenBuilder {
                 .setYesNoTextSupplier(yesNoTextSupplier)
                 .build();
         //Enable Break Protection
-        AbstractConfigListEntry toggleBreakProtection = entryBuilder.startBooleanToggle(Text.translatable("options.autofish.break_protection.title"), config.isNoBreak())
+        AbstractConfigListEntry<Boolean> toggleBreakProtection = entryBuilder.startBooleanToggle(Text.translatable("options.autofish.break_protection.title"), config.isNoBreak())
                 .setDefaultValue(defaults.isNoBreak())
                 .setTooltip(
                         Text.translatable("options.autofish.break_protection.tooltip_0"),
@@ -89,7 +89,7 @@ public class AutofishScreenBuilder {
                 .build();
 
         //Enable Persistent Mode
-        AbstractConfigListEntry togglePersistentMode = entryBuilder.startBooleanToggle(Text.translatable("options.autofish.persistent.title"), config.isPersistentMode())
+        AbstractConfigListEntry<Boolean> togglePersistentMode = entryBuilder.startBooleanToggle(Text.translatable("options.autofish.persistent.title"), config.isPersistentMode())
                 .setDefaultValue(defaults.isPersistentMode())
                 .setTooltip(
                         Text.translatable("options.autofish.persistent.tooltip_0"),
@@ -107,7 +107,7 @@ public class AutofishScreenBuilder {
 
 
         //Enable Sound Detection
-        AbstractConfigListEntry toggleSoundDetection = entryBuilder.startBooleanToggle(Text.translatable("options.autofish.sound.title"), config.isUseSoundDetection())
+        AbstractConfigListEntry<Boolean> toggleSoundDetection = entryBuilder.startBooleanToggle(Text.translatable("options.autofish.sound.title"), config.isUseSoundDetection())
                 .setDefaultValue(defaults.isUseSoundDetection())
                 .setTooltip(
                         Text.translatable("options.autofish.sound.tooltip_0"),
@@ -129,7 +129,7 @@ public class AutofishScreenBuilder {
                 .build();
 
         //Enable Force MP Detection
-        AbstractConfigListEntry toggleForceMPDetection = entryBuilder.startBooleanToggle(Text.translatable("options.autofish.multiplayer_compat.title"), config.isForceMPDetection())
+        AbstractConfigListEntry<Boolean> toggleForceMPDetection = entryBuilder.startBooleanToggle(Text.translatable("options.autofish.multiplayer_compat.title"), config.isForceMPDetection())
                 .setDefaultValue(defaults.isPersistentMode())
                 .setTooltip(
                         Text.translatable("options.autofish.multiplayer_compat.tooltip_0"),
@@ -143,7 +143,7 @@ public class AutofishScreenBuilder {
                 .build();
 
         //Recast Delay
-        AbstractConfigListEntry recastDelaySlider = entryBuilder.startLongSlider(Text.translatable("options.autofish.recast_delay.title"), config.getRecastDelay(), 500, 5000)
+        AbstractConfigListEntry<Long> recastDelaySlider = entryBuilder.startLongSlider(Text.translatable("options.autofish.recast_delay.title"), config.getRecastDelay(), 500, 5000)
                 .setDefaultValue(defaults.getRecastDelay())
                 .setTooltip(
                         Text.translatable("options.autofish.recast_delay.tooltip_0"),
@@ -154,7 +154,7 @@ public class AutofishScreenBuilder {
                     modAutofish.getConfig().setRecastDelay(newValue);
                 })
                 .build();
-        AbstractConfigListEntry randomDelaySlider = entryBuilder.startLongSlider(Text.translatable("options.autofish.random_delay.title"), config.getRandomDelay(), 0, 75)
+        AbstractConfigListEntry<Long> randomDelaySlider = entryBuilder.startLongSlider(Text.translatable("options.autofish.random_delay.title"), config.getRandomDelay(), 0, 75)
                 .setDefaultValue(defaults.getRandomPercent())
                 .setTooltip(
                         Text.translatable("options.autofish.random_delay.tooltip_0"),
@@ -167,7 +167,7 @@ public class AutofishScreenBuilder {
                     modAutofish.getConfig().setRandomDelay(newValue);
                 })
                 .build();
-        AbstractConfigListEntry reelInDelay = entryBuilder.startLongSlider(Text.translatable("options.autofish.reel_in_delay.title"), config.getReelInDelay(), 1, 2000)
+        AbstractConfigListEntry<Long> reelInDelay = entryBuilder.startLongSlider(Text.translatable("options.autofish.reel_in_delay.title"), config.getReelInDelay(), 1, 2000)
                 .setDefaultValue(defaults.getReelInDelay())
                 .setTooltip(
                         Text.translatable("options.autofish.reel_in_delay.tooltip_0"),
@@ -180,7 +180,7 @@ public class AutofishScreenBuilder {
                 .build();
 
         //ClearLag Regex
-        AbstractConfigListEntry clearLagRegexField = entryBuilder.startTextField(Text.translatable("options.autofish.clear_regex.title"), config.getClearLagRegex())
+        AbstractConfigListEntry<String> clearLagRegexField = entryBuilder.startTextField(Text.translatable("options.autofish.clear_regex.title"), config.getClearLagRegex())
                 .setDefaultValue(defaults.getClearLagRegex())
                 .setTooltip(
                         Text.translatable("options.autofish.clear_regex.tooltip_0"),
