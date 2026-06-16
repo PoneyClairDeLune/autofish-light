@@ -1,15 +1,26 @@
 plugins {
-	id 'fabric-loom' version '1.6-SNAPSHOT'
+	id 'fabric-loom' version '1.15-SNAPSHOT'
 }
 
-sourceCompatibility = JavaVersion.VERSION_21
-targetCompatibility = JavaVersion.VERSION_21
+//sourceCompatibility = JavaVersion.VERSION_21
+//targetCompatibility = JavaVersion.VERSION_21
 
-archivesBaseName = project.archives_base_name
 version = project.mod_version
 group = project.maven_group
 
 def includeDep = true
+
+base {
+	archivesName = project.archives_base_name
+}
+
+jar {
+	inputs.property "archivesName", project.base.archivesName
+
+	from("LICENSE") {
+		rename { "${it}_${inputs.properties.archivesName}"}
+	}
+}
 
 repositories {
 	maven { url "https://maven.shedaniel.me/" }
@@ -55,5 +66,3 @@ java {
 		languageVersion.set(JavaLanguageVersion.of(21))
 	}
 }
-
-
