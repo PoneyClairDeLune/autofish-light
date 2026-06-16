@@ -56,3 +56,7 @@ Sure! With caveats.
   - Enough downloads on Modrinth (1050+ for the past week). 
   - Pass checks on VirusTotal.
   - Zero obfuscation. This mod avoids compile-time dependencies by using reflections, which requires unobfuscated class and method paths to work.
+
+## Technical details
+### Constraints
+- Touch mixins as little as possible.

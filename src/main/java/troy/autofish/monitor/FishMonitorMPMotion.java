@@ -1,13 +1,14 @@
 package troy.autofish.monitor;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.entity.projectile.ProjectileEntity;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.s2c.play.EntityVelocityUpdateS2CPacket;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.World;
+import net.minecraft.client.Minecraft;
+import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.util.Mth;
+import net.minecraft.world.level.Level;
 import troy.autofish.Autofish;
 import troy.autofish.modded.Common;
 
@@ -27,14 +28,6 @@ public class FishMonitorMPMotion implements FishMonitorMP {
     // 0 if the bobber has not rose in the water yet.
     private long bobberRiseTimestamp = 0;
 
-
-	@Override
-	public void hookTick(Autofish autofish, MinecraftClient minecraft, ProjectileEntity hook) {
-		if (worldContainsBlockWithFishableLiquid(hook.getWorld(), hook.getBoundingBox())) {
-			hasHitWater = true;
-		}
-	}
-
     @Override
     public void handleHookRemoved() {
         hasHitWater = false;
@@ -42,47 +35,54 @@ public class FishMonitorMPMotion implements FishMonitorMP {
     }
 
 	@Override
-	public void handlePacket(Autofish autofish, Packet<?> packet, MinecraftClient minecraft) {
-		if (packet instanceof EntityVelocityUpdateS2CPacket velocityPacket) {
+	public void hookTick(Autofish autofish, Minecraft minecraft, Projectile hook) {
+		if (LevelContainsBlockWithFishableLiquid(hook.level(), hook.getBoundingBox())) {
+			hasHitWater = true;
+		}
+	}
+
+	@Override
+	public void handlePacket(Autofish autofish, Packet<?> packet, Minecraft minecraft) {
+		if (packet instanceof ClientboundSetEntityMotionPacket velocityPacket) {
 			if (minecraft.player == null) return;
-			ProjectileEntity bobber = Common.getPlayerBobber(minecraft.player);
+			Projectile bobber = Common.getPlayerBobber(minecraft.player);
 			if (bobber == null) return;
-			if (bobber.getId() == velocityPacket.getId()) {
-				// Wait until the bobber has rose in the water.
-				// Prevent remarking the bobber rise timestamp until it is reset by catching.
-				if (
-					hasHitWater && bobberRiseTimestamp == 0 &&
-					velocityPacket.getVelocityY() > 0
-				) {
-					// Mark the time in which the bobber began to rise.
-					bobberRiseTimestamp = autofish.timeMillis;
-				}
-				// Calculate the time in which the bobber has been in the water
-				long timeInWater = autofish.timeMillis - bobberRiseTimestamp;
-				// If the bobber has been in the water long enough, start detecting the bobber movement.
-				if (
-					hasHitWater && bobberRiseTimestamp != 0 &&
-					timeInWater > START_CATCHING_AFTER_THRESHOLD
-				) {
-					// minecraft.player.sendMessage(Text.of("Y: "+ velocityPacket.getVelocityY()),true);
-					if (velocityPacket.getVelocityX() == 0.0 && velocityPacket.getVelocityZ() == 0.0 && velocityPacket.getVelocityY() < PACKET_MOTION_Y_THRESHOLD) {
-						// Catch the fish
-						autofish.catchFish();
-						// Reset the class attributes to default.
-						this.handleHookRemoved();
-					}
+			if (bobber.getId() != velocityPacket.id()) return;
+			// Wait until the bobber has rose in the water.
+			// Prevent remarking the bobber rise timestamp until it is reset by catching.
+			Vec3 bobberMovement = velocityPacket.movement();
+			if (
+				hasHitWater && bobberRiseTimestamp == 0 &&
+				bobberMovement.y() > 0
+			) {
+				// Mark the time in which the bobber began to rise.
+				bobberRiseTimestamp = autofish.timeMillis;
+			}
+			// Calculate the time in which the bobber has been in the water
+			long timeInWater = autofish.timeMillis - bobberRiseTimestamp;
+			// If the bobber has been in the water long enough, start detecting the bobber movement.
+			if (
+				hasHitWater && bobberRiseTimestamp != 0 &&
+				timeInWater > START_CATCHING_AFTER_THRESHOLD
+			) {
+				// minecraft.player.sendMessage(Text.of("Y: "+ bobberMovement.Y()),true);
+				if (bobberMovement.x() == 0.0 && bobberMovement.z() == 0.0 && bobberMovement.y() < PACKET_MOTION_Y_THRESHOLD) {
+					// Catch the fish
+					autofish.catchFish();
+					// Reset the class attributes to default.
+					this.handleHookRemoved();
 				}
 			}
 		}
 	}
 
-    public static boolean worldContainsBlockWithFishableLiquid(World world, Box box) {
-        int i = MathHelper.floor(box.minX);
-        int j = MathHelper.ceil(box.maxX);
-        int k = MathHelper.floor(box.minY);
-        int l = MathHelper.ceil(box.maxY);
-        int m = MathHelper.floor(box.minZ);
-        int n = MathHelper.ceil(box.maxZ);
-        return BlockPos.stream(i, k, m, j - 1, l - 1, n - 1).anyMatch((blockPos) -> Common.isFishableLiquid(world.getBlockState(blockPos).getBlock()));
+    public static boolean LevelContainsBlockWithFishableLiquid(Level Level, AABB box) {
+        int i = Mth.floor(box.minX);
+        int j = Mth.ceil(box.maxX);
+        int k = Mth.floor(box.minY);
+        int l = Mth.ceil(box.maxY);
+        int m = Mth.floor(box.minZ);
+        int n = Mth.ceil(box.maxZ);
+        return BlockPos.betweenClosedStream(i, k, m, j - 1, l - 1, n - 1).anyMatch((blockPos) -> Common.isFishableLiquid(Level.getBlockState(blockPos).getBlock()));
     }
 }

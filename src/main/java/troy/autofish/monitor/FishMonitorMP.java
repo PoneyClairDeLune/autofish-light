@@ -1,16 +1,12 @@
 package troy.autofish.monitor;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.entity.projectile.ProjectileEntity;
-import net.minecraft.network.packet.Packet;
+import net.minecraft.client.Minecraft;
+import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.network.protocol.Packet;
 import troy.autofish.Autofish;
 
 public interface FishMonitorMP {
-
-    void hookTick(Autofish autofish, MinecraftClient minecraft, ProjectileEntity hook);
-
-    void handleHookRemoved();
-
-    void handlePacket(Autofish autofish, Packet<?> packet, MinecraftClient minecraft);
-
+	void handleHookRemoved();
+	void hookTick(Autofish autofish, Minecraft minecraft, Projectile hook);
+	void handlePacket(Autofish autofish, Packet<?> packet, Minecraft minecraft);
 }
