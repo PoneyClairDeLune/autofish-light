@@ -1,7 +1,8 @@
 package troy.autofish.modded;
 
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Set;
+import java.util.HashSet;
 
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.player.LocalPlayer;
@@ -33,10 +34,8 @@ public class Common {
 	private static int lastPlayerBobberId = 0;
 
 	/** A list of registered sound events. */
-	private static Set<String> bobberSplashSoundList = Set.of(
-		"entity.fishing_bobber.splash",
-		"minecraft:entity.fishing_bobber.splash"
-	);
+	private static HashSet<String> bobberSplashSoundList = new HashSet<String>(Arrays.asList("entity.fishing_bobber.splash",
+	"minecraft:entity.fishing_bobber.splash"));
 
 	/** A cached detector of mods' presence. */
 	public static Boolean hasMod(String modId) {
@@ -140,6 +139,9 @@ public class Common {
 		// Modded section here.
 		if (!isRod && hasMod("spectrum")) {
 			isRod = Spectrum.isModdedRod(itemId);
+		}
+		if (!isRod && hasMod("gofish")) {
+			isRod = GoFish.isModdedRod(itemId);
 		}
 		return isRod;
 	}
