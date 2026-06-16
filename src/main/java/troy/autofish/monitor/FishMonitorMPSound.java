@@ -13,10 +13,10 @@ public class FishMonitorMPSound implements FishMonitorMP {
 	public static final double HOOKSOUND_DISTANCESQ_THRESHOLD = 25D;
 
 	@Override
-	public void hookTick(Autofish autofish, Minecraft minecraft, Projectile hook) {}
+	public void handleHookRemoved() {}
 
 	@Override
-	public void handleHookRemoved() {}
+	public void hookTick(Autofish autofish, Minecraft minecraft, Projectile hook) {}
 
 	@Override
 	public void handlePacket(Autofish autofish, Packet<?> packet, Minecraft minecraft) {
@@ -28,18 +28,13 @@ public class FishMonitorMPSound implements FishMonitorMP {
 		)) return;
 		//TODO investigate PlaySoundFromEntityS2CPacket; i dont think its ever used for fishing but whatever
 		if (!(packet instanceof ClientboundSoundPacket)) return;
-		String soundName;
 		double x, y, z;
 		ClientboundSoundPacket soundPacket = (ClientboundSoundPacket) packet;
 		SoundEvent soundEvent = soundPacket.getSound().value();
-		soundName = soundEvent.location().toString();
 		x = soundPacket.getX();
 		y = soundPacket.getY();
 		z = soundPacket.getZ();
-		if (
-			soundName.equalsIgnoreCase("minecraft:entity.fishing_bobber.splash") ||
-			soundName.equalsIgnoreCase("entity.fishing_bobber.splash")
-		) {
+		if (Common.isSplashSound(soundEvent)) {
 			if (bobber.distanceToSqr(x, y, z) < HOOKSOUND_DISTANCESQ_THRESHOLD) {
 				autofish.catchFish();
 			}

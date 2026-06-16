@@ -1,17 +1,19 @@
 package troy.autofish.modded;
 
 import java.util.HashMap;
+import java.util.Set;
 
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.level.block.Block;
 import troy.autofish.FabricModAutofish;
 import troy.autofish.LogSession;
 
@@ -29,6 +31,12 @@ public class Common {
 	public static final int damageSafeMargin = 1;
 	private static int lastBobberId = 0;
 	private static int lastPlayerBobberId = 0;
+
+	/** A list of registered sound events. */
+	private static Set<String> bobberSplashSoundList = Set.of(
+		"entity.fishing_bobber.splash",
+		"minecraft:entity.fishing_bobber.splash"
+	);
 
 	/** A cached detector of mods' presence. */
 	public static Boolean hasMod(String modId) {
@@ -140,9 +148,12 @@ public class Common {
 		// WIP
 		return false;
 	}
-	/**
-	* If true, the rod should not be either reeled or thrown.
-	*/
+	/** Returns true if the sound event is bobber splash. */
+	public static boolean isSplashSound(SoundEvent soundEvent) {
+		String soundName = soundEvent.location().toString();
+		return bobberSplashSoundList.contains(soundName.toLowerCase());
+	}
+	/** If true, the rod should not be either reeled or thrown. */
 	public static boolean shouldNotReel(ItemStack itemStack) {
 		ItemStack selectedItem = itemStack;
 		int currentDamage = selectedItem.getDamageValue();
