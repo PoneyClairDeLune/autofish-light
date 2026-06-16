@@ -2,13 +2,15 @@ package troy.autofish;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.util.InputUtil;
-import net.minecraft.entity.Entity;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.s2c.play.GameMessageS2CPacket;
+import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.KeyMapping;
+import com.mojang.blaze3d.platform.InputConstants;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientboundSystemChatPacket;
+import net.minecraft.resources.Identifier;
+
 import org.lwjgl.glfw.GLFW;
 import troy.autofish.config.Config;
 import troy.autofish.config.ConfigManager;
@@ -16,35 +18,35 @@ import troy.autofish.gui.AutofishScreenBuilder;
 import troy.autofish.scheduler.AutofishScheduler;
 
 public class FabricModAutofish implements ClientModInitializer {
+	private static FabricModAutofish instance;
+	private Autofish autofish;
+	private AutofishScheduler scheduler;
+	private KeyMapping autofishGuiKey;
+	private ConfigManager configManager;
+	public static final String modId = "autofish";
 
-    private static FabricModAutofish instance;
-    private Autofish autofish;
-    private AutofishScheduler scheduler;
-    private KeyBinding autofishGuiKey;
-    private ConfigManager configManager;
+	@Override
+	public void onInitializeClient() {
+		if (instance == null) instance = this;
+		this.configManager = new ConfigManager(this);
+		KeyMapping.Category keymapCategory = new KeyMapping.Category(
+			Identifier.fromNamespaceAndPath(modId, "Autofish")
+		);
+		autofishGuiKey = KeyMappingHelper.registerKeyMapping(new KeyMapping(
+			"key.autofish.open_gui",
+			InputConstants.Type.KEYSYM,
+			GLFW.GLFW_KEY_V,
+			keymapCategory
+		));
+		ClientTickEvents.END_CLIENT_TICK.register(this::tick);
+		this.scheduler = new AutofishScheduler(this);
+		this.autofish = new Autofish(this);
+	}
 
-    @Override
-    public void onInitializeClient() {
-
-        if (instance == null) instance = this;
-
-        //Create ConfigManager
-        this.configManager = new ConfigManager(this);
-        //Register Keybinding
-        autofishGuiKey = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.autofish.open_gui", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_V, "Autofish"));
-        //Register Tick Callback
-        ClientTickEvents.END_CLIENT_TICK.register(this::tick);
-        //Create Scheduler instance
-        this.scheduler = new AutofishScheduler(this);
-        //Create Autofisher instance
-        this.autofish = new Autofish(this);
-
-    }
-
-	public void tick(MinecraftClient client) {
+	public void tick(Minecraft client) {
 		if (this.autofish != null) {
-			if (autofishGuiKey.wasPressed()) {
-				client.setScreen(AutofishScreenBuilder.buildScreen(this, client.currentScreen));
+			if (autofishGuiKey.consumeClick()) {
+				client.setScreen(AutofishScreenBuilder.buildScreen(this, client.screen));
 			}
 			autofish.tick(client);
 			scheduler.tick(client);
@@ -57,38 +59,32 @@ public class FabricModAutofish implements ClientModInitializer {
 	public void handlePacket(Packet<?> packet) {
 		autofish.handlePacket(packet);
 	}
-
 	/**
 	* Mixin callback for chat packets.
 	*/
-	public void handleChat(GameMessageS2CPacket packet) {
+	public void handleChat(ClientboundSystemChatPacket packet) {
 		autofish.handleChat(packet);
 	}
+	/**
+	* Mixin callback for catchingFish method of EntityFishHook (singleplayer detection)
+	*/
+	public void tickFishingLogic(Entity owner, int ticksCatchable) {
+		autofish.tickFishingLogic(owner, ticksCatchable);
+	}
 
-    /**
-     * Mixin callback for catchingFish method of EntityFishHook (singleplayer detection)
-     */
-    public void tickFishingLogic(Entity owner, int ticksCatchable) {
-        autofish.tickFishingLogic(owner, ticksCatchable);
-    }
-
-    public static FabricModAutofish getInstance() {
-        return instance;
-    }
-
-    public Autofish getAutofish() {
-        return autofish;
-    }
-
-    public ConfigManager getConfigManager() {
-        return configManager;
-    }
-
-    public Config getConfig() {
-        return configManager.getConfig();
-    }
-
-    public AutofishScheduler getScheduler() {
-        return scheduler;
-    }
+	public static FabricModAutofish getInstance() {
+		return instance;
+	}
+	public Autofish getAutofish() {
+		return autofish;
+	}
+	public ConfigManager getConfigManager() {
+		return configManager;
+	}
+	public Config getConfig() {
+		return configManager.getConfig();
+	}
+	public AutofishScheduler getScheduler() {
+		return scheduler;
+	}
 }
