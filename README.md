@@ -28,6 +28,7 @@ Crossed out entries indicate WIP status.
 - 1.20.1 (WIP)
 - 1.21.1
 - 1.21.11 (WIP)
+- 1.22.x (`26.1.x`) (WIP)
 
 ## FAQ
 ### Can I include this mod in my mod pack?
