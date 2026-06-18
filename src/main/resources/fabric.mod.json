@@ -48,6 +48,9 @@
 		"fabric": ">=0.100.1",
 		"cloth-config": ">=15.0.127"
 	},
+	"recommends": {
+		"modmenu": ">=11.0.0"
+	},
 	"suggests": {
 		"spectrum": ">=1.10.2"
 	}
