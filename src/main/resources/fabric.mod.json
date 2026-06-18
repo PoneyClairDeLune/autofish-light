@@ -1,13 +1,17 @@
 {
 	"schemaVersion": 1,
-	"id": "autofish",
+	"id": "autofish-light",
 	"version": "${version}",
+	"license": "GPL-3.0-only",
 	"name": "Light's Autofish",
 	"description": "Automatically catches fish for you when holding a fishing rod. Now with explicit mod support.",
 	"authors": [
 		"troyboy50",
 		"Wudji",
-		"PoneyClairDeLune"
+		{
+			"name": "PoneyClairDeLune",
+			"homepage": "https://github.com/PoneyClairDeLune"
+		}
 	],
 	"contributors": [
 		"7coil",
@@ -37,9 +41,12 @@
 	"mixins": [
 		"autofish.mixins.json"
 	],
+	"provides": [
+		"autofish"
+	],
 	"depends": {
-		"fabric": ">=0.100.1",
-		"cloth-config": ">=15.0.127"
+		"fabric": ">=0.140.2",
+		"cloth-config": ">=21.11.150"
 	},
 	"suggests": {
 		"spectrum": ">=1.10.2"
