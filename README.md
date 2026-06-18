@@ -20,8 +20,8 @@ Light's Autofish is a hard fork of [X+ Autofish](https://github.com/Wudji/XPlus-
 Crossed out entries indicate WIP status. Content of some mods might only be offered via [Polymer](https://modrinth.com/mod/polymer), which are marked in italic in the relevant versions.
 
 - [~~Fishing Frenzy~~](https://github.com/Vg34100/Minecraft-FishingFrenzy) (~~1.21.1~~) ([Modrinth](https://modrinth.com/mod/fishingfrenzy))
-- [Go Fish](https://github.com/Draylar/go-fish) (~~1.20.1~~, _26.1.x_) ([CurseForge](https://www.curseforge.com/minecraft/mc-mods/go-fish))
-- [~~More Rod Variants~~](https://github.com/pnk2u/More-Fishing-Rod-Variants) (~~1.20.1~~, ~~1.21.1~~, ~~1.21.11~~) ([Modrinth](https://modrinth.com/mod/more-fishing-rod-variants))
+- [Go Fish](https://github.com/Draylar/go-fish) (~~1.20.1~~, 1.21.1, _26.1.x_) ([CurseForge](https://www.curseforge.com/minecraft/mc-mods/go-fish), [CurseForge](https://www.curseforge.com/minecraft/mc-mods/go-fish-updated))
+- [~~More Rod Variants~~](https://github.com/pnk2u/More-Fishing-Rod-Variants) (~~1.20.1~~, 1.21.1, 1.21.11, 26.1.x) ([Modrinth](https://modrinth.com/mod/more-fishing-rod-variants))
 - [~~Nether Depths Upgrade~~](https://github.com/Scouter456/Nether_Depths_Upgrade) (~~1.20.1~~, ~~1.21.1~~) ([Modrinth](https://modrinth.com/mod/nether-depths-upgrade))
 - [Spectrum](https://github.com/DaFuqs/Spectrum) (~~1.20.1~~, 1.21.1) ([Modrinth](https://modrinth.com/mod/spectrum))
 
