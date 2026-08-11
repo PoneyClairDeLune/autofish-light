@@ -127,6 +127,9 @@ public class Common {
 		if (!isFishable && hasMod("spectrum")) {
 			isFishable = Spectrum.isFishableLiquid(blockId);
 		}
+		if (!isFishable && hasMod("gofish")) {
+			isFishable = GoFish.isFishableLiquid(blockId);
+		}
 		return isFishable;
 	}
 	/** Returns true if the item is a fishing rod. */
@@ -137,10 +140,10 @@ public class Common {
 		boolean isRod = false;
 		// Tags can go here.
 		// Modded section here.
-		if (!isRod) {
+		if (!isRod && hasMod("spectrum")) {
 			isRod = Spectrum.isModdedRod(itemId);
 		}
-		if (!isRod) {
+		if (!isRod && hasMod("gofish")) {
 			isRod = GoFish.isModdedRod(itemId);
 		}
 		return isRod;

@@ -30,21 +30,21 @@ public class GoFish {
 			LogSession.error("Spectrum bobber retrieval error: " + err.getMessage());
 		}
 		return null;
-	}
+	}*/
 	public static boolean isFishableLiquid(String blockId) {
 		// No idea how to retrieve tags yet, so hardcoding for now.
 		switch (blockId) {
-			case "minecraft:lava":
-			case "spectrum:dragonrot":
-			case "spectrum:liquid_crystal":
-			case "spectrum:midnight_solution":
-			case "spectrum:sludge": {
+			//case "spectrum:dragonrot":
+			//case "spectrum:liquid_crystal":
+			//case "spectrum:midnight_solution":
+			//case "spectrum:sludge":
+			case "minecraft:lava": {
 				return true;
 			}
 		}
 		return false;
 	}
-	public static boolean isLiquidFishableIn(String itemId, String blockId) {
+	/*public static boolean isLiquidFishableIn(String itemId, String blockId) {
 		// WIP
 		return false;
 	}
