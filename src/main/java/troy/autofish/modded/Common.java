@@ -6,17 +6,8 @@ import java.util.HashSet;
 
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.player.LocalPlayer;
-//import net.minecraft.core.component.DataComponentMap;
-//import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.Identifier;
-//import net.minecraft.resources.ResourceKey;
-//import net.minecraft.core.DefaultedRegistry;
-import net.minecraft.core.registries.BuiltInRegistries;
+//import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
-//import net.minecraft.tags.BlockTags;
-//import net.minecraft.tags.FluidTags;
-//import net.minecraft.tags.ItemTags;
-//import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.player.Player;
@@ -26,6 +17,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import troy.autofish.FabricModAutofish;
 import troy.autofish.LogSession;
+import troy.autofish.utils.*;
 
 /** Common methods used for allowing mod support. */
 public class Common {
@@ -77,7 +69,7 @@ public class Common {
 			if (bobber == null) {
 				LogSession.debug("No bobber has been found.");
 			} else {
-				LogSession.debug("Found player bobber: " + getRegistryKey(bobber) + ".");
+				LogSession.debug("Found player bobber: " + RegistryUtils.getRegistryIDKey(bobber) + ".");
 			}
 		}
 		lastPlayerBobberId = bobberId;
@@ -96,35 +88,6 @@ public class Common {
 		if (owner instanceof Player) return (Player) owner;
 		return null;
 	}
-	/** Utility method for returning cached tags. */
-	public static Identifier getNamespacedId(String namespace, String path) {
-		return null;
-	};
-	/** Utility method for returning cached tags. */
-	public static Identifier getNamespacedId(String fullPath) {
-		return null;
-	};
-	/** Utility method for returning registry keys. */
-	public static String getRegistryKey(Block block) {
-		if (block == null) return null;
-		return BuiltInRegistries.BLOCK.getKey(block).toString();
-	}
-	/** Utility method for returning registry keys. */
-	public static String getRegistryKey(Item item) {
-		if (item == null) return null;
-		return BuiltInRegistries.ITEM.getKey(item).toString();
-	}
-	/** Utility method for returning registry keys. */
-	public static String getRegistryKey(ItemStack itemStack) {
-		if (itemStack == null || itemStack == ItemStack.EMPTY) return null;
-		Item item = itemStack.getItem();
-		return getRegistryKey(item);
-	}
-	/** Utility method for returning registry keys. */
-	public static String getRegistryKey(Entity entity) {
-		if (entity == null) return null;
-		return BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType()).toString();
-	}
 	/** Returns true if the entity is a fishing bobber. */
 	public static boolean isBobber(Projectile entity) {
 		if (entity == null) {
@@ -134,7 +97,7 @@ public class Common {
 		boolean bobberVerdict = entity instanceof FishingHook || Spectrum.isModdedBobber(entity);
 		int entityId = entity.getId();
 		if (entityId != lastBobberId) {
-			LogSession.info("Entity " + getRegistryKey(entity) + (bobberVerdict ? " is" : " is not") + " a bobber.");
+			LogSession.info("Entity " + RegistryUtils.getRegistryIDKey(entity) + (bobberVerdict ? " is" : " is not") + " a bobber.");
 		}
 		lastBobberId = entityId;
 		return bobberVerdict;
@@ -142,14 +105,14 @@ public class Common {
 	/** Returns true if the block does not obstruct fishing, like a lily pad. */
 	public static boolean isFishableFlora(Block block) {
 		if (block == null) return false;
-		String blockId = getRegistryKey(block);
+		String blockId = RegistryUtils.getRegistryIDKey(block);
 		if (blockId.equals("minecraft:lily_pad")) return true;
 		return false;
 	}
 	/** Returns true if the liquid is fishable. Should be superceded, as different fishing rods have different allowed liquids to fish in. */
 	public static boolean isFishableLiquid(Block block) {
 		if (block == null) return false;
-		String blockId = getRegistryKey(block);
+		String blockId = RegistryUtils.getRegistryIDKey(block);
 		if (blockId.equals("minecraft:water")) return true;
 		if (blockId.equals("minecraft:lava")) return true;
 		boolean isFishable = false;
@@ -178,7 +141,7 @@ public class Common {
 	/** Returns true if the item is a fishing rod. */
 	public static boolean isFishingRod(Item rodItem) {
 		if (rodItem == null) return false;
-		String itemId = getRegistryKey(rodItem);
+		String itemId = RegistryUtils.getRegistryIDKey(rodItem);
 		if (itemId.equals("minecraft:fishing_rod")) return true;
 		boolean isRod = false;
 		// Tags can go here.
@@ -200,7 +163,7 @@ public class Common {
 	public static boolean shouldNotReel(ItemStack selectedItem) {
 		int currentDamage = selectedItem.getDamageValue();
 		int breakThreshold = selectedItem.getMaxDamage();
-		LogSession.debug("Item " + Common.getRegistryKey(selectedItem.getItem()) + " has damage at " + currentDamage + "/" + (breakThreshold) + ".");
+		LogSession.debug("Item " + RegistryUtils.getRegistryIDKey(selectedItem.getItem()) + " has damage at " + currentDamage + "/" + (breakThreshold) + ".");
 		boolean noReelingVerdict = false;
 		if (breakThreshold > 0) {
 			// There's little sense to not use rods that are unbreakable, right?

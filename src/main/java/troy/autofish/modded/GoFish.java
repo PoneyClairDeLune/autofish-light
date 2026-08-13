@@ -1,12 +1,12 @@
 package troy.autofish.modded;
 
-import java.lang.reflect.Method;
+//import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashSet;
 
-import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.world.entity.projectile.Projectile;
-import troy.autofish.LogSession;
+//import net.minecraft.client.player.LocalPlayer;
+//import net.minecraft.world.entity.projectile.Projectile;
+//import troy.autofish.LogSession;
 
 public class GoFish {
 	//private static Class<?> moddedAccessor = null;
@@ -50,7 +50,7 @@ public class GoFish {
 	}
 	public static boolean isModdedBobber(Projectile entity) {
 		if (!Common.hasMod("spectrum")) return false;
-		return moddedBobbers.contains(Common.getRegistryKey(entity));
+		return moddedBobbers.contains(RegistryUtils.getRegistryIDKey(entity));
 	}*/
 	public static boolean isModdedRod(String itemId) {
 		if (!Common.hasMod("spectrum")) return false;

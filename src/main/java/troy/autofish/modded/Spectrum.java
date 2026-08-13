@@ -7,6 +7,7 @@ import java.util.HashSet;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.entity.projectile.Projectile;
 import troy.autofish.LogSession;
+import troy.autofish.utils.*;
 
 public class Spectrum {
 	private static Class<?> moddedAccessor = null;
@@ -50,7 +51,7 @@ public class Spectrum {
 	}
 	public static boolean isModdedBobber(Projectile entity) {
 		if (!Common.hasMod("spectrum")) return false;
-		return moddedBobbers.contains(Common.getRegistryKey(entity));
+		return moddedBobbers.contains(RegistryUtils.getRegistryIDKey(entity));
 	}
 	public static boolean isModdedRod(String itemId) {
 		if (!Common.hasMod("spectrum")) return false;
