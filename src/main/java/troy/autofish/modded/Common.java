@@ -6,8 +6,17 @@ import java.util.HashSet;
 
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.player.LocalPlayer;
+//import net.minecraft.core.component.DataComponentMap;
+//import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
+//import net.minecraft.resources.ResourceKey;
+//import net.minecraft.core.DefaultedRegistry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.sounds.SoundEvent;
+//import net.minecraft.tags.BlockTags;
+//import net.minecraft.tags.FluidTags;
+//import net.minecraft.tags.ItemTags;
+//import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.player.Player;
@@ -38,7 +47,7 @@ public class Common {
 	"minecraft:entity.fishing_bobber.splash"));
 
 	/** A cached detector of mods' presence. */
-	public static Boolean hasMod(String modId) {
+	public static boolean hasMod(String modId) {
 		if (modExistCache.containsKey(modId)) {
 			return modExistCache.get(modId);
 		} else {
@@ -74,6 +83,12 @@ public class Common {
 		lastPlayerBobberId = bobberId;
 		return bobber;
 	}
+	/** Returns the held item stack of the specified player. */
+	public static ItemStack getPlayerHeldStack(Player player, boolean isOffhand) {
+		if (player == null) return ItemStack.EMPTY;
+		ItemStack itemStack = isOffhand ? player.getOffhandItem() : player.getMainHandItem();
+		return itemStack;
+	}
 	/** Returns the owner of the bobber. */
 	public static Player getPlayerOwner(Projectile entity) {
 		if (entity == null) return null;
@@ -81,6 +96,14 @@ public class Common {
 		if (owner instanceof Player) return (Player) owner;
 		return null;
 	}
+	/** Utility method for returning cached tags. */
+	public static Identifier getNamespacedId(String namespace, String path) {
+		return null;
+	};
+	/** Utility method for returning cached tags. */
+	public static Identifier getNamespacedId(String fullPath) {
+		return null;
+	};
 	/** Utility method for returning registry keys. */
 	public static String getRegistryKey(Block block) {
 		if (block == null) return null;
@@ -92,6 +115,12 @@ public class Common {
 		return BuiltInRegistries.ITEM.getKey(item).toString();
 	}
 	/** Utility method for returning registry keys. */
+	public static String getRegistryKey(ItemStack itemStack) {
+		if (itemStack == null || itemStack == ItemStack.EMPTY) return null;
+		Item item = itemStack.getItem();
+		return getRegistryKey(item);
+	}
+	/** Utility method for returning registry keys. */
 	public static String getRegistryKey(Entity entity) {
 		if (entity == null) return null;
 		return BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType()).toString();
@@ -101,7 +130,7 @@ public class Common {
 		if (entity == null) {
 			lastBobberId = 0;
 			return false;
-		};
+		}
 		boolean bobberVerdict = entity instanceof FishingHook || Spectrum.isModdedBobber(entity);
 		int entityId = entity.getId();
 		if (entityId != lastBobberId) {
@@ -122,6 +151,7 @@ public class Common {
 		if (block == null) return false;
 		String blockId = getRegistryKey(block);
 		if (blockId.equals("minecraft:water")) return true;
+		if (blockId.equals("minecraft:lava")) return true;
 		boolean isFishable = false;
 		// Modded section here.
 		if (!isFishable && hasMod("spectrum")) {
@@ -131,6 +161,19 @@ public class Common {
 			isFishable = GoFish.isFishableLiquid(blockId);
 		}
 		return isFishable;
+	}
+	/** Returns true if the liquid is fishable to the given rod. */
+	public static boolean isFishableLiquid(Block block, Item item) {
+		// WIP
+		return false;
+	}
+	/** Returns true if the liquid is fishable to the given rod. */
+	public static boolean isFishableLiquid(Block block, ItemStack itemStack) {
+		return isFishableLiquid(block, itemStack.getItem());
+	}
+	/** Returns true if the liquid is fishable to the rod held by the given player. */
+	public static boolean isFishableLiquid(Block block, Player player) {
+		return isFishableLiquid(block, getPlayerHeldStack(player, false));
 	}
 	/** Returns true if the item is a fishing rod. */
 	public static boolean isFishingRod(Item rodItem) {
@@ -148,19 +191,13 @@ public class Common {
 		}
 		return isRod;
 	}
-	/** Returns true if the liquid is fishable with the given rod. */
-	public static boolean isLiquidFishableIn(Item rodItem, Block block) {
-		// WIP
-		return false;
-	}
 	/** Returns true if the sound event is bobber splash. */
 	public static boolean isSplashSound(SoundEvent soundEvent) {
 		String soundName = soundEvent.location().toString();
 		return bobberSplashSoundList.contains(soundName.toLowerCase());
 	}
 	/** If true, the rod should not be either reeled or thrown. */
-	public static boolean shouldNotReel(ItemStack itemStack) {
-		ItemStack selectedItem = itemStack;
+	public static boolean shouldNotReel(ItemStack selectedItem) {
 		int currentDamage = selectedItem.getDamageValue();
 		int breakThreshold = selectedItem.getMaxDamage();
 		LogSession.debug("Item " + Common.getRegistryKey(selectedItem.getItem()) + " has damage at " + currentDamage + "/" + (breakThreshold) + ".");
