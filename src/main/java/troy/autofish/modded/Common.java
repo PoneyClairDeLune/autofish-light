@@ -69,7 +69,7 @@ public class Common {
 			if (bobber == null) {
 				LogSession.debug("No bobber has been found.");
 			} else {
-				LogSession.debug("Found player bobber: " + RegistryUtils.getRegistryIDKey(bobber) + ".");
+				LogSession.debug("Found player bobber: " + RegistryUtils.getIdKey(bobber) + ".");
 			}
 		}
 		lastPlayerBobberId = bobberId;
@@ -97,7 +97,7 @@ public class Common {
 		boolean bobberVerdict = entity instanceof FishingHook || Spectrum.isModdedBobber(entity);
 		int entityId = entity.getId();
 		if (entityId != lastBobberId) {
-			LogSession.info("Entity " + RegistryUtils.getRegistryIDKey(entity) + (bobberVerdict ? " is" : " is not") + " a bobber.");
+			LogSession.info("Entity " + RegistryUtils.getIdKey(entity) + (bobberVerdict ? " is" : " is not") + " a bobber.");
 		}
 		lastBobberId = entityId;
 		return bobberVerdict;
@@ -105,14 +105,14 @@ public class Common {
 	/** Returns true if the block does not obstruct fishing, like a lily pad. */
 	public static boolean isFishableFlora(Block block) {
 		if (block == null) return false;
-		String blockId = RegistryUtils.getRegistryIDKey(block);
+		String blockId = RegistryUtils.getIdKey(block);
 		if (blockId.equals("minecraft:lily_pad")) return true;
 		return false;
 	}
 	/** Returns true if the liquid is fishable. Should be superceded, as different fishing rods have different allowed liquids to fish in. */
 	public static boolean isFishableLiquid(Block block) {
 		if (block == null) return false;
-		String blockId = RegistryUtils.getRegistryIDKey(block);
+		String blockId = RegistryUtils.getIdKey(block);
 		if (blockId.equals("minecraft:water")) return true;
 		if (blockId.equals("minecraft:lava")) return true;
 		boolean isFishable = false;
@@ -141,7 +141,7 @@ public class Common {
 	/** Returns true if the item is a fishing rod. */
 	public static boolean isFishingRod(Item rodItem) {
 		if (rodItem == null) return false;
-		String itemId = RegistryUtils.getRegistryIDKey(rodItem);
+		String itemId = RegistryUtils.getIdKey(rodItem);
 		if (itemId.equals("minecraft:fishing_rod")) return true;
 		boolean isRod = false;
 		// Tags can go here.
@@ -163,7 +163,7 @@ public class Common {
 	public static boolean shouldNotReel(ItemStack selectedItem) {
 		int currentDamage = selectedItem.getDamageValue();
 		int breakThreshold = selectedItem.getMaxDamage();
-		LogSession.debug("Item " + RegistryUtils.getRegistryIDKey(selectedItem.getItem()) + " has damage at " + currentDamage + "/" + (breakThreshold) + ".");
+		LogSession.debug("Item " + RegistryUtils.getIdKey(selectedItem.getItem()) + " has damage at " + currentDamage + "/" + (breakThreshold) + ".");
 		boolean noReelingVerdict = false;
 		if (breakThreshold > 0) {
 			// There's little sense to not use rods that are unbreakable, right?

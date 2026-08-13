@@ -293,7 +293,7 @@ public class Autofish {
 		Projectile bobber = Common.getPlayerBobber(client.player);
 		if (bobber == null) return false;
 		Block currentBlock = client.level.getBlockState(bobber.blockPosition()).getBlock();
-		String currentBlockId = RegistryUtils.getRegistryIDKey(currentBlock);
+		String currentBlockId = RegistryUtils.getIdKey(currentBlock);
 		boolean waterVerdict = false;
 		switch (currentBlockId) {
 			case "minecraft:water": {
@@ -331,7 +331,7 @@ public class Autofish {
 		Item heldItem = getHeldItem().getItem();
 		boolean heldRod = Common.isFishingRod(heldItem);
 		if (lastHeldFishingRod != heldRod) {
-			LogSession.debug((heldRod ? "H" : "Not h") + "olding fishing rod: " + RegistryUtils.getRegistryIDKey(heldItem) + ".");
+			LogSession.debug((heldRod ? "H" : "Not h") + "olding fishing rod: " + RegistryUtils.getIdKey(heldItem) + ".");
 		}
 		lastHeldFishingRod = heldRod;
 		return heldRod;

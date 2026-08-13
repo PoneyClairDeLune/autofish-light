@@ -51,7 +51,7 @@ public class Spectrum {
 	}
 	public static boolean isModdedBobber(Projectile entity) {
 		if (!Common.hasMod("spectrum")) return false;
-		return moddedBobbers.contains(RegistryUtils.getRegistryIDKey(entity));
+		return moddedBobbers.contains(RegistryUtils.getIdKey(entity));
 	}
 	public static boolean isModdedRod(String itemId) {
 		if (!Common.hasMod("spectrum")) return false;

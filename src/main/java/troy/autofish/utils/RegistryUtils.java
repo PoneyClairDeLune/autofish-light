@@ -33,7 +33,7 @@ public class RegistryUtils {
 	}*/
 
 	/** Utility method for returning cached tags. Namespace "minecraft" and path "logs_that_burn" will be assembled into "minecraft:logs_that_burn" first to query the cache, before the actual identifier creation ever happens. */
-	public static Identifier getId(String namespace, String path) {
+	public static Identifier getIdentifier(String namespace, String path) {
 		if (namespace == null || namespace.length() <= 0) {
 			namespace = "minecraft";
 		}
@@ -44,7 +44,7 @@ public class RegistryUtils {
 		return targetId;
 	};
 	/** Utility method for returning cached tags. Recommended due to faster cache hits. */
-	public static Identifier getId(String fullPath) {
+	public static Identifier getIdentifier(String fullPath) {
 		if (!fullPath.contains(":")) {
 			fullPath = "minecraft:" + fullPath;
 		}
@@ -73,23 +73,23 @@ public class RegistryUtils {
 		return targetTag;
 	};*/
 	/** Utility method for returning registry ID keys like "minecraft:stone". */
-	public static String getRegistryIDKey(Block block) {
+	public static String getIdKey(Block block) {
 		if (block == null) return null;
 		return BuiltInRegistries.BLOCK.getKey(block).toString();
 	}
 	/** Utility method for returning registry ID keys like "minecraft:stick". */
-	public static String getRegistryIDKey(Item item) {
+	public static String getIdKey(Item item) {
 		if (item == null) return null;
 		return BuiltInRegistries.ITEM.getKey(item).toString();
 	}
 	/** Utility method for returning registry ID keys like "minecraft:stick". */
-	public static String getRegistryIDKey(ItemStack itemStack) {
+	public static String getIdKey(ItemStack itemStack) {
 		if (itemStack == null || itemStack == ItemStack.EMPTY) return null;
 		Item item = itemStack.getItem();
-		return getRegistryIDKey(item);
+		return getIdKey(item);
 	}
 	/** Utility method for returning registry ID keys like "minecraft:horse". */
-	public static String getRegistryIDKey(Entity entity) {
+	public static String getIdKey(Entity entity) {
 		if (entity == null) return null;
 		return BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType()).toString();
 	}
