@@ -1,8 +1,9 @@
 // 2026 © Lumière Élevé
 // The code below is licensed under GNU LGPL 3.0+ as part of Lune API.
 
-package troy.autofish.utils;
+package troy.autofish.luneApi;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -15,7 +16,7 @@ import net.minecraft.client.Minecraft;
 
 /** Execution environment utilities. */
 public class EnvUtils {
-	private static final Map<String, String> arguments = new HashMap<>();
+	private static Map<String, String> arguments;
 
 	/** The Minecraft client. */
 	public static Minecraft client() {
@@ -39,9 +40,9 @@ public class EnvUtils {
 		return Minecraft.getInstance().getVersionType();
 	}
 	/** The game version ID. */
-	public static String gameVersion = SharedConstants.getCurrentVersion().id();
+	public static final String gameVersion = SharedConstants.getCurrentVersion().id();
 	/** The game version string. */
-	public static String gameVersionString = SharedConstants.getCurrentVersion().name();
+	public static final String gameVersionString = SharedConstants.getCurrentVersion().name();
 	/** The mod loader instance. */
 	public static FabricLoader loader = FabricLoader.getInstance();
 
@@ -49,24 +50,26 @@ public class EnvUtils {
 		//if (client == null) client = Minecraft.getInstance();
 		String[] launchArgs = loader.getLaunchArguments(true);
 		String mapKey = null;
+		Map<String, String> newMap = new HashMap<>();
 		for (String e: launchArgs) {
 			if (e.startsWith("--")) {
 				if (mapKey != null) {
-					arguments.put(mapKey, null);
+					newMap.put(mapKey, null);
 				}
 				mapKey = e;
 			} else if (e.startsWith("-")) {
 				mapKey = null;
 			} else {
 				if (mapKey != null) {
-					arguments.put(mapKey, e);
+					newMap.put(mapKey, e);
 					mapKey = null;
 				}
 			}
 		}
 		if (mapKey != null) {
-			arguments.put(mapKey, null);
+			newMap.put(mapKey, null);
 		}
+		arguments = Collections.unmodifiableMap(newMap);
 	}
 
 	/** Retrive a specific launch argument. */

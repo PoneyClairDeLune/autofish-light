@@ -7,7 +7,7 @@ import java.util.HashSet;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.entity.projectile.Projectile;
 import troy.autofish.LogSession;
-import troy.autofish.utils.*;
+import troy.autofish.luneApi.*;
 
 public class Spectrum {
 	private static Class<?> moddedAccessor = null;

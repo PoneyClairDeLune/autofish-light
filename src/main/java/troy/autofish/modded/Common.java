@@ -22,7 +22,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
 import troy.autofish.FabricModAutofish;
 import troy.autofish.LogSession;
-import troy.autofish.utils.*;
+import troy.autofish.luneApi.*;
 
 /** Common methods used for allowing mod support. */
 public class Common {

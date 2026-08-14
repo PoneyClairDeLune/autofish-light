@@ -24,7 +24,7 @@ import troy.autofish.monitor.FishMonitorMP;
 import troy.autofish.monitor.FishMonitorMPMotion;
 import troy.autofish.monitor.FishMonitorMPSound;
 import troy.autofish.scheduler.ActionType;
-import troy.autofish.utils.*;
+import troy.autofish.luneApi.*;
 
 import org.apache.commons.lang3.StringUtils;
 
