@@ -134,11 +134,20 @@ public class Common {
 		if (fluidState == null) return false;
 		boolean isFishable = false;
 		boolean isHandled = false;
-		if (RegistryUtils.getIdKey(itemStack).equalsIgnoreCase("minecraft:fishing_rod")) {
+		String itemId = RegistryUtils.getIdKey(itemStack);
+		if (itemId.equalsIgnoreCase("minecraft:fishing_rod")) {
 			isFishable = RegistryUtils.isIn(FluidTags.WATER, fluidState);
 			isHandled = true;
 		}
 		// Modded section here.
+		switch (RegistryUtils.getNamespace(itemId)) {
+			case "gofish": {
+				break;
+			}
+			case "spectrum": {
+				break;
+			}
+		}
 		// Fallback here.
 		if (!isHandled && !isFishable) {
 			isFishable = RegistryUtils.isIn(FluidTags.WATER, fluidState) ||
