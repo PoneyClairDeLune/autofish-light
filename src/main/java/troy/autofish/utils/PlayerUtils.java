@@ -37,14 +37,14 @@ public class PlayerUtils {
 	}
 	/** Returns true when the item stack on the defined hand is used. */
 	public static boolean useItem(Player player, boolean isOffhand) {
-		if (EnvUtils.client.level == null) return false;
-		if (EnvUtils.client.gameMode == null) return false;
+		if (EnvUtils.client().level == null) return false;
+		if (EnvUtils.client().gameMode == null) return false;
 		if (player == null) return false;
 		InteractionHand targetHand = getHand(isOffhand);
-		InteractionResult usageResult = EnvUtils.client.gameMode.useItem(player, targetHand);
+		InteractionResult usageResult = EnvUtils.client().gameMode.useItem(player, targetHand);
 		if (usageResult != null && usageResult.consumesAction()) {
-			EnvUtils.client.player.swing(targetHand);
-			EnvUtils.client.gameRenderer.itemInHandRenderer.itemUsed(targetHand);
+			EnvUtils.client().player.swing(targetHand);
+			EnvUtils.client().gameRenderer.itemInHandRenderer.itemUsed(targetHand);
 			return true;
 		}
 		return false;

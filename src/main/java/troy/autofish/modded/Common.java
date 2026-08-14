@@ -6,9 +6,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.player.LocalPlayer;
-//import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.ItemTags;
@@ -28,7 +26,6 @@ import troy.autofish.utils.*;
 
 /** Common methods used for allowing mod support. */
 public class Common {
-	public static final FabricLoader fabricInstance = FabricLoader.getInstance();
 	private static final Map<String, Boolean> modExistCache = new HashMap<>();
 
 	/** How much durability should be left for rods to be safe. */
@@ -52,7 +49,7 @@ public class Common {
 		if (modExistCache.containsKey(modId)) {
 			return modExistCache.get(modId);
 		} else {
-			boolean modExistence = fabricInstance.isModLoaded(modId);
+			boolean modExistence = EnvUtils.loader.isModLoaded(modId);
 			modExistCache.put(modId, modExistence);
 			LogSession.info("Mod \"" + modId + "\" " + (modExistence ? "exists" : "does not exist") + ".");
 			return modExistence;

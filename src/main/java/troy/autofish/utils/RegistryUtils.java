@@ -42,7 +42,8 @@ public class RegistryUtils {
 		return (TagKey<T>) source; // Unchecked cast!
 	}*/
 
-	/** Retrieve cached tags. Namespace "minecraft" and path "logs_that_burn" will be assembled into "minecraft:logs_that_burn" first to query the cache, before the actual identifier creation ever happens. */
+	/** Retrieve cached tags. Namespace "minecraft" and path "logs_that_burn" will be assembled into "minecraft:logs_that_burn" first to query the cache, before the actual identifier creation ever happens.
+	* <br/>Avoid creating ephemeral identifier objects. */
 	public static Identifier getIdentifier(String namespace, String path) {
 		if (namespace == null || namespace.length() <= 0) {
 			namespace = DEFAULT_NAMESPACE;
@@ -53,7 +54,8 @@ public class RegistryUtils {
 		fullIdCache.put(fullPath, targetId);
 		return targetId;
 	}
-	/** Retrieve cached tags. Recommended due to faster cache hits. */
+	/** Retrieve cached tags. Recommended due to faster cache hits.
+	* <br/>Avoid creating ephemeral identifier objects. */
 	public static Identifier getIdentifier(String fullPath) {
 		if (!fullPath.contains(NAMESPACE_DELIMITER)) {
 			fullPath = DEFAULT_NAMESPACE + NAMESPACE_DELIMITER + fullPath;

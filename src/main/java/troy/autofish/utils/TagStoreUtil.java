@@ -3,4 +3,6 @@
 
 package troy.autofish.utils;
 
-public class TagStoreUtil {}
+public class TagStoreUtil {
+	// Only provide a Collections.unmodifiableMap() to the public.
+}
