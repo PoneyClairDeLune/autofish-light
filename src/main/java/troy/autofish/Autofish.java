@@ -11,7 +11,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.projectile.Projectile;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundSystemChatPacket;
@@ -269,10 +268,10 @@ public class Autofish {
 		int inventorySize = mainInventory.size();
 		for (int i = 0; i < inventorySize; i ++) {
 			if (i >= 9) break; // Hotbar only.
-			ItemStack slot = mainInventory.get(i);
-			if (Common.isFishingRod(slot.getItem())) {
+			ItemStack slotStack = mainInventory.get(i);
+			if (Common.isFishingRod(slotStack)) {
 				if (modAutofish.getConfig().isNoBreak()) {
-					if (slot.getDamageValue() + Common.damageSafeMargin < slot.getMaxDamage()) {
+					if (slotStack.getDamageValue() + Common.damageSafeMargin < slotStack.getMaxDamage()) {
 						inventory.setSelectedSlot(i);
 						return;
 					}
@@ -328,10 +327,10 @@ public class Autofish {
 
 	private boolean lastHeldFishingRod = false;
 	public boolean isHoldingFishingRod() {
-		Item heldItem = getHeldItem().getItem();
-		boolean heldRod = Common.isFishingRod(heldItem);
+		ItemStack heldItemStack = getHeldItem();
+		boolean heldRod = Common.isFishingRod(heldItemStack);
 		if (lastHeldFishingRod != heldRod) {
-			LogSession.debug((heldRod ? "H" : "Not h") + "olding fishing rod: " + RegistryUtils.getIdKey(heldItem) + ".");
+			LogSession.debug((heldRod ? "H" : "Not h") + "olding fishing rod: " + RegistryUtils.getIdKey(heldItemStack) + ".");
 		}
 		lastHeldFishingRod = heldRod;
 		return heldRod;
@@ -341,7 +340,7 @@ public class Autofish {
 		if (!modAutofish.getConfig().isMultiRod()) {
 			if (
 				client.player != null &&
-				Common.isFishingRod(client.player.getOffhandItem().getItem())
+				Common.isFishingRod(client.player.getOffhandItem())
 			) return InteractionHand.OFF_HAND;
 		}
 		return InteractionHand.MAIN_HAND;
@@ -351,7 +350,7 @@ public class Autofish {
 		if (client.player == null) return ItemStack.EMPTY;
 		if (!modAutofish.getConfig().isMultiRod()) {
 			if (
-				Common.isFishingRod(client.player.getOffhandItem().getItem())
+				Common.isFishingRod(client.player.getOffhandItem())
 			) return client.player.getOffhandItem();
 		}
 		return client.player.getMainHandItem();

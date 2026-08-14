@@ -49,7 +49,7 @@ public class RegistryUtils {
 		Identifier targetId = Identifier.fromNamespaceAndPath(namespace, path);
 		fullIdCache.put(fullPath, targetId);
 		return targetId;
-	};
+	}
 	/** Retrieve cached tags. Recommended due to faster cache hits. */
 	public static Identifier getIdentifier(String fullPath) {
 		if (!fullPath.contains(":")) {
@@ -59,7 +59,7 @@ public class RegistryUtils {
 		Identifier targetId = Identifier.parse(fullPath);
 		fullIdCache.put(fullPath, targetId);
 		return targetId;
-	};
+	}
 	/** Retrieve tag containers. */
 	/*public static <T> Object getTagContainer(Registry<T> registry, TagKey<T> tagKey, Identifier id) {
 		Object tagContainer = registry.get(id);
@@ -78,7 +78,7 @@ public class RegistryUtils {
 		targetTag = TagKey.create(registry, getId(fullPath));
 		registryCache.put(fullPath, targetTag);
 		return targetTag;
-	};*/
+	}*/
 	/** Retrieve registry ID keys like "minecraft:stone". */
 	public static String getIdKey(Block block) {
 		if (block == null) return null;
@@ -121,6 +121,7 @@ public class RegistryUtils {
 	}
 	/** Test if a given target is in a tag. */
 	public static boolean isIn(TagKey<Block> blockTag, Block block) {
+		if (block == null) return false;
 		return isIn(blockTag, block.defaultBlockState());
 	}
 	/** Test if a given target is in a tag. */
@@ -137,6 +138,7 @@ public class RegistryUtils {
 	}*/
 	/** Test if a given target is in a tag. */
 	public static boolean isIn(TagKey<Fluid> fluidTag, Fluid fluid) {
+		if (fluid == null) return false;
 		return isIn(fluidTag, fluid.defaultFluidState());
 	}
 	/** Test if a given target is in a tag. */
@@ -145,6 +147,7 @@ public class RegistryUtils {
 	}
 	/** Test if a given target is in a tag. */
 	public static boolean isIn(TagKey<Item> itemTag, Item item) {
+		if (item == null) return false;
 		return isIn(itemTag, item.getDefaultInstance());
 	}
 	/** Test if a given target is in a tag. */
