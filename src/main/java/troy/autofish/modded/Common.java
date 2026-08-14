@@ -84,12 +84,6 @@ public class Common {
 		lastPlayerBobberId = bobberId;
 		return bobber;
 	}
-	/** Returns the held item stack of the specified player. */
-	public static ItemStack getPlayerHeldStack(Player player, boolean isOffhand) {
-		if (player == null) return ItemStack.EMPTY;
-		ItemStack itemStack = isOffhand ? player.getOffhandItem() : player.getMainHandItem();
-		return itemStack;
-	}
 	/** Returns the owner of the bobber. */
 	public static Player getPlayerOwner(Projectile entity) {
 		if (entity == null) return null;
@@ -159,7 +153,7 @@ public class Common {
 	public static boolean isFishableLiquidTo(Player player, BlockState blockState) {
 		if (player == null) return false;
 		if (blockState == null) return false;
-		return isFishableLiquidTo(getPlayerHeldStack(player, false), blockState);
+		return isFishableLiquidTo(PlayerUtils.getHeldStack(player, false), blockState);
 	}
 	private static boolean isFishingRodInternal(Item rodItem) {
 		if (rodItem == null) return false;
@@ -229,6 +223,6 @@ public class Common {
 	/** If true, the rod should not be either reeled or thrown. */
 	public static boolean shouldNotReel(Player player, boolean isOffhand) {
 		if (player == null) return true;
-		return shouldNotReel(getPlayerHeldStack(player, isOffhand));
+		return shouldNotReel(PlayerUtils.getHeldStack(player, isOffhand));
 	}
 }

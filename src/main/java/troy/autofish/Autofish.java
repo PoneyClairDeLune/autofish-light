@@ -15,8 +15,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundSystemChatPacket;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.util.StringUtil;
 import net.minecraft.util.Util;
 import net.minecraft.core.BlockPos;
@@ -31,7 +29,6 @@ import troy.autofish.utils.*;
 import org.apache.commons.lang3.StringUtils;
 
 public class Autofish {
-	private Minecraft client;
 	private FabricModAutofish modAutofish;
 	private FishMonitorMP fishMonitorMP;
 
@@ -43,7 +40,6 @@ public class Autofish {
 
 	public Autofish(FabricModAutofish modAutofish) {
 		this.modAutofish = modAutofish;
-		this.client = Minecraft.getInstance();
 		setDetection();
 		Common.initialize(modAutofish);
 		LogSession.info("Autofish is now activated!");
@@ -51,15 +47,15 @@ public class Autofish {
 		// Initiate the repeating action for persistent mode casting.
 		// Honestly, this needs a better implementation...
 		modAutofish.getScheduler().scheduleRepeatingAction(10000, () -> {
-			if (!isHoldingFishingRod()) return;
+			if (!isRodHeld(EnvUtils.client.player)) return;
 			if (!modAutofish.getConfig().isPersistentMode()) return;
-			if (Common.shouldNotReel(client.player, false)) return;
+			if (Common.shouldNotReel(EnvUtils.client.player, false)) return;
 			if (hookExists) {
 				if (isBobberInWater()) return;
-				else useRod();
+				else useRodItem(EnvUtils.client.player);
 			}
 			if (modAutofish.getScheduler().isRecastQueued()) return;
-			useRod();
+			useRodItem(EnvUtils.client.player);
 		});
 	}
 
@@ -70,7 +66,7 @@ public class Autofish {
 		) {
 			timeMillis = Util.getMillis(); // Update current working time for this tick.
 			Projectile bobber = Common.getPlayerBobber(client.player);
-			if (isHoldingFishingRod()) {
+			if (isRodHeld(client.player)) {
 				if (bobber == null) {
 					removeHook();
 					return;
@@ -93,17 +89,17 @@ public class Autofish {
 	*/
 	public void tickFishingLogic(Entity owner, int ticksCatchable) {
 		// This callback will come from the Server thread. Use client.execute() to run this action in the Render thread.
-		client.execute(() -> {
+		EnvUtils.client.execute(() -> {
 			if (!modAutofish.getConfig().isAutofishEnabled() || shouldUseMPDetection()) return;
 			// Null checks for sanity.
 			if (
-				client.player == null ||
-				Common.getPlayerBobber(client.player) == null
+				EnvUtils.client.player == null ||
+				Common.getPlayerBobber(EnvUtils.client.player) == null
 			) return;
 			// The hook can be caught with the correct player.
 			if (
 				ticksCatchable > 0 &&
-				owner.getUUID().compareTo(client.player.getUUID()) == 0
+				owner.getUUID().compareTo(EnvUtils.client.player.getUUID()) == 0
 			) {
 				catchFish();
 			}
@@ -117,7 +113,7 @@ public class Autofish {
 	public void handlePacket(Packet<?> packet) {
 		if (modAutofish.getConfig().isAutofishEnabled()) {
 			if (shouldUseMPDetection()) {
-				fishMonitorMP.handlePacket(this, packet, client);
+				fishMonitorMP.handlePacket(this, packet, EnvUtils.client);
 			}
 		}
 	}
@@ -129,8 +125,8 @@ public class Autofish {
 	public void handleChat(ClientboundSystemChatPacket packet) {
 		if (
 			!modAutofish.getConfig().isAutofishEnabled() ||
-			client.isLocalServer() ||
-			!isHoldingFishingRod()
+			EnvUtils.client.isLocalServer() ||
+			!isRodHeld(EnvUtils.client.player)
 		) return;
 		// Check if the hook either exists or was just removed.
 		// This prevents false casts if a rod is held but isn't used for fishing.
@@ -156,14 +152,14 @@ public class Autofish {
 
 	public void catchFish() {
 		if (!modAutofish.getScheduler().isRecastQueued()) { // Prevents double reels.
-			if (client.player != null) {
-				detectOpenWater(Common.getPlayerBobber(client.player));
+			if (EnvUtils.client.player != null) {
+				detectOpenWater(Common.getPlayerBobber(EnvUtils.client.player));
 			}
 			LogSession.info("Reeling scheduled.");
 			// Queue actions.
 			queueRodSwitch();
 			queueRecast();
-			modAutofish.getScheduler().scheduleAction(ActionType.REEL_IN, modAutofish.getConfig().getReelInDelay(), this::useRod);
+			modAutofish.getScheduler().scheduleAction(ActionType.REEL_IN, modAutofish.getConfig().getReelInDelay(), () -> useRodItem(EnvUtils.client.player));
 		} else {
 			LogSession.info("Reeling prevented.");
 		}
@@ -175,10 +171,10 @@ public class Autofish {
 			getRandomDelay() + modAutofish.getConfig().getReelInDelay(),
 			() -> {
 				if (hookExists) return;
-				if (!isHoldingFishingRod()) return;
-				ItemStack heldOnHand = Common.getPlayerHeldStack(client.player, false);
+				if (!isRodHeld(EnvUtils.client.player)) return;
+				ItemStack heldOnHand = PlayerUtils.getHeldStack(EnvUtils.client.player, this::isOffhandPredicate);
 				if (Common.shouldNotReel(heldOnHand)) return;
-				useRod();
+				useRodItem(EnvUtils.client.player);
 			}
 		);
 	}
@@ -189,7 +185,7 @@ public class Autofish {
 			(long) (getRandomDelay() * 0.83) + modAutofish.getConfig().getReelInDelay(),
 			() -> {
 				if (!modAutofish.getConfig().isMultiRod()) return;
-				switchToFirstRod(client.player);
+				switchToFirstRod(EnvUtils.client.player);
 			}
 		);
 	}
@@ -224,9 +220,9 @@ public class Autofish {
 			)) {
 				// Didn't pass the open water check.
 				if (!playerAlreadyAlerted) {
-					Player clientPlayer = Common.getPlayerOwner(bobber);
-					if (clientPlayer != null) {
-						clientPlayer.sendOverlayMessage(
+					Player bobberOwner = Common.getPlayerOwner(bobber);
+					if (bobberOwner != null) {
+						bobberOwner.sendOverlayMessage(
 							Component.translatable("info.autofish.open_water_detection.fail")
 						);
 						playerAlreadyAlerted = true;
@@ -238,9 +234,9 @@ public class Autofish {
 			}
 		}
 		if (flag && !playerOpenCheckAlreadyPassed) {
-			Player clientPlayer = Common.getPlayerOwner(bobber);
-			if (clientPlayer != null) {
-				clientPlayer.sendOverlayMessage(
+			Player bobberOwner = Common.getPlayerOwner(bobber);
+			if (bobberOwner != null) {
+				bobberOwner.sendOverlayMessage(
 					Component.translatable("info.autofish.open_water_detection.success")
 				);
 				playerOpenCheckAlreadyPassed = true;
@@ -285,13 +281,13 @@ public class Autofish {
 
 	private Block lastBlock = null;
 	public boolean isBobberInWater() {
-		if (client.player == null || client.level == null) {
+		if (EnvUtils.client.player == null || EnvUtils.client.level == null) {
 			lastBlock = null;
 			return false;
 		}
-		Projectile bobber = Common.getPlayerBobber(client.player);
+		Projectile bobber = Common.getPlayerBobber(EnvUtils.client.player);
 		if (bobber == null) return false;
-		Block currentBlock = client.level.getBlockState(bobber.blockPosition()).getBlock();
+		Block currentBlock = EnvUtils.client.level.getBlockState(bobber.blockPosition()).getBlock();
 		String currentBlockId = RegistryUtils.getIdKey(currentBlock);
 		boolean waterVerdict = false;
 		switch (currentBlockId) {
@@ -310,55 +306,6 @@ public class Autofish {
 		return waterVerdict;
 	}
 
-	public void useRod() {
-		if (client.player == null) return;
-		if (client.level == null) return;
-		InteractionHand hand = getCorrectHand();
-		LogSession.debug("Selected " + (hand == InteractionHand.MAIN_HAND ? "main " : "off") + "hand.");
-		InteractionResult InteractionResult = null;
-		if (client.gameMode != null) {
-			InteractionResult = client.gameMode.useItem(client.player, hand);
-		}
-		if (InteractionResult != null && InteractionResult.consumesAction()) {
-			client.player.swing(hand);
-			client.gameRenderer.itemInHandRenderer.itemUsed(hand);
-		}
-		LogSession.debug("Current rod has been used.");
-	}
-
-	private boolean lastHeldFishingRod = false;
-	public boolean isHoldingFishingRod() {
-		ItemStack heldItemStack = Common.getPlayerHeldStack(client.player, false);
-		boolean heldRod = Common.isFishingRod(heldItemStack);
-		if (lastHeldFishingRod != heldRod) {
-			LogSession.debug((heldRod ? "H" : "Not h") + "olding fishing rod: " + RegistryUtils.getIdKey(heldItemStack) + ".");
-		}
-		lastHeldFishingRod = heldRod;
-		return heldRod;
-	}
-
-	@Deprecated
-	private InteractionHand getCorrectHand() {
-		if (!modAutofish.getConfig().isMultiRod()) {
-			if (
-				client.player != null &&
-				Common.isFishingRod(client.player.getOffhandItem())
-			) return InteractionHand.OFF_HAND;
-		}
-		return InteractionHand.MAIN_HAND;
-	}
-
-	@Deprecated
-	private ItemStack getHeldItem() {
-		if (client.player == null) return ItemStack.EMPTY;
-		if (!modAutofish.getConfig().isMultiRod()) {
-			if (
-				Common.isFishingRod(client.player.getOffhandItem())
-			) return client.player.getOffhandItem();
-		}
-		return client.player.getMainHandItem();
-	}
-
 	public void setDetection() {
 		if (modAutofish.getConfig().isUseSoundDetection()) {
 			fishMonitorMP = new FishMonitorMPSound();
@@ -369,7 +316,7 @@ public class Autofish {
 
 	private boolean shouldUseMPDetection(){
 		if (modAutofish.getConfig().isForceMPDetection()) return true;
-		return !client.isLocalServer();
+		return !EnvUtils.client.isLocalServer();
 	}
 
 	private long getRandomDelay(){
@@ -378,5 +325,35 @@ public class Autofish {
 			(long) (modAutofish.getConfig().getRecastDelay() * (1 - (Math.random() * modAutofish.getConfig().getRandomDelay() * 0.01))) :
 			(long) (modAutofish.getConfig().getRecastDelay() * (1 + (Math.random() * modAutofish.getConfig().getRandomDelay() * 0.01)))
 		);
+	}
+
+	// Rewritten sections go below.
+	// Properties for logging.
+	private boolean lastHeldRod = false;
+	// Detection.
+	public boolean isRodHeld(Player player) {
+		ItemStack heldItemStack = PlayerUtils.getHeldStack(player, this::isOffhandPredicate);
+		boolean rodHeld = Common.isFishingRod(heldItemStack);
+		if (lastHeldRod != rodHeld) {
+			LogSession.debug((rodHeld ? "H" : "Not h") + "olding fishing rod: " + RegistryUtils.getIdKey(heldItemStack) + ".");
+		}
+		lastHeldRod = rodHeld;
+		return rodHeld;
+	}
+	private boolean isOffhand(Player player) {
+		return PlayerUtils.matchOffhandItem(player, this::isOffhandPredicate);
+	}
+	private boolean isOffhandPredicate(ItemStack itemStack) {
+		return Common.isFishingRod(itemStack);
+	}
+	// Interaction.
+	public void useRodItem(Player player) {
+		if (EnvUtils.client.level == null) return;
+		if (EnvUtils.client.gameMode == null) return;
+		if (player == null) return;
+		boolean targetHand = isOffhand(EnvUtils.client.player);
+		//LogSession.debug("Selected " + (targetHand ? "main " : "off") + "hand.");
+		PlayerUtils.useItem(EnvUtils.client.player, targetHand);
+		return;
 	}
 }
