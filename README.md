@@ -46,7 +46,7 @@ New versions of Minecraft will be supported with best effort, and old versions w
 The built versions of the mod may already work on other versions, although it's neither tested nor guaranteed.
 
 ### Modded content doesn't work in single player!
-Due to mixin requirements, support for modded fishing rods and liquids are only available via multiplayer detection. Please enforce multiplayer detection whenever you can.
+Due to mixin requirements, support for modded fishing rods and liquids is only available via multiplayer detection. Please enforce multiplayer detection whenever you can.
 
 The mod is currently going through a rewrite which gets rid of the current mixins, as such all future methods of detection will be multiplayer-friendly, making this suggestion obsolete.
 
@@ -58,7 +58,7 @@ Sure! With caveats.
 
 - The mod should **not** implement mechanics that largely deviates from vanilla fishing (e.g. [Fishing for Stars](https://modrinth.com/mod/forstars), [Steve Goes Fishing](https://modrinth.com/mod/steve-goes-fishing)).
 - The mod has to fail with at least one of the two multiplayer detection modes (bobber motion, bobber splash sound).
-- If the mod is open-source or source available, **two** of the following two criteria must be met at the time of the request.
+- If the mod is open-source or source available, **two** of the following criteria must be met at the time of the request.
   - (**Required**) Enough downloads on Modrinth (35+ for the past week). This is to avoid implementing integrations that few people will use.
   - Pass checks on VirusTotal.
   - Pass manual audits from at least one of the maintainers.

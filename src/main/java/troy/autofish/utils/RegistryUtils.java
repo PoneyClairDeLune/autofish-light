@@ -8,11 +8,12 @@ import java.util.Map;
 
 //import net.minecraft.core.component.DataComponentMap;
 //import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.Identifier;
-//import net.minecraft.resources.ResourceKey;
 //import net.minecraft.core.DefaultedRegistry;
 //import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.IdentifierException;
+import net.minecraft.resources.Identifier;
+//import net.minecraft.resources.ResourceKey;
 //import net.minecraft.tags.BlockTags;
 //import net.minecraft.tags.EntityTypeTags;
 //import net.minecraft.tags.FluidTags;
@@ -30,6 +31,7 @@ import net.minecraft.world.level.material.FluidState;
 
 /** Utility methods for registry access. */
 public class RegistryUtils {
+	public static final String DEFAULT_NAMESPACE = "minecraft";
 	public static final String NAMESPACE_DELIMITER = ":";
 
 	private static final Map<String, Identifier> fullIdCache = new HashMap<>();
@@ -43,7 +45,7 @@ public class RegistryUtils {
 	/** Retrieve cached tags. Namespace "minecraft" and path "logs_that_burn" will be assembled into "minecraft:logs_that_burn" first to query the cache, before the actual identifier creation ever happens. */
 	public static Identifier getIdentifier(String namespace, String path) {
 		if (namespace == null || namespace.length() <= 0) {
-			namespace = "minecraft";
+			namespace = DEFAULT_NAMESPACE;
 		}
 		String fullPath = namespace + NAMESPACE_DELIMITER + path;
 		if (fullIdCache.containsKey(fullPath)) return fullIdCache.get(fullPath);
@@ -53,8 +55,8 @@ public class RegistryUtils {
 	}
 	/** Retrieve cached tags. Recommended due to faster cache hits. */
 	public static Identifier getIdentifier(String fullPath) {
-		if (!fullPath.contains(":")) {
-			fullPath = "minecraft:" + fullPath;
+		if (!fullPath.contains(NAMESPACE_DELIMITER)) {
+			fullPath = DEFAULT_NAMESPACE + NAMESPACE_DELIMITER + fullPath;
 		}
 		if (fullIdCache.containsKey(fullPath)) return fullIdCache.get(fullPath);
 		Identifier targetId = Identifier.parse(fullPath);
@@ -119,6 +121,21 @@ public class RegistryUtils {
 	public static String getIdKey(ItemStack itemStack) {
 		if (itemStack == null || itemStack == ItemStack.EMPTY) return null;
 		return getIdKey(itemStack.getItem());
+	}
+	/** Retrieve the namespace of the full identifier string when the related source object is not available, which should be avoided. Identifier objects should use the namespace attribute directly whenever available.
+	* <br/>While modded items may not always have their namespaces match the mod ID (e.g. <i>Vanilla Backport</i>, which populates <code>minecraft:*</code>), this method is still useful for a crude validation test.
+	* <br/>Path is not validated at all, as this method does not deal with paths. */
+	public static String getNamespace(String idKey) {
+		// The namespace validation process here has been verified to match Minecraft's own Identifier construction process on JE 26.1.2 without constructing new Identifier objects every time.
+		if (idKey == null) throw new IdentifierException("ID cannot be null.");
+		int colonPos = idKey.indexOf(NAMESPACE_DELIMITER);
+		if (colonPos < 0) return DEFAULT_NAMESPACE;
+		if (colonPos == 0) throw new IdentifierException("Namespace cannot be blank.");
+		String namespace = idKey.substring(0, colonPos);
+		if (!Identifier.isValidNamespace(namespace)) {
+			throw new IdentifierException("Namespace contains invalid characters.");
+		}
+		return namespace;
 	}
 	/** Test if a given target is in a tag. */
 	public static boolean isIn(TagKey<Block> blockTag, Block block) {
