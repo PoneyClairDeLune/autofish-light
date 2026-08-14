@@ -53,7 +53,7 @@ public class Autofish {
 		modAutofish.getScheduler().scheduleRepeatingAction(10000, () -> {
 			if (!isHoldingFishingRod()) return;
 			if (!modAutofish.getConfig().isPersistentMode()) return;
-			if (Common.shouldNotReel(getHeldItem())) return;
+			if (Common.shouldNotReel(client.player, false)) return;
 			if (hookExists) {
 				if (isBobberInWater()) return;
 				else useRod();
@@ -176,7 +176,7 @@ public class Autofish {
 			() -> {
 				if (hookExists) return;
 				if (!isHoldingFishingRod()) return;
-				ItemStack heldOnHand = getHeldItem();
+				ItemStack heldOnHand = Common.getPlayerHeldStack(client.player, false);
 				if (Common.shouldNotReel(heldOnHand)) return;
 				useRod();
 			}
@@ -314,6 +314,7 @@ public class Autofish {
 		if (client.player == null) return;
 		if (client.level == null) return;
 		InteractionHand hand = getCorrectHand();
+		LogSession.debug("Selected " + (hand == InteractionHand.MAIN_HAND ? "main " : "off") + "hand.");
 		InteractionResult InteractionResult = null;
 		if (client.gameMode != null) {
 			InteractionResult = client.gameMode.useItem(client.player, hand);
@@ -327,7 +328,7 @@ public class Autofish {
 
 	private boolean lastHeldFishingRod = false;
 	public boolean isHoldingFishingRod() {
-		ItemStack heldItemStack = getHeldItem();
+		ItemStack heldItemStack = Common.getPlayerHeldStack(client.player, false);
 		boolean heldRod = Common.isFishingRod(heldItemStack);
 		if (lastHeldFishingRod != heldRod) {
 			LogSession.debug((heldRod ? "H" : "Not h") + "olding fishing rod: " + RegistryUtils.getIdKey(heldItemStack) + ".");
@@ -336,6 +337,7 @@ public class Autofish {
 		return heldRod;
 	}
 
+	@Deprecated
 	private InteractionHand getCorrectHand() {
 		if (!modAutofish.getConfig().isMultiRod()) {
 			if (
@@ -346,6 +348,7 @@ public class Autofish {
 		return InteractionHand.MAIN_HAND;
 	}
 
+	@Deprecated
 	private ItemStack getHeldItem() {
 		if (client.player == null) return ItemStack.EMPTY;
 		if (!modAutofish.getConfig().isMultiRod()) {

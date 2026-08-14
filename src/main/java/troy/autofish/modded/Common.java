@@ -214,6 +214,7 @@ public class Common {
 	}
 	/** If true, the rod should not be either reeled or thrown. */
 	public static boolean shouldNotReel(ItemStack selectedItem) {
+		if (selectedItem == null) return true;
 		int currentDamage = selectedItem.getDamageValue();
 		int breakThreshold = selectedItem.getMaxDamage();
 		LogSession.debug("Item " + RegistryUtils.getIdKey(selectedItem.getItem()) + " has damage at " + currentDamage + "/" + (breakThreshold) + ".");
@@ -224,5 +225,10 @@ public class Common {
 		}
 		LogSession.debug("The fishing rod shoul" + (noReelingVerdict ? "dn't" : "d") + " reel.");
 		return noReelingVerdict;
+	}
+	/** If true, the rod should not be either reeled or thrown. */
+	public static boolean shouldNotReel(Player player, boolean isOffhand) {
+		if (player == null) return true;
+		return shouldNotReel(getPlayerHeldStack(player, isOffhand));
 	}
 }
