@@ -10,7 +10,9 @@
 		"Wudji",
 		{
 			"name": "PoneyClairDeLune",
-			"homepage": "https://github.com/PoneyClairDeLune"
+			"contact": {
+				"homepage": "https://github.com/PoneyClairDeLune"
+			}
 		}
 	],
 	"contributors": [
@@ -53,5 +55,9 @@
 	},
 	"suggests": {
 		"spectrum": ">=1.10.2"
+	},
+	"breaks": {
+		"fishing-for-stars": "*",
+		"stevegoesfishing": "*"
 	}
 }

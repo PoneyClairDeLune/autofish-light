@@ -1,9 +1,9 @@
 # Light's Autofish
 > Download from [Modrinth](https://modrinth.com/mod/autofish-light)!
 
-> This mod is currently going through a rewrite to minimise technical debt.
+> This mod is currently going through a rewrite to reduce technical debt.
 
-> This mod only provides Fabric support. Direct support of neither NeoForge nor Quilt is in consideration in this implementation.
+> This mod only supports Fabric. Direct support for NeoForge or Quilt is not planned.
 
 Annoyed that you have to focus on when to reel in your fishing rod? Frustrated to find out that modded liquids and rods don't work with existing alternatives? Fret no longer, and give this mod a try!
 
