@@ -1,7 +1,9 @@
 # Light's Autofish
 > Download from [Modrinth](https://modrinth.com/mod/autofish-light)!
 
-> This mod only provides Fabric support. Direct support of neither NeoForge nor Quilt is in consideration in this implementation.
+> This mod is currently going through a rewrite to reduce technical debt.
+
+> This mod only supports Fabric. Direct support for NeoForge or Quilt is not planned.
 
 Annoyed that you have to focus on when to reel in your fishing rod? Frustrated to find out that modded liquids and rods don't work with existing alternatives? Fret no longer, and give this mod a try!
 
@@ -31,7 +33,7 @@ Crossed out entries indicate WIP status.
 - ~~1.20.1~~ (`fabric-1.20.1`) [LTS]
 - 1.21.1 (`fabric-1.21.1`) [LTS]
 - 1.21.11 (`fabric-1.21.11`) [LTS]
-- 26.1.x (`fabric-1.22.1`) [LTS]
+- 26.1.x (`fabric-1.22.1`)
 - 26.2.x (`fabric-1.23.1`)
 
 ## FAQ
@@ -44,7 +46,9 @@ New versions of Minecraft will be supported with best effort, and old versions w
 The built versions of the mod may already work on other versions, although it's neither tested nor guaranteed.
 
 ### Modded content doesn't work in single player!
-Due to mixin requirements, support for modded fishing rods and liquids are only available via multi-player detection. Please enforce multi-player detection whenever you can.
+Due to mixin requirements, support for modded fishing rods and liquids is only available via multiplayer detection. Please enforce multiplayer detection whenever you can.
+
+The mod is currently going through a rewrite which gets rid of the current mixins, as such all future methods of detection will be multiplayer-friendly, making this suggestion obsolete.
 
 ### Fishing rods constantly re-reel in the air!
 It's caused by the very old code in persistent mode that disregards the past state, only snapshots in time captured every 10 seconds. I have a plan to fix this in the future with a refined algorithm, but until then please bear with it a bit longer. If you prefer the older algorithm, there will be a new toggle for the legacy behaviour.
@@ -53,8 +57,8 @@ It's caused by the very old code in persistent mode that disregards the past sta
 Sure! With caveats.
 
 - The mod should **not** implement mechanics that largely deviates from vanilla fishing (e.g. [Fishing for Stars](https://modrinth.com/mod/forstars), [Steve Goes Fishing](https://modrinth.com/mod/steve-goes-fishing)).
-- The mod has to fail with at least one of the two multi-player detection modes (bobber motion, bobber splash sound).
-- If the mod is open-source or source available, **two** of the following two criteria must be met at the time of the request.
+- The mod has to fail with at least one of the two multiplayer detection modes (bobber motion, bobber splash sound).
+- If the mod is open-source or source available, **two** of the following criteria must be met at the time of the request.
   - (**Required**) Enough downloads on Modrinth (35+ for the past week). This is to avoid implementing integrations that few people will use.
   - Pass checks on VirusTotal.
   - Pass manual audits from at least one of the maintainers.
@@ -65,4 +69,4 @@ Sure! With caveats.
 
 ## Technical details
 ### Constraints
-- Touch mixins as little as possible.
+- Touch mixins as little as possible, and avoid them whenever possible.
