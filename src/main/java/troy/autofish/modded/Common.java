@@ -36,9 +36,11 @@ public class Common {
 	}
 	public static void initialize(FabricModAutofish mod) {
 		modInstance = mod;
-		addContent(new Minecraft());
-		addContent(new GoFish());
-		addContent(new Spectrum());
+		if (registeredContent.isEmpty()) {
+			addContent(new Minecraft());
+			addContent(new GoFish());
+			addContent(new Spectrum());
+		}
 	}
 
 	private static Projectile getPlayerBobberInternal(LocalPlayer player) {
