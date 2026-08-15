@@ -12,7 +12,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
 import troy.autofish.FabricModAutofish;
@@ -72,25 +71,12 @@ public class Common {
 		return null;
 	}
 	/** Returns true if the block does not obstruct fishing, like a lily pad. */
-	public static boolean isBlockNegligible(Block block) {
-		if (block == null) return false;
-		// TODO: Integrate its detection into namespaced content.
-		String blockId = RegistryUtils.getIdKey(block);
-		if (blockId.equals("minecraft:air")) return true;
-		if (blockId.equals("minecraft:cave_air")) return true;
-		if (blockId.equals("minecraft:lily_pad")) return true;
-		if (blockId.equals("minecraft:void_air")) return true;
-		return false;
-	}
-	/** Returns true if the block does not obstruct fishing, like a lily pad. */
 	public static boolean isBlockNegligible(BlockState blockState) {
 		if (blockState == null) return false;
-		// TODO: Integrate its detection into namespaced content.
-		String blockId = RegistryUtils.getIdKey(blockState);
-		if (blockId.equals("minecraft:air")) return true;
-		if (blockId.equals("minecraft:cave_air")) return true;
-		if (blockId.equals("minecraft:lily_pad")) return true;
-		if (blockId.equals("minecraft:void_air")) return true;
+		NamespacedContent content = registeredContent.get(RegistryUtils.getNamespace(blockState));
+		if (content != null) {
+			return content.isBlockNegligible(blockState);
+		}
 		return false;
 	}
 	/** Returns true if the entity is a fishing bobber. */

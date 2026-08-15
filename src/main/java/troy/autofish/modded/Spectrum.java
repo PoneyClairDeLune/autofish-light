@@ -19,7 +19,7 @@ public class Spectrum extends NamespacedContent {
 	}
 	public Class<?> accessorBobber = null;
 
-	public boolean populateIds() {
+	protected boolean populateIds() {
 		// Explicitly hardcoded bobbers
 		if (bobberIds.isEmpty()) {
 			bobberIds.add("spectrum:lagoon_fishing_bobber");
@@ -34,7 +34,7 @@ public class Spectrum extends NamespacedContent {
 		}
 		return true;
 	}
-	public boolean populateFluidTags() {
+	protected boolean populateFluidTags() {
 		if (!hasMod()) return false;
 		if (fluidTags.size() > 0) return true;
 		try {
@@ -54,7 +54,7 @@ public class Spectrum extends NamespacedContent {
 		}
 		return false;
 	}
-	public boolean populateItemTags() {
+	protected boolean populateItemTags() {
 		if (!hasMod()) return false;
 		if (rodTags.size() > 0) return true;
 		try {

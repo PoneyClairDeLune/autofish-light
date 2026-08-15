@@ -14,7 +14,7 @@ public class GoFish extends NamespacedContent {
 		super("gofish", "gofish", "Go Fish");
 	}
 
-	public boolean populateIds() {
+	protected boolean populateIds() {
 		// Explicitly hardcoded rods
 		if (rodIds.isEmpty()) {
 			rodIds.add("gofish:blaze_rod");
@@ -29,7 +29,7 @@ public class GoFish extends NamespacedContent {
 		}
 		return true;
 	}
-	public boolean populateFluidTags() {
+	protected boolean populateFluidTags() {
 		//if (!hasMod()) return false;
 		if (fluidTags.size() > 0) return true;
 		if (populateIds()) {

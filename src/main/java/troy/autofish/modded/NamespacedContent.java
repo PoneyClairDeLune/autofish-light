@@ -12,6 +12,8 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import troy.autofish.LogSession;
@@ -32,23 +34,32 @@ public abstract class NamespacedContent {
 	public final Set<String> bobberIds = new HashSet<>();
 	/** List of fluid tags rods are matched against. */
 	public final Map<String, Set<TagKey<Fluid>>> fluidTags = new ConcurrentHashMap<>();
+	/** List of negligible block tags. */
+	public final Set<String> blockIds = new HashSet<>();
+	/** List of negligible block tags. */
+	public final Set<TagKey<Block>> blockTags = new HashSet<>();
 	/** List of item IDs rods are under. */
 	public final Set<String> rodIds = new HashSet<>();
 	/** List of item tags rods are under. */
 	public final Set<TagKey<Item>> rodTags = new HashSet<>();
 
 	/** Method used to populate pure IDs. Should return <code>true</code> if the fields are populated. Don't use it if not implemented. */
-	@Deprecated
+	//@Deprecated
 	protected boolean populateIds() {
 		return false;
 	};
+	/** Method used to populate block tags, which may call reflectors. Should return <code>true</code> if the fields are populated. Don't use it if not implemented. */
+	//@Deprecated
+	protected boolean populateBlockTags() {
+		return false;
+	};
 	/** Method used to populate fluid tags, which may call reflectors. Should return <code>true</code> if the fields are populated. Don't use it if not implemented. */
-	@Deprecated
+	//@Deprecated
 	protected boolean populateFluidTags() {
 		return false;
 	};
 	/** Method used to populate item tags, which may call reflectors. Should return <code>true</code> if the fields are populated. Don't use it if not implemented. */
-	@Deprecated
+	//@Deprecated
 	protected boolean populateItemTags() {
 		return false;
 	};
@@ -65,7 +76,8 @@ public abstract class NamespacedContent {
 	/** Method used to test if the mod has been loaded at all. */
 	public boolean hasMod() {
 		boolean modExistence = EnvUtils.loader.isModLoaded(id);
-		if (modExistence != modExistOld.get(id)) {
+		Boolean oldValue = modExistOld.get(id);
+		if (oldValue == null || modExistence != oldValue) {
 			LogSession.info("Mod \"" + id + "\" " + (modExistence ? "exists" : "does not exist") + ".");
 		}
 		modExistOld.put(id, modExistence);
@@ -77,6 +89,20 @@ public abstract class NamespacedContent {
 	public Projectile getBobber(LocalPlayer player) {
 		return null;
 	};
+	/** Method used to test if a given block is considered negligible. */
+	public boolean isBlockNegligible(BlockState blockState) {
+		boolean verdict = false;
+		if (populateIds()) {
+			verdict = blockIds.contains(RegistryUtils.getIdKey(blockState));
+		}
+		if (!verdict && populateBlockTags()) {
+			for (TagKey<Block> blockTag: blockTags) {
+				verdict = RegistryUtils.isIn(blockTag, blockState);
+				if (verdict) break;
+			}
+		}
+		return verdict;
+	}
 	/** Method used to test if a given projectile entity is considered a bobber. */
 	public boolean isBobber(Projectile entity) {
 		if (populateIds()) {

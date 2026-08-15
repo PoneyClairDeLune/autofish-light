@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
@@ -17,10 +18,13 @@ public class Minecraft extends NamespacedContent {
 		super("minecraft", "minecraft", "Minecraft");
 	}
 
-	public boolean populateIds() {
+	protected boolean populateIds() {
 		if (biteSoundIds.isEmpty()) {
 			biteSoundIds.add("entity.fishing_bobber.splash");
 			biteSoundIds.add("minecraft:entity.fishing_bobber.splash");
+		}
+		if (blockIds.isEmpty()) {
+			blockIds.add("minecraft:lily_pad");
 		}
 		if (bobberIds.isEmpty()) {
 			bobberIds.add("minecraft:fishing_bobber");
@@ -30,20 +34,26 @@ public class Minecraft extends NamespacedContent {
 		}
 		return true;
 	}
-	@SuppressWarnings("unused")
-	public boolean populateFluidTags() {
+	protected boolean populateBlockTags() {
+		if (blockTags.isEmpty()) {
+			blockTags.add(BlockTags.AIR);
+		}
+		return true;
+	}
+	//@SuppressWarnings("unused")
+	protected boolean populateFluidTags() {
 		if (fluidTags.isEmpty()) {
 			Set<TagKey<Fluid>> vanillaFluidTags = new HashSet<>();
 			vanillaFluidTags.add(FluidTags.WATER);
 			// TODO: Add a config entry allowing lava blocks to be used on vanilla rods.
-			if (false) {
+			if (true) {
 				vanillaFluidTags.add(FluidTags.LAVA);
 			}
 			fluidTags.put("minecraft:fishing_rod", vanillaFluidTags);
 		}
 		return true;
 	}
-	public boolean populateItemTags() {
+	protected boolean populateItemTags() {
 		// Can be no-op as soon as a counter case is found.
 		if (rodTags.isEmpty()) {
 			rodTags.add(ItemTags.FISHING_ENCHANTABLE);
