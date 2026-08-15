@@ -12,31 +12,43 @@ import net.minecraft.world.level.material.Fluid;
 
 /** The vanilla <i>Minecraft</i> game and <i>Vanilla Backport</i>. */
 public class Minecraft extends NamespacedContent {
+	/** The vanilla <i>Minecraft</i> game and <i>Vanilla Backport</i>. */
 	public Minecraft() {
 		super("minecraft", "minecraft", "Minecraft");
 	}
 
-	public void populateIds() {
-		if (bobberIds.size() <= 0) {
+	public boolean populateIds() {
+		if (biteSoundIds.isEmpty()) {
+			biteSoundIds.add("entity.fishing_bobber.splash");
+			biteSoundIds.add("minecraft:entity.fishing_bobber.splash");
+		}
+		if (bobberIds.isEmpty()) {
 			bobberIds.add("minecraft:fishing_bobber");
 		}
-		if (rodIds.size() <= 0) {
+		if (rodIds.isEmpty()) {
 			rodIds.add("minecraft:fishing_rod");
 		}
+		return true;
 	}
 	@SuppressWarnings("unused")
-	public void populateFluidTags() {
-		Set<TagKey<Fluid>> vanillaFluidTags = new HashSet<>();
-		vanillaFluidTags.add(FluidTags.WATER);
-		// TODO: Add a config entry allowing lava blocks to be used on vanilla rods.
-		if (false) {
-			vanillaFluidTags.add(FluidTags.LAVA);
+	public boolean populateFluidTags() {
+		if (fluidTags.isEmpty()) {
+			Set<TagKey<Fluid>> vanillaFluidTags = new HashSet<>();
+			vanillaFluidTags.add(FluidTags.WATER);
+			// TODO: Add a config entry allowing lava blocks to be used on vanilla rods.
+			if (false) {
+				vanillaFluidTags.add(FluidTags.LAVA);
+			}
+			fluidTags.put("minecraft:fishing_rod", vanillaFluidTags);
 		}
-		fluidTags.put("minecraft:fishing_rod", vanillaFluidTags);
+		return true;
 	}
-	public void populateItemTags() {
+	public boolean populateItemTags() {
 		// Can be no-op as soon as a counter case is found.
-		rodTags.add(ItemTags.FISHING_ENCHANTABLE);
+		if (rodTags.isEmpty()) {
+			rodTags.add(ItemTags.FISHING_ENCHANTABLE);
+		}
+		return true;
 	}
 
 	public Projectile getBobber(LocalPlayer player) {

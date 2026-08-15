@@ -1,48 +1,42 @@
 package troy.autofish.modded;
 
 import java.lang.reflect.Method;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import cc.ltgc.luneApi.*;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.projectile.Projectile;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraft.world.level.material.FluidState;
 import troy.autofish.LogSession;
 
 /** <i>Spectrum</i> by DaFuqs. */
-public class Spectrum {
-	public static final String modId = "spectrum";
-	public static final String modNamespace = "spectrum";
-	public static final Set<String> modBobbers = new HashSet<>();
-	public static final Map<String, Set<TagKey<Fluid>>> modFluidTags = new ConcurrentHashMap<>();
-	public static final Set<String> modRods = new HashSet<>();
-	public static final Set<TagKey<Item>> modRodTags = new HashSet<>();
-	public static Class<?> accessorBobber = null;
+public class Spectrum extends NamespacedContent {
+	/** <i>Spectrum</i> by DaFuqs. */
+	public Spectrum() {
+		super("spectrum", "spectrum", "Spectrum");
+	}
+	public Class<?> accessorBobber = null;
 
-	public static void populateIds() {
+	public boolean populateIds() {
 		// Explicitly hardcoded bobbers
-		if (modBobbers.size() <= 0) {
-			modBobbers.add("spectrum:lagoon_fishing_bobber");
-			modBobbers.add("spectrum:molten_fishing_bobber");
-			modBobbers.add("spectrum:bedrock_fishing_bobber");
+		if (bobberIds.isEmpty()) {
+			bobberIds.add("spectrum:lagoon_fishing_bobber");
+			bobberIds.add("spectrum:molten_fishing_bobber");
+			bobberIds.add("spectrum:bedrock_fishing_bobber");
 		}
 		// Explicitly hardcoded rods
-		if (modRods.size() <= 0) {
-			modRods.add("spectrum:lagoon_rod");
-			modRods.add("spectrum:molten_rod");
-			modRods.add("spectrum:bedrock_fishing_rod");
+		if (rodIds.isEmpty()) {
+			rodIds.add("spectrum:lagoon_rod");
+			rodIds.add("spectrum:molten_rod");
+			rodIds.add("spectrum:bedrock_fishing_rod");
 		}
+		return true;
 	}
-	public static void populateFluidTags() {
-		if (!Common.hasMod(modId)) return;
-		if (modFluidTags.size() > 0) return;
+	public boolean populateFluidTags() {
+		if (!hasMod()) return false;
+		if (fluidTags.size() > 0) return true;
 		try {
 			Set<TagKey<Fluid>> lagoonFluidTags = new HashSet<>();
 			lagoonFluidTags.add(ReflectorUtils.getField("de.dafuqs.spectrum.registries.SpectrumFluidTags", "LAGOON_ROD_FISHABLE_IN", true, null));
@@ -51,30 +45,29 @@ public class Spectrum {
 			Set<TagKey<Fluid>> bedrockFluidTags = new HashSet<>();
 			bedrockFluidTags.add(ReflectorUtils.getField("de.dafuqs.spectrum.registries.SpectrumFluidTags", "BEDROCK_ROD_FISHABLE_IN", true, null));
 			// Postpone commit to make any error visible.
-			modFluidTags.put("spectrum:lagoon_rod", lagoonFluidTags);
-			modFluidTags.put("spectrum:molten_rod", moltenFluidTags);
-			modFluidTags.put("spectrum:bedrock_fishing_rod", bedrockFluidTags);
+			fluidTags.put("spectrum:lagoon_rod", lagoonFluidTags);
+			fluidTags.put("spectrum:molten_rod", moltenFluidTags);
+			fluidTags.put("spectrum:bedrock_fishing_rod", bedrockFluidTags);
+			return true;
 		} catch (Exception err) {
 			LogSession.error("Spectrum fluid tag retrieval error: " + err.getMessage());
 		}
+		return false;
 	}
-	public static void populateItemTags() {
-		if (!Common.hasMod(modId)) return;
-		if (modRodTags.size() > 0) return;
+	public boolean populateItemTags() {
+		if (!hasMod()) return false;
+		if (rodTags.size() > 0) return true;
 		try {
-			modRodTags.add(ReflectorUtils.getField("de.dafuqs.spectrum.registries.SpectrumItemTags", "FISHING_RODS", true, null));
+			rodTags.add(ReflectorUtils.getField("de.dafuqs.spectrum.registries.SpectrumItemTags", "FISHING_RODS", true, null));
+			return true;
 		} catch (Exception err) {
 			LogSession.error("Spectrum block tag retrieval error: " + err.getMessage());
 		}
-	}
-	static {
-		populateIds();
-		populateFluidTags();
-		populateItemTags();
+		return false;
 	}
 
-	public static Projectile getBobber(LocalPlayer player) {
-		if (!Common.hasMod(modId)) return null;
+	public Projectile getBobber(LocalPlayer player) {
+		if (!hasMod()) return null;
 		try {
 			// TODO: Move to ReflectorUtils.getMethod once properly tested on 1.21.1.
 			if (accessorBobber == null) {
@@ -89,45 +82,5 @@ public class Spectrum {
 			LogSession.error("Spectrum bobber retrieval error: " + err.getMessage());
 		}
 		return null;
-	}
-	@Deprecated
-	public static boolean isFishableLiquid(String blockId) {
-		// No idea how to retrieve tags yet, so hardcoding for now.
-		switch (blockId) {
-			case "minecraft:lava":
-			case "spectrum:dragonrot":
-			case "spectrum:liquid_crystal":
-			case "spectrum:midnight_solution":
-			case "spectrum:sludge": {
-				return true;
-			}
-		}
-		return false;
-	}
-	public static boolean isLiquidFishableTo(String itemId, FluidState fluidState) {
-		if (!Common.hasMod(modId)) return false;
-		populateFluidTags();
-		Set<TagKey<Fluid>> validFluidTags = modFluidTags.get(itemId);
-		if (validFluidTags == null) return false;
-		for (TagKey<Fluid> fluidTag: validFluidTags) {
-			if (RegistryUtils.isIn(fluidTag, fluidState)) return true;
-		}
-		return false;
-	}
-	public static boolean isBobber(Projectile entity) {
-		populateIds();
-		return modBobbers.contains(RegistryUtils.getIdKey(entity));
-	}
-	public static boolean isRod(ItemStack itemStack) {
-		if (!Common.hasMod(modId)) return false;
-		populateItemTags();
-		for (TagKey<Item> itemTag: modRodTags) {
-			if (RegistryUtils.isIn(itemTag, itemStack)) return true;
-		}
-		return false;
-	}
-	public static boolean isRod(String itemId) {
-		populateIds();
-		return modRods.contains(itemId);
 	}
 }

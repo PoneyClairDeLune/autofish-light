@@ -1,15 +1,11 @@
 package troy.autofish.modded;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import cc.ltgc.luneApi.*;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.tags.FluidTags;
-import net.minecraft.tags.ItemTags;
-import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.player.Player;
@@ -27,41 +23,29 @@ public class Common {
 	//private static final Map<String, Boolean> modExistCache = new HashMap<>();
 
 	/** How much durability should be left for rods to be safe. */
-	public static final int damageSafeMargin = 1;
-	private static Set<TagKey<Item>> eligibleRodTags = new HashSet<>(Arrays.asList(ItemTags.FISHING_ENCHANTABLE));
+	public static int damageSafeMargin = 1; // TODO: Make it configurable.
 	private static String lastRodItemId = null;
 	private static int lastBobberId = 0;
 	private static int lastPlayerBobberId = 0;
 	private static boolean determinedByTag = false;
+	private static final Map<String, NamespacedContent> registeredContent = new ConcurrentHashMap<>();
+	private static final Iterable<NamespacedContent> registeredContentList = registeredContent.values();
 
 	private static FabricModAutofish modInstance = null;
+	private static void addContent(NamespacedContent content) {
+		registeredContent.put(content.namespace, content);
+	}
 	public static void initialize(FabricModAutofish mod) {
 		modInstance = mod;
+		addContent(new Minecraft());
+		addContent(new GoFish());
+		addContent(new Spectrum());
 	}
 
-	/** A list of registered sound events. */
-	private static Set<String> bobberSplashSoundList = new HashSet<>(Arrays.asList("entity.fishing_bobber.splash",
-	"minecraft:entity.fishing_bobber.splash"));
-
-	/** A cached detector of mods' presence. */
-	public static boolean hasMod(String modId) {
-		/*if (modExistCache.containsKey(modId)) {
-			return modExistCache.get(modId);
-		} else {*/
-			boolean modExistence = EnvUtils.loader.isModLoaded(modId);
-			//modExistCache.put(modId, modExistence);
-			LogSession.info("Mod \"" + modId + "\" " + (modExistence ? "exists" : "does not exist") + ".");
-			return modExistence;
-		//}
-	}
 	private static Projectile getPlayerBobberInternal(LocalPlayer player) {
 		if (player == null) return null;
-		Projectile bobber = player.fishing;
-		// Vanilla Minecraft.
-		if (bobber != null) return bobber;
-		// Add more mods here.
-		if (hasMod("spectrum")) {
-			bobber = Spectrum.getBobber(player);
+		for (NamespacedContent content: registeredContentList) {
+			Projectile bobber = content.getBobber(player);
 			if (bobber != null) return bobber;
 		}
 		return null;
@@ -87,13 +71,45 @@ public class Common {
 		if (owner instanceof Player) return (Player) owner;
 		return null;
 	}
+	/** Returns true if the block does not obstruct fishing, like a lily pad. */
+	public static boolean isBlockNegligible(Block block) {
+		if (block == null) return false;
+		// TODO: Integrate its detection into namespaced content.
+		String blockId = RegistryUtils.getIdKey(block);
+		if (blockId.equals("minecraft:air")) return true;
+		if (blockId.equals("minecraft:cave_air")) return true;
+		if (blockId.equals("minecraft:lily_pad")) return true;
+		if (blockId.equals("minecraft:void_air")) return true;
+		return false;
+	}
+	/** Returns true if the block does not obstruct fishing, like a lily pad. */
+	public static boolean isBlockNegligible(BlockState blockState) {
+		if (blockState == null) return false;
+		// TODO: Integrate its detection into namespaced content.
+		String blockId = RegistryUtils.getIdKey(blockState);
+		if (blockId.equals("minecraft:air")) return true;
+		if (blockId.equals("minecraft:cave_air")) return true;
+		if (blockId.equals("minecraft:lily_pad")) return true;
+		if (blockId.equals("minecraft:void_air")) return true;
+		return false;
+	}
 	/** Returns true if the entity is a fishing bobber. */
 	public static boolean isBobber(Projectile entity) {
 		if (entity == null) {
 			lastBobberId = 0;
 			return false;
 		}
-		boolean bobberVerdict = entity instanceof FishingHook || Spectrum.isBobber(entity);
+		boolean bobberVerdict = entity instanceof FishingHook;
+		if (!bobberVerdict) {
+			NamespacedContent content = registeredContent.get(RegistryUtils.getNamespace(entity));
+			if (content != null) {
+				bobberVerdict = content.isBobber(entity);
+			}
+			/*for (NamespacedContent content: registeredContentList) {
+				bobberVerdict = content.isBobber(entity);
+				if (bobberVerdict) break;
+			}*/
+		}
 		int entityId = entity.getId();
 		if (entityId != lastBobberId) {
 			LogSession.info("Entity " + RegistryUtils.getIdKey(entity) + (bobberVerdict ? " is" : " is not") + " a bobber.");
@@ -101,107 +117,47 @@ public class Common {
 		lastBobberId = entityId;
 		return bobberVerdict;
 	}
-	/** Returns true if the block does not obstruct fishing, like a lily pad. */
-	public static boolean isFishableFlora(Block block) {
-		if (block == null) return false;
-		String blockId = RegistryUtils.getIdKey(block);
-		if (blockId.equals("minecraft:lily_pad")) return true;
-		return false;
-	}
-	/** Returns true if the liquid is fishable. Should be superceded, as different fishing rods have different allowed liquids to fish in. */
-	//@Deprecated
-	public static boolean isFishableLiquid(Block block) {
-		if (block == null) return false;
-		String blockId = RegistryUtils.getIdKey(block);
-		if (blockId.equals("minecraft:water")) return true;
-		if (blockId.equals("minecraft:lava")) return true;
-		boolean isFishable = false;
-		// Modded section here.
-		if (!isFishable && hasMod("spectrum")) {
-			isFishable = Spectrum.isFishableLiquid(blockId);
-		}
-		if (!isFishable && hasMod("gofish")) {
-			isFishable = GoFish.isFishableLiquid(blockId);
-		}
-		return isFishable;
-	}
 	/** Returns true if the liquid is fishable to the given rod. */
-	public static boolean isFishableLiquidTo(ItemStack itemStack, BlockState blockState) {
+	public static boolean isLiquidFishableTo(ItemStack itemStack, BlockState blockState) {
 		if (blockState == null) return false;
 		if (itemStack == null || itemStack.count() <= 0) return false;
 		FluidState fluidState = blockState.getFluidState();
-		return isFishableLiquidTo(itemStack, fluidState);
+		return isLiquidFishableTo(itemStack, fluidState);
 	}
 	/** Returns true if the liquid is fishable to the given rod. */
-	public static boolean isFishableLiquidTo(ItemStack itemStack, FluidState fluidState) {
+	public static boolean isLiquidFishableTo(ItemStack itemStack, FluidState fluidState) {
 		if (fluidState == null) return false;
 		if (itemStack == null || itemStack.count() <= 0) return false;
 		boolean isFishable = false;
 		String itemId = RegistryUtils.getIdKey(itemStack);
-		switch (RegistryUtils.getNamespace(itemId)) {
-			// Vanilla.
-			case "minecraft": {
-				if (itemId.equalsIgnoreCase("minecraft:fishing_rod")) {
-					isFishable = RegistryUtils.isIn(FluidTags.WATER, fluidState);
-				}
-				break;
-			}
-			// Modded section here.
-			case "gofish": {
-				break;
-			}
-			case "spectrum": {
-				break;
-			}
+		NamespacedContent content = registeredContent.get(RegistryUtils.getNamespace(itemStack));
+		if (content != null) {
+			isFishable = content.isLiquidFishableTo(itemId, fluidState);
 		}
 		return isFishable;
 	}
 	/** Returns true if the liquid is fishable to the rod held by the given player. */
-	public static boolean isFishableLiquidTo(Player player, BlockState blockState) {
+	public static boolean isLiquidFishableTo(Player player, BlockState blockState) {
 		if (player == null) return false;
 		if (blockState == null) return false;
-		return isFishableLiquidTo(PlayerUtils.getHeldStack(player, false), blockState);
+		return isLiquidFishableTo(PlayerUtils.getHeldStack(player, false), blockState);
 	}
 	private static boolean isFishingRodInternal(Item rodItem) {
 		if (rodItem == null) return false;
 		determinedByTag = false;
 		String itemId = RegistryUtils.getIdKey(rodItem);
-		switch (RegistryUtils.getNamespace(rodItem)) {
-			case "minecraft": {
-				if (itemId.equals("minecraft:fishing_rod")) return true;
-				break;
-			}
-			// Modded section here.
-			case "gofish": {
-				return GoFish.isRod(itemId);
-				//break;
-			}
-			case "spectrum": {
-				return Spectrum.isRod(itemId);
-				//break;
-			}
+		NamespacedContent content = registeredContent.get(RegistryUtils.getNamespace(rodItem));
+		if (content != null) {
+			return content.isRod(itemId);
 		}
 		return false;
 	}
 	private static boolean isFishingRodInternal(ItemStack rodItemStack) {
 		if (rodItemStack == null || rodItemStack.count() <= 0) return false;
 		determinedByTag = true;
-		// Tags go here.
-		switch (RegistryUtils.getNamespace(rodItemStack)) {
-			// Vanilla.
-			case "minecraft": {
-				for (TagKey<Item> itemTag: eligibleRodTags) {
-					if (RegistryUtils.isIn(itemTag, rodItemStack)) return true;
-				}
-				break;
-			}
-			// Modded section here.
-			case "gofish": {
-				break;
-			}
-			case "spectrum": {
-				break;
-			}
+		NamespacedContent content = registeredContent.get(RegistryUtils.getNamespace(rodItemStack));
+		if (content != null) {
+			return content.isRod(rodItemStack);
 		}
 		return false;
 	}
@@ -231,8 +187,12 @@ public class Common {
 	}
 	/** Returns true if the sound event is bobber splash. */
 	public static boolean isSplashSound(SoundEvent soundEvent) {
-		String soundName = soundEvent.location().toString();
-		return bobberSplashSoundList.contains(soundName.toLowerCase());
+		if (soundEvent == null) return false;
+		NamespacedContent content = registeredContent.get(RegistryUtils.getNamespace(soundEvent));
+		if (content != null) {
+			return content.isFishBiteSound(soundEvent);
+		}
+		return false;
 	}
 	/** If true, the rod should not be either reeled or thrown. */
 	public static boolean shouldNotReel(ItemStack selectedItem) {

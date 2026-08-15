@@ -4,8 +4,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import cc.ltgc.luneApi.*;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.entity.Entity;
@@ -210,12 +209,11 @@ public class Autofish {
 			if (!(
 				BlockPos.betweenClosedStream(x - 2, y + yi, z - 2, x + 2, y + yi, z + 2).allMatch((blockPos ->
 					// Every block is water.
-					Common.isFishableLiquid(bobber.level().getBlockState(blockPos).getBlock())
+					Common.isLiquidFishableTo(EnvUtils.client().player, bobber.level().getBlockState(blockPos))
 				)) ||
 				BlockPos.betweenClosedStream(x - 2, y + yi, z - 2, x + 2, y + yi, z + 2).allMatch((blockPos ->
 					// Or every block is air or lily pad.
-					bobber.level().getBlockState(blockPos).getBlock() == Blocks.AIR ||
-					Common.isFishableFlora(bobber.level().getBlockState(blockPos).getBlock())
+					Common.isBlockNegligible(bobber.level().getBlockState(blockPos))
 				))
 			)) {
 				// Didn't pass the open water check.
@@ -279,7 +277,7 @@ public class Autofish {
 		}
 	}
 
-	private Block lastBlock = null;
+	private BlockState lastBlock = null;
 	public boolean isBobberInWater() {
 		if (EnvUtils.client().player == null || EnvUtils.client().level == null) {
 			lastBlock = null;
@@ -287,18 +285,9 @@ public class Autofish {
 		}
 		Projectile bobber = Common.getPlayerBobber(EnvUtils.client().player);
 		if (bobber == null) return false;
-		Block currentBlock = EnvUtils.client().level.getBlockState(bobber.blockPosition()).getBlock();
+		BlockState currentBlock = EnvUtils.client().level.getBlockState(bobber.blockPosition());
 		String currentBlockId = RegistryUtils.getIdKey(currentBlock);
-		boolean waterVerdict = false;
-		switch (currentBlockId) {
-			case "minecraft:water": {
-				waterVerdict = true;
-				break;
-			}
-			default: {
-				waterVerdict = Common.isFishableLiquid(currentBlock);
-			}
-		}
+		boolean waterVerdict = Common.isLiquidFishableTo(EnvUtils.client().player, currentBlock);
 		if (currentBlock != lastBlock) {
 			LogSession.info("Block " + currentBlockId + (waterVerdict ? " is" : " isn't") + " fishable liquid.");
 		}

@@ -6,14 +6,10 @@ package cc.ltgc.luneApi;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.Map;
 
-//import net.minecraft.core.component.DataComponentMap;
-//import net.minecraft.core.registries.Registries;
-//import net.minecraft.core.DefaultedRegistry;
-//import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.IdentifierException;
 import net.minecraft.resources.Identifier;
-//import net.minecraft.resources.ResourceKey;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -135,6 +131,10 @@ public class RegistryUtils {
 	public static String getNamespace(ItemStack itemStack) {
 		if (itemStack == null || itemStack == ItemStack.EMPTY) return null;
 		return getNamespace(itemStack.getItem());
+	}
+	public static String getNamespace(SoundEvent soundEvent) {
+		if (soundEvent == null) return null;
+		return soundEvent.location().getNamespace();
 	}
 	/** Retrieve the namespace of the full identifier string when the related source object is not available, which should be avoided. Identifier objects should use the namespace attribute directly whenever available.
 	* <br/>While modded items may not always have their namespaces match the mod ID (e.g. <i>Vanilla Backport</i>, which populates <code>minecraft:*</code>), this method is still useful for a crude validation test.

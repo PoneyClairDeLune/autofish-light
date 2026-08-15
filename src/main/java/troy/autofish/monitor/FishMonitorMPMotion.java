@@ -83,6 +83,6 @@ public class FishMonitorMPMotion implements FishMonitorMP {
         int l = Mth.ceil(box.maxY);
         int m = Mth.floor(box.minZ);
         int n = Mth.ceil(box.maxZ);
-        return BlockPos.betweenClosedStream(i, k, m, j - 1, l - 1, n - 1).anyMatch((blockPos) -> Common.isFishableLiquid(Level.getBlockState(blockPos).getBlock()));
+        return BlockPos.betweenClosedStream(i, k, m, j - 1, l - 1, n - 1).anyMatch((blockPos) -> Common.isBlockNegligible(Level.getBlockState(blockPos)));
     }
 }
