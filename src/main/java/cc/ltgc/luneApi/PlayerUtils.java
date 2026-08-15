@@ -27,13 +27,30 @@ public class PlayerUtils {
 		if (matcher == null) return ItemStack.EMPTY;
 		return getHeldStack(player, matchOffhandItem(player, matcher));
 	}
-	/** Returns true when the offhand matches the given predicate. */
+	/** Returns <code>true</code> if the given stack is empty. */
+	public static boolean isStackEmpty(ItemStack itemStack) {
+		// Minecraft still allows negative item counts!
+		if (itemStack == null || itemStack == ItemStack.EMPTY || itemStack.count() == 0) return true;
+		return false;
+	}
+	/** Returns true when the offhand matches the given predicate while the main hand doesn't. */
 	public static boolean matchOffhandItem(Player player, Predicate<? super ItemStack> matcher) {
 		if (player == null) return false;
 		if (matcher == null) return false;
 		ItemStack offhandItemStack = player.getOffhandItem();
-		if (offhandItemStack == null || offhandItemStack.count() <= 0) return false;
-		return matcher.test(offhandItemStack);
+		if (isStackEmpty(offhandItemStack)) return false;
+		boolean offhandMatched = matcher.test(offhandItemStack);
+		if (offhandMatched) {
+			ItemStack mainHandItemStack = player.getMainHandItem();
+			if (isStackEmpty(mainHandItemStack)) return true;
+			return !matcher.test(mainHandItemStack);
+		};
+		return false;
+	}
+	/** Change the selected hotbar slot (<code>[0, 8]</code>). */
+	public static void selectHotbarSlot(Player player, int slotIndex) {
+		if (player == null) return;
+		player.getInventory().setSelectedSlot(slotIndex);
 	}
 	/** Returns true when the item stack on the defined hand is used. */
 	public static boolean useItem(Player player, boolean isOffhand) {

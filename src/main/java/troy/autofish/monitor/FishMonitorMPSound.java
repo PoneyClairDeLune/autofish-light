@@ -36,7 +36,7 @@ public class FishMonitorMPSound implements FishMonitorMP {
 		z = soundPacket.getZ();
 		if (Common.isSplashSound(soundEvent)) {
 			if (bobber.distanceToSqr(x, y, z) < HOOKSOUND_DISTANCESQ_THRESHOLD) {
-				autofish.catchFish();
+				autofish.reelRod();
 			}
 		}
 	}

@@ -68,7 +68,7 @@ public class FishMonitorMPMotion implements FishMonitorMP {
 				// minecraft.player.sendMessage(Text.of("Y: "+ bobberMovement.Y()),true);
 				if (bobberMovement.x() == 0.0 && bobberMovement.z() == 0.0 && bobberMovement.y() < PACKET_MOTION_Y_THRESHOLD) {
 					// Catch the fish
-					autofish.catchFish();
+					autofish.reelRod();
 					// Reset the class attributes to default.
 					this.handleHookRemoved();
 				}

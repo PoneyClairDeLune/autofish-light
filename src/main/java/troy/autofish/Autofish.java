@@ -4,21 +4,23 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import cc.ltgc.luneApi.*;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.entity.projectile.Projectile;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.NonNullList;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundSystemChatPacket;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.StringUtil;
 import net.minecraft.util.Util;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.NonNullList;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.Level;
 import troy.autofish.modded.Common;
 import troy.autofish.monitor.FishMonitorMP;
 import troy.autofish.monitor.FishMonitorMPMotion;
@@ -46,15 +48,16 @@ public class Autofish {
 		// Initiate the repeating action for persistent mode casting.
 		// Honestly, this needs a better implementation...
 		modAutofish.getScheduler().scheduleRepeatingAction(10000, () -> {
-			if (!isRodHeld(EnvUtils.client().player)) return;
+			LocalPlayer player = EnvUtils.client().player;
+			if (!isRodHeld(player)) return;
 			if (!modAutofish.getConfig().isPersistentMode()) return;
-			if (Common.shouldNotReel(EnvUtils.client().player, false)) return;
+			if (Common.shouldNotReel(player, false)) return;
 			if (hookExists) {
-				if (isBobberInWater()) return;
+				if (isBobberInWater(player)) return;
 				else useRodItem(EnvUtils.client().player);
 			}
 			if (modAutofish.getScheduler().isRecastQueued()) return;
-			useRodItem(EnvUtils.client().player);
+			useRodItem(player);
 		});
 	}
 
@@ -86,21 +89,23 @@ public class Autofish {
 	* Callback from mixin for the catchingFish method of the EntityFishHook.
 	* For singleplayer detection only.
 	*/
+	@Deprecated
 	public void tickFishingLogic(Entity owner, int ticksCatchable) {
 		// This callback will come from the Server thread. Use client().execute() to run this action in the Render thread.
 		EnvUtils.client().execute(() -> {
 			if (!modAutofish.getConfig().isAutofishEnabled() || shouldUseMPDetection()) return;
+			LocalPlayer player = EnvUtils.client().player;
 			// Null checks for sanity.
 			if (
-				EnvUtils.client().player == null ||
-				Common.getPlayerBobber(EnvUtils.client().player) == null
+				player == null ||
+				Common.getPlayerBobber(player) == null
 			) return;
 			// The hook can be caught with the correct player.
 			if (
 				ticksCatchable > 0 &&
-				owner.getUUID().compareTo(EnvUtils.client().player.getUUID()) == 0
+				owner.getUUID().compareTo(player.getUUID()) == 0
 			) {
-				catchFish();
+				reelRod();
 			}
 		});
 	}
@@ -149,16 +154,17 @@ public class Autofish {
 		}
 	}
 
-	public void catchFish() {
+	public void reelRod() {
 		if (!modAutofish.getScheduler().isRecastQueued()) { // Prevents double reels.
-			if (EnvUtils.client().player != null) {
-				detectOpenWater(Common.getPlayerBobber(EnvUtils.client().player));
+			LocalPlayer player = EnvUtils.client().player;
+			if (player != null) {
+				checkAndNotifyOpenWater(Common.getPlayerBobber(player), player);
 			}
 			LogSession.info("Reeling scheduled.");
 			// Queue actions.
 			queueRodSwitch();
 			queueRecast();
-			modAutofish.getScheduler().scheduleAction(ActionType.REEL_IN, modAutofish.getConfig().getReelInDelay(), () -> useRodItem(EnvUtils.client().player));
+			modAutofish.getScheduler().scheduleAction(ActionType.REEL_IN, modAutofish.getConfig().getReelInDelay(), () -> useRodItem(player));
 		} else {
 			LogSession.info("Reeling prevented.");
 		}
@@ -189,6 +195,8 @@ public class Autofish {
 		);
 	}
 
+	/** See <code>isInOpenWater()</code>, <code>notifyOpenWater()</code> and <code>checkAndNotifyOpenWater()</code>. */
+	@Deprecated
 	private void detectOpenWater(Projectile bobber) {
 		/*
 		* To catch items in the treasure category, the bobber must be in open water,
@@ -277,24 +285,6 @@ public class Autofish {
 		}
 	}
 
-	private BlockState lastBlock = null;
-	public boolean isBobberInWater() {
-		if (EnvUtils.client().player == null || EnvUtils.client().level == null) {
-			lastBlock = null;
-			return false;
-		}
-		Projectile bobber = Common.getPlayerBobber(EnvUtils.client().player);
-		if (bobber == null) return false;
-		BlockState currentBlock = EnvUtils.client().level.getBlockState(bobber.blockPosition());
-		String currentBlockId = RegistryUtils.getIdKey(currentBlock);
-		boolean waterVerdict = Common.isLiquidFishableTo(EnvUtils.client().player, currentBlock);
-		if (currentBlock != lastBlock) {
-			LogSession.info("Block " + currentBlockId + (waterVerdict ? " is" : " isn't") + " fishable liquid.");
-		}
-		lastBlock = currentBlock;
-		return waterVerdict;
-	}
-
 	public void setDetection() {
 		if (modAutofish.getConfig().isUseSoundDetection()) {
 			fishMonitorMP = new FishMonitorMPSound();
@@ -318,9 +308,82 @@ public class Autofish {
 
 	// Rewritten sections go below.
 	// Properties for logging.
+	private boolean bobberOwnerNotNotified = true;
+	private BlockState lastBlock = null;
 	private boolean lastHeldRod = false;
+	private boolean lastNotifyAttemptOpenWater = false;
 	// Detection.
-	public boolean isRodHeld(Player player) {
+	/** Common method to determine if a method should return early. */
+	private boolean earlyReturn(LocalPlayer player) {
+		if (player == null) return true;
+		if (EnvUtils.client().level == null) return true;
+		if (EnvUtils.client().gameMode == null) return true;
+		return false;
+	}
+	/** Detect if the bobber is in water. */
+	private boolean isBobberInWater(LocalPlayer player) {
+		if (earlyReturn(player)) {
+			lastBlock = null;
+			return false;
+		}
+		Projectile bobber = Common.getPlayerBobber(player);
+		if (bobber == null) return false;
+		BlockState currentBlock = EnvUtils.client().level.getBlockState(bobber.blockPosition());
+		boolean waterVerdict = Common.isLiquidFishableTo(player, currentBlock);
+		if (currentBlock != lastBlock) {
+			LogSession.info("Block " + RegistryUtils.getIdKey(currentBlock) + (waterVerdict ? " is" : " isn't") + " fishable liquid.");
+		}
+		lastBlock = currentBlock;
+		return waterVerdict;
+	}
+	/** Detect if the bobber entity is in open water. Useful to determine if treasure items are going to be obtained. */
+	private boolean isInOpenWater(Projectile bobber, Player player, boolean useNewerMethod) {
+		/*
+		Source: https://minecraft.wiki/w/Fishing#Items_obtainable
+		The open water check is passed when all horizontal layers within the bounding box match only one of the two criteria below.
+		1. All of them are air blocks or lily pads.
+		2. All of them are water source blocks, or waterlogged blocks without collision. Flowing water is prohibited.
+		As an example, if a layer has both air blocks and water source blocks, the check fails. And even with the second criteria, if the fishing rod is in the bubble column directly, the check fails.
+		The detection bounding box is defined as 5×4×5 (w×h×d), centered around the bobber entity. 	As such, the box is defined as [a-2, a+2] on both horizontal directions, however this left ambiguity on the vertical axis. Is it (a-2, a+2] or [a-2, a+2) that formed the four-block height?
+		*/
+		// TODO: Determine what the vertical four block actually means. Could it be that the actual detection range is [-1, 2] (the bounding box used by the new method), since when the fish bites the bobber gets pulled into the source block? At least how Minecraft Wiki worded it suggests that this is the case.
+		if (bobber == null) return false;
+		// Old detection method inherited with some refactoring.
+		Level bobberWorld = bobber.level();
+		int blockX = bobber.getBlockX();
+		int blockY = bobber.getBlockY();
+		int blockZ = bobber.getBlockZ();
+		boolean verdict = false;
+		// Bounding box check
+		for (int deltaY = (useNewerMethod ? -1 : -2); deltaY <= 2; deltaY ++) {
+			boolean liquidVerdict = BlockPos.betweenClosedStream(
+				blockX - 2, blockY + deltaY, blockZ - 2,
+				blockX + 2, blockY + deltaY, blockZ + 2
+			).allMatch(blockPos -> Common.isLiquidFishableTo(player, bobberWorld.getBlockState(blockPos)));
+			boolean blockVerdict = BlockPos.betweenClosedStream(
+				blockX - 2, blockY + deltaY, blockZ - 2,
+				blockX + 2, blockY + deltaY, blockZ + 2
+			).allMatch(blockPos -> Common.isBlockNegligible(bobberWorld.getBlockState(blockPos)));
+			verdict = liquidVerdict || blockVerdict;
+			if (!verdict) break;
+		}
+		// Final check
+		if (useNewerMethod && verdict) {
+			// The older implementation does not directly check for bubble columns.
+			if (
+				bobberWorld.getBlockState(
+					bobber.blockPosition()
+				).getBlock() == Blocks.BUBBLE_COLUMN
+			) verdict = false;
+		}
+		return verdict;
+	}
+	/** Detect if a fishing rod is held. */
+	private boolean isRodHeld(LocalPlayer player) {
+		if (earlyReturn(player)) {
+			lastHeldRod = false;
+			return false;
+		};
 		ItemStack heldItemStack = PlayerUtils.getHeldStack(player, this::isOffhandPredicate);
 		boolean rodHeld = Common.isFishingRod(heldItemStack);
 		if (lastHeldRod != rodHeld) {
@@ -329,20 +392,48 @@ public class Autofish {
 		lastHeldRod = rodHeld;
 		return rodHeld;
 	}
+	/** Determine if the item on the offhand should be used. */
 	private boolean isOffhand(Player player) {
 		return PlayerUtils.matchOffhandItem(player, this::isOffhandPredicate);
 	}
+	/** The predicate used to determine if the offhand should be used. */
 	private boolean isOffhandPredicate(ItemStack itemStack) {
 		return Common.isFishingRod(itemStack);
 	}
 	// Interaction.
-	public void useRodItem(Player player) {
-		if (EnvUtils.client().level == null) return;
-		if (EnvUtils.client().gameMode == null) return;
-		if (player == null) return;
+	/** Notify the player of the open water check status. */
+	private void notifyOpenWater(Projectile bobber, Player player, boolean checkResult, boolean useNewerMethod) {
+		LogSession.info("Bobber " + (checkResult ? "was" : "wasn't") + " in open water.");
+		Player bobberOwner = Common.getPlayerOwner(bobber);
+		if (useNewerMethod || bobberOwnerNotNotified || (checkResult ^ lastNotifyAttemptOpenWater)) {
+			if (bobberOwner != null && (!useNewerMethod || player == bobberOwner)) {
+				bobberOwner.sendOverlayMessage(
+					Component.translatable(checkResult ? "info.autofish.open_water_detection.success" : "info.autofish.open_water_detection.fail")
+				);
+				bobberOwnerNotNotified = false;
+			} else {
+				bobberOwnerNotNotified = true;
+			}
+		}
+		lastNotifyAttemptOpenWater = checkResult;
+	}
+	/** Nullify item usage by attempting to switch away from fishing rods, and returns <code>true</code> when successful. Useful for avoiding rod usage when avoidable with this method, while still allowing hard cancellation via explicit usage. */
+	private boolean nullifyRodUsage(LocalPlayer player) {
+		// TODO: Implement natural slot shifting - Detect closest unmatched slot on either direction of scrolling, then decide which direction to scroll to accordingly. Should be useful to help evade overly stringent server-side anti-cheat.
+		return false;
+	}
+	/** Use the fishing rod item. */
+	private void useRodItem(LocalPlayer player) {
+		if (earlyReturn(player)) return;
 		boolean targetHand = isOffhand(EnvUtils.client().player);
 		//LogSession.debug("Selected " + (targetHand ? "main " : "off") + "hand.");
 		PlayerUtils.useItem(EnvUtils.client().player, targetHand);
 		return;
+	}
+	// Combined actions.
+	private void checkAndNotifyOpenWater(Projectile bobber, Player player) {
+		if (!modAutofish.getConfig().isOpenWaterDetectEnabled()) return;
+		boolean useNewerMethod = true; // TODO: Must be made configurable before the next release. Default to true, but allows the user to revert to compatible implementation with a single click.
+		notifyOpenWater(bobber, player, isInOpenWater(bobber, player, useNewerMethod), useNewerMethod);
 	}
 }
