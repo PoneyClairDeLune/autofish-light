@@ -10,7 +10,6 @@ public class Config {
     @Expose boolean noBreak = false;
     @Expose boolean persistentMode = false;
     @Expose boolean useSoundDetection = false;
-    @Expose boolean forceMPDetection = false;
     @Expose long recastDelay = 1500;
     @Expose long randomPercent = 50;
     @Expose long reelInDelay = 1;
@@ -36,8 +35,6 @@ public class Config {
     public boolean isUseSoundDetection() {
         return useSoundDetection;
     }
-
-    public boolean isForceMPDetection() { return forceMPDetection; }
 
     public long getRecastDelay() {
         return recastDelay;
@@ -66,8 +63,6 @@ public class Config {
     public void setUseSoundDetection(boolean useSoundDetection) {
         this.useSoundDetection = useSoundDetection;
     }
-
-    public void setForceMPDetection(boolean forceMPDetection) { this.forceMPDetection = forceMPDetection; }
 
     public void setRecastDelay(long recastDelay) {
         this.recastDelay = recastDelay;

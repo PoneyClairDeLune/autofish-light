@@ -65,12 +65,6 @@ public class FabricModAutofish implements ClientModInitializer {
 	public void handleChat(ClientboundSystemChatPacket packet) {
 		autofish.handleChat(packet);
 	}
-	/**
-	* Mixin callback for catchingFish method of EntityFishHook (singleplayer detection)
-	*/
-	public void tickFishingLogic(Entity owner, int ticksCatchable) {
-		autofish.tickFishingLogic(owner, ticksCatchable);
-	}
 
 	public static FabricModAutofish getInstance() {
 		return instance;

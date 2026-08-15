@@ -75,39 +75,11 @@ public class Autofish {
 				}
 				hookExists = true;
 				// Multiplayer catch listener
-				if (shouldUseMPDetection()) {
-					// Multiplayer-only, send tick event to monitor.
-					fishMonitorMP.hookTick(this, client, bobber);
-				}
+				fishMonitorMP.hookTick(this, client, bobber);
 			} else {
 				removeHook();
 			}
 		}
-	}
-
-	/**
-	* Callback from mixin for the catchingFish method of the EntityFishHook.
-	* For singleplayer detection only.
-	*/
-	@Deprecated
-	public void tickFishingLogic(Entity owner, int ticksCatchable) {
-		// This callback will come from the Server thread. Use client().execute() to run this action in the Render thread.
-		EnvUtils.client().execute(() -> {
-			if (!modAutofish.getConfig().isAutofishEnabled() || shouldUseMPDetection()) return;
-			LocalPlayer player = EnvUtils.client().player;
-			// Null checks for sanity.
-			if (
-				player == null ||
-				Common.getPlayerBobber(player) == null
-			) return;
-			// The hook can be caught with the correct player.
-			if (
-				ticksCatchable > 0 &&
-				owner.getUUID().compareTo(player.getUUID()) == 0
-			) {
-				reelRod();
-			}
-		});
 	}
 
 	/**
@@ -116,9 +88,7 @@ public class Autofish {
 	*/
 	public void handlePacket(Packet<?> packet) {
 		if (modAutofish.getConfig().isAutofishEnabled()) {
-			if (shouldUseMPDetection()) {
-				fishMonitorMP.handlePacket(this, packet, EnvUtils.client());
-			}
+			fishMonitorMP.handlePacket(this, packet, EnvUtils.client());
 		}
 	}
 
@@ -291,11 +261,6 @@ public class Autofish {
 		} else {
 			fishMonitorMP = new FishMonitorMPMotion();
 		}
-	}
-
-	private boolean shouldUseMPDetection(){
-		if (modAutofish.getConfig().isForceMPDetection()) return true;
-		return !EnvUtils.client().isLocalServer();
 	}
 
 	private long getRandomDelay(){

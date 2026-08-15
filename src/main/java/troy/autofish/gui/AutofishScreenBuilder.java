@@ -126,20 +126,6 @@ public class AutofishScreenBuilder {
 			.setYesNoTextSupplier(yesNoTextSupplier)
 			.build();
 
-		// Enforce multi-player detection everywhere.
-		AbstractConfigListEntry<Boolean> toggleForceMPDetection = entryBuilder.startBooleanToggle(Component.translatable("options.autofish.multiplayer_compat.title"), config.isForceMPDetection())
-			.setDefaultValue(defaults.isPersistentMode())
-			.setTooltip(
-				Component.translatable("options.autofish.multiplayer_compat.tooltip_0"),
-				Component.translatable("options.autofish.multiplayer_compat.tooltip_1"),
-				Component.translatable("options.autofish.multiplayer_compat.tooltip_2")
-			)
-			.setSaveConsumer(newValue -> {
-				modAutofish.getConfig().setForceMPDetection(newValue);
-			})
-			.setYesNoTextSupplier(yesNoTextSupplier)
-			.build();
-
 		// Configure the delay between recasts.
 		AbstractConfigListEntry<Long> recastDelaySlider = entryBuilder.startLongSlider(Component.translatable("options.autofish.recast_delay.title"), config.getRecastDelay(), 500, 5000)
 			.setDefaultValue(defaults.getRecastDelay())
@@ -205,7 +191,6 @@ public class AutofishScreenBuilder {
 
 		SubCategoryBuilder subCatBuilderAdvanced = entryBuilder.startSubCategory(Component.translatable("options.autofish.advanced.title"));
 		subCatBuilderAdvanced.add(toggleSoundDetection);
-		subCatBuilderAdvanced.add(toggleForceMPDetection);
 		subCatBuilderAdvanced.add(recastDelaySlider);
 		subCatBuilderAdvanced.add(randomDelaySlider);
 		subCatBuilderAdvanced.add(reelInDelay);
