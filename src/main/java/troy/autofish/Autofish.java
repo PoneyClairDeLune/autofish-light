@@ -111,18 +111,19 @@ public class Autofish {
 	}
 
 	public void reelRod() {
+		boolean emitReelingLogs = !modAutofish.getConfig().noisyDetection();
 		if (!modAutofish.getScheduler().isRecastQueued()) { // Prevents double reels.
 			LocalPlayer player = EnvUtils.client().player;
 			if (player != null) {
 				checkAndNotifyOpenWater(Common.getPlayerBobber(player), player);
 			}
-			LogSession.info("Reeling scheduled.");
+			if (emitReelingLogs) LogSession.info("Reeling scheduled.");
 			// Queue actions.
 			queueRodSwitch();
 			queueRecast();
 			modAutofish.getScheduler().scheduleAction(ActionType.REEL_IN, modAutofish.getConfig().getReelInDelay(), () -> useRodItem(player));
 		} else {
-			LogSession.info("Reeling prevented.");
+			if (emitReelingLogs) LogSession.info("Reeling prevented.");
 		}
 	}
 
