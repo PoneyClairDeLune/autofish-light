@@ -16,16 +16,17 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import troy.autofish.LogSession;
 
+/** <i>Spectrum</i> by DaFuqs. */
 public class Spectrum {
 	public static final String modId = "spectrum";
 	public static final String modNamespace = "spectrum";
-	private static final Set<String> modBobbers = new HashSet<>();
-	private static final Map<String, Set<TagKey<Fluid>>> modFluidTags = new ConcurrentHashMap<>();
-	private static final Set<String> modRods = new HashSet<>();
-	private static final Set<TagKey<Item>> modRodTags = new HashSet<>();
-	private static Class<?> accessorBobber = null;
+	public static final Set<String> modBobbers = new HashSet<>();
+	public static final Map<String, Set<TagKey<Fluid>>> modFluidTags = new ConcurrentHashMap<>();
+	public static final Set<String> modRods = new HashSet<>();
+	public static final Set<TagKey<Item>> modRodTags = new HashSet<>();
+	public static Class<?> accessorBobber = null;
 
-	private static void populateIds() {
+	public static void populateIds() {
 		// Explicitly hardcoded bobbers
 		if (modBobbers.size() <= 0) {
 			modBobbers.add("spectrum:lagoon_fishing_bobber");
@@ -39,7 +40,7 @@ public class Spectrum {
 			modRods.add("spectrum:bedrock_fishing_rod");
 		}
 	}
-	private static void populateFluidTags() {
+	public static void populateFluidTags() {
 		if (!Common.hasMod(modId)) return;
 		if (modFluidTags.size() > 0) return;
 		try {
@@ -57,7 +58,7 @@ public class Spectrum {
 			LogSession.error("Spectrum fluid tag retrieval error: " + err.getMessage());
 		}
 	}
-	private static void populateItemTags() {
+	public static void populateItemTags() {
 		if (!Common.hasMod(modId)) return;
 		if (modRodTags.size() > 0) return;
 		try {
@@ -72,7 +73,7 @@ public class Spectrum {
 		populateItemTags();
 	}
 
-	public static Projectile getModdedBobber(LocalPlayer player) {
+	public static Projectile getBobber(LocalPlayer player) {
 		if (!Common.hasMod(modId)) return null;
 		try {
 			// TODO: Move to ReflectorUtils.getMethod once properly tested on 1.21.1.
@@ -113,11 +114,11 @@ public class Spectrum {
 		}
 		return false;
 	}
-	public static boolean isModdedBobber(Projectile entity) {
+	public static boolean isBobber(Projectile entity) {
 		populateIds();
 		return modBobbers.contains(RegistryUtils.getIdKey(entity));
 	}
-	public static boolean isModdedRod(ItemStack itemStack) {
+	public static boolean isRod(ItemStack itemStack) {
 		if (!Common.hasMod(modId)) return false;
 		populateItemTags();
 		for (TagKey<Item> itemTag: modRodTags) {
@@ -125,7 +126,7 @@ public class Spectrum {
 		}
 		return false;
 	}
-	public static boolean isModdedRod(String itemId) {
+	public static boolean isRod(String itemId) {
 		populateIds();
 		return modRods.contains(itemId);
 	}

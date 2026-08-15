@@ -61,7 +61,7 @@ public class Common {
 		if (bobber != null) return bobber;
 		// Add more mods here.
 		if (hasMod("spectrum")) {
-			bobber = Spectrum.getModdedBobber(player);
+			bobber = Spectrum.getBobber(player);
 			if (bobber != null) return bobber;
 		}
 		return null;
@@ -93,7 +93,7 @@ public class Common {
 			lastBobberId = 0;
 			return false;
 		}
-		boolean bobberVerdict = entity instanceof FishingHook || Spectrum.isModdedBobber(entity);
+		boolean bobberVerdict = entity instanceof FishingHook || Spectrum.isBobber(entity);
 		int entityId = entity.getId();
 		if (entityId != lastBobberId) {
 			LogSession.info("Entity " + RegistryUtils.getIdKey(entity) + (bobberVerdict ? " is" : " is not") + " a bobber.");
@@ -109,7 +109,7 @@ public class Common {
 		return false;
 	}
 	/** Returns true if the liquid is fishable. Should be superceded, as different fishing rods have different allowed liquids to fish in. */
-	@Deprecated
+	//@Deprecated
 	public static boolean isFishableLiquid(Block block) {
 		if (block == null) return false;
 		String blockId = RegistryUtils.getIdKey(block);
@@ -173,11 +173,11 @@ public class Common {
 			}
 			// Modded section here.
 			case "gofish": {
-				return GoFish.isModdedRod(itemId);
+				return GoFish.isRod(itemId);
 				//break;
 			}
 			case "spectrum": {
-				return Spectrum.isModdedRod(itemId);
+				return Spectrum.isRod(itemId);
 				//break;
 			}
 		}
