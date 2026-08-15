@@ -9,7 +9,6 @@ import cc.ltgc.luneApi.*;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
-import troy.autofish.LogSession;
 
 /** <i>Go Fish</i> by Draylar. */
 public class GoFish {
