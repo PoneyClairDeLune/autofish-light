@@ -13,9 +13,8 @@ import troy.autofish.config.Config;
 import java.util.function.Function;
 
 public class AutofishScreenBuilder {
-	private static final Function<Boolean, Component> yesNoTextSupplier = bool -> {
-		if (bool) return Component.translatable("options.autofish.toggle.on");
-		else return Component.translatable("options.autofish.toggle.off");
+	private static final Function<Boolean, Component> booleanTextComponent = bool -> {
+		return Component.translatable(bool ? "options.autofish.toggle.on" : "options.autofish.toggle.off");
 	};
 
 	public static Screen buildScreen(FabricModAutofish modAutofish, Screen parentScreen) {
@@ -23,108 +22,133 @@ public class AutofishScreenBuilder {
 		Config config = modAutofish.getConfig();
 
 		ConfigBuilder builder = ConfigBuilder.create()
-			.setParentScreen(parentScreen)
-			.setTitle(Component.translatable("options.autofish.title"))
-			.transparentBackground()
-			.setDoesConfirmSave(true)
-			.setSavingRunnable(() -> {
-				modAutofish.getConfig().enforceConstraints();
-				modAutofish.getConfigManager().writeConfig(true);
-			});
+		.setParentScreen(parentScreen)
+		.setTitle(
+			Component.translatable("options.autofish.title")
+		).transparentBackground()
+		.setDoesConfirmSave(true)
+		.setSavingRunnable(() -> {
+			modAutofish.getConfig().enforceConstraints();
+			modAutofish.getConfigManager().writeConfig(true);
+		});
 
 		ConfigEntryBuilder entryBuilder = builder.entryBuilder();
-		ConfigCategory configCat = builder.getOrCreateCategory(Component.translatable("options.autofish.config"));
+		ConfigCategory configCat = builder.getOrCreateCategory(
+			Component.translatable("options.autofish.config")
+		);
 
 		// If the mod should be enabled.
-		AbstractConfigListEntry<Boolean> toggleAutofish = entryBuilder.startBooleanToggle(Component.translatable("options.autofish.enable.title"), config.isAutofishEnabled())
-			.setDefaultValue(defaults.isAutofishEnabled())
-			.setTooltip(Component.translatable("options.autofish.enable.tooltip"))
-			.setSaveConsumer(newValue -> {
-				modAutofish.getConfig().setAutofishEnabled(newValue);
-			})
-			.setYesNoTextSupplier(yesNoTextSupplier)
-			.build();
+		AbstractConfigListEntry<Boolean> toggleAutofish = entryBuilder.startBooleanToggle(
+			Component.translatable("options.autofish.enable.title"),
+			config.modEnabled()
+		).setDefaultValue(
+			defaults.modEnabled()
+		).setTooltip(
+			Component.translatable("options.autofish.enable.tooltip")
+		).setSaveConsumer(value -> {
+			modAutofish.getConfig().modEnabled(value);
+		}).setYesNoTextSupplier(
+			booleanTextComponent
+		).build();
 
 		// Should the mod use multiple rods.
-		AbstractConfigListEntry<Boolean> toggleMultiRod = entryBuilder.startBooleanToggle(Component.translatable("options.autofish.multirod.title"), config.isMultiRod())
-			.setDefaultValue(defaults.isMultiRod())
-			.setTooltip(
-				Component.translatable("options.autofish.multirod.tooltip_0"),
-				Component.translatable("options.autofish.multirod.tooltip_1"),
-				Component.translatable("options.autofish.multirod.tooltip_2")
-			)
-			.setSaveConsumer(newValue -> {
-				modAutofish.getConfig().setMultiRod(newValue);
-			})
-			.setYesNoTextSupplier(yesNoTextSupplier)
-			.build();
+		AbstractConfigListEntry<Boolean> toggleMultiRod = entryBuilder.startBooleanToggle(
+			Component.translatable("options.autofish.multirod.title"),
+			config.multiRod()
+		).setDefaultValue(
+			defaults.multiRod()
+		).setTooltip(
+			Component.translatable("options.autofish.multirod.tooltip")
+		).setSaveConsumer(newValue -> {
+			modAutofish.getConfig().multiRod(newValue);
+		}).setYesNoTextSupplier(
+			booleanTextComponent
+		).build();
 
 		// Should the mod detect open water.
-		AbstractConfigListEntry<Boolean> toggleOpenWaterDetection = entryBuilder.startBooleanToggle(Component.translatable("options.autofish.open_water_detection.title"), config.isOpenWaterDetectEnabled())
-			.setDefaultValue(defaults.isOpenWaterDetectEnabled())
-			.setTooltip(
-				Component.translatable("options.autofish.open_water_detection.tooltip_0"),
-				Component.translatable("options.autofish.open_water_detection.tooltip_1"),
-				Component.translatable("options.autofish.open_water_detection.tooltip_2")
-			)
-			.setSaveConsumer(newValue -> {
-				modAutofish.getConfig().setOpenWaterDetectEnabled(newValue);
-			})
-			.setYesNoTextSupplier(yesNoTextSupplier)
-			.build();
+		AbstractConfigListEntry<Boolean> toggleOpenWaterDetection = entryBuilder.startBooleanToggle(
+			Component.translatable("options.autofish.open_water_detection.title"),
+			config.openWaterDetected()
+		).setDefaultValue(
+			defaults.openWaterDetected()
+		).setTooltip(
+			Component.translatable("options.autofish.open_water_detection.tooltip")
+		).setSaveConsumer(newValue -> {
+			modAutofish.getConfig().openWaterDetected(newValue);
+		}).setYesNoTextSupplier(
+			booleanTextComponent
+		).build();
 
 		// Should the mod prevent rods from breaking.
-		AbstractConfigListEntry<Boolean> toggleBreakProtection = entryBuilder.startBooleanToggle(Component.translatable("options.autofish.break_protection.title"), config.isNoBreak())
-			.setDefaultValue(defaults.isNoBreak())
-			.setTooltip(
-				Component.translatable("options.autofish.break_protection.tooltip_0"),
-				Component.translatable("options.autofish.break_protection.tooltip_1")
-			)
-			.setSaveConsumer(newValue -> {
-				modAutofish.getConfig().setNoBreak(newValue);
-			})
-			.setYesNoTextSupplier(yesNoTextSupplier)
-			.build();
+		AbstractConfigListEntry<Boolean> toggleBreakProtection = entryBuilder.startBooleanToggle(
+			Component.translatable("options.autofish.break_protection.title"),
+			config.rodBreakAvoided()
+		).setDefaultValue(
+			defaults.rodBreakAvoided()
+		).setTooltip(
+			Component.translatable("options.autofish.break_protection.tooltip")
+		).setSaveConsumer(newValue -> {
+			modAutofish.getConfig().rodBreakAvoided(newValue);
+		}).setYesNoTextSupplier(
+			booleanTextComponent
+		).build();
 
 		// Should the mod attempt recasts.
-		AbstractConfigListEntry<Boolean> togglePersistentMode = entryBuilder.startBooleanToggle(Component.translatable("options.autofish.persistent.title"), config.isPersistentMode())
-			.setDefaultValue(defaults.isPersistentMode())
-			.setTooltip(
-				Component.translatable("options.autofish.persistent.tooltip_0"),
-				Component.translatable("options.autofish.persistent.tooltip_1"),
-				Component.translatable("options.autofish.persistent.tooltip_2"),
-				Component.translatable("options.autofish.persistent.tooltip_3"),
-				Component.translatable("options.autofish.persistent.tooltip_4"),
-				Component.translatable("options.autofish.persistent.tooltip_5")
-			)
-			.setSaveConsumer(newValue -> {
-				modAutofish.getConfig().setPersistentMode(newValue);
-			})
-			.setYesNoTextSupplier(yesNoTextSupplier)
-			.build();
+		AbstractConfigListEntry<Boolean> togglePersistentMode = entryBuilder.startBooleanToggle(
+			Component.translatable("options.autofish.persistent.title"),
+			config.persistentMode()
+		).setDefaultValue(defaults.persistentMode()
+		).setTooltip(
+			Component.translatable("options.autofish.persistent.tooltip")
+		).setSaveConsumer(newValue -> {
+			modAutofish.getConfig().persistentMode(newValue);
+		}).setYesNoTextSupplier(
+			booleanTextComponent
+		).build();
 
 
 		// Should the mod use sound-based detection.
-		AbstractConfigListEntry<Boolean> toggleSoundDetection = entryBuilder.startBooleanToggle(Component.translatable("options.autofish.sound.title"), config.isUseSoundDetection())
-			.setDefaultValue(defaults.isUseSoundDetection())
-			.setTooltip(
-				Component.translatable("options.autofish.sound.tooltip_0"),
-				Component.translatable("options.autofish.sound.tooltip_1"),
-				Component.translatable("options.autofish.sound.tooltip_2"),
-				Component.translatable("options.autofish.sound.tooltip_3"),
-				Component.translatable("options.autofish.sound.tooltip_4"),
-				Component.translatable("options.autofish.sound.tooltip_5"),
-				Component.translatable("options.autofish.sound.tooltip_6"),
-				Component.translatable("options.autofish.sound.tooltip_7"),
-				Component.translatable("options.autofish.sound.tooltip_8"),
-				Component.translatable("options.autofish.sound.tooltip_9")
-			)
-			.setSaveConsumer(newValue -> {
-				modAutofish.getConfig().setUseSoundDetection(newValue);
-				modAutofish.getAutofish().setDetection();
-			})
-			.setYesNoTextSupplier(yesNoTextSupplier)
-			.build();
+		AbstractConfigListEntry<Boolean> toggleSoundDetection = entryBuilder.startBooleanToggle(
+			Component.translatable("options.autofish.sound.title"),
+			config.soundUsed()
+		).setDefaultValue(
+			defaults.soundUsed()
+		).setTooltip(
+			Component.translatable("options.autofish.sound.tooltip")
+		).setSaveConsumer(newValue -> {
+			modAutofish.getConfig().soundUsed(newValue);
+			modAutofish.getAutofish().setDetection();
+		}).setYesNoTextSupplier(
+			booleanTextComponent
+		).build();
+
+		// Should the open water detection algorithm use the new algorithm.
+		AbstractConfigListEntry<Boolean> toggleOpenWaterNewAlgo = entryBuilder.startBooleanToggle(
+			Component.translatable("options.autofish.open_water_new_algorithm.title"),
+			config.openWaterNewAlgo()
+		).setDefaultValue(
+			defaults.openWaterNewAlgo()
+		).setTooltip(
+			Component.translatable("options.autofish.open_water_new_algorithm.tooltip")
+		).setSaveConsumer(value -> {
+			modAutofish.getConfig().openWaterNewAlgo(value);
+		}).setYesNoTextSupplier(
+			booleanTextComponent
+		).build();
+
+		// Should the detection .
+		AbstractConfigListEntry<Boolean> toggleNoisyDetection = entryBuilder.startBooleanToggle(
+			Component.translatable("options.autofish.noisy_detection.title"),
+			config.noisyDetection()
+		).setDefaultValue(
+			defaults.noisyDetection()
+		).setTooltip(
+			Component.translatable("options.autofish.noisy_detection.tooltip")
+		).setSaveConsumer(value -> {
+			modAutofish.getConfig().noisyDetection(value);
+		}).setYesNoTextSupplier(
+			booleanTextComponent
+		).build();
 
 		// Configure the delay between recasts.
 		AbstractConfigListEntry<Long> recastDelaySlider = entryBuilder.startLongSlider(Component.translatable("options.autofish.recast_delay.title"), config.getRecastDelay(), 500, 5000)
@@ -185,12 +209,14 @@ public class AutofishScreenBuilder {
 		subCatBuilderBasic.add(toggleMultiRod);
 		subCatBuilderBasic.add(toggleOpenWaterDetection);
 		subCatBuilderBasic.add(toggleBreakProtection);
-		subCatBuilderBasic.add((togglePersistentMode));
+		subCatBuilderBasic.add(togglePersistentMode);
 		subCatBuilderBasic.setExpanded(true);
 		configCat.addEntry(subCatBuilderBasic.build());
 
 		SubCategoryBuilder subCatBuilderAdvanced = entryBuilder.startSubCategory(Component.translatable("options.autofish.advanced.title"));
 		subCatBuilderAdvanced.add(toggleSoundDetection);
+		subCatBuilderAdvanced.add(toggleOpenWaterNewAlgo);
+		subCatBuilderAdvanced.add(toggleNoisyDetection);
 		subCatBuilderAdvanced.add(recastDelaySlider);
 		subCatBuilderAdvanced.add(randomDelaySlider);
 		subCatBuilderAdvanced.add(reelInDelay);

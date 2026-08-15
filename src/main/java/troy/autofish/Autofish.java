@@ -13,7 +13,6 @@ import net.minecraft.network.protocol.game.ClientboundSystemChatPacket;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.StringUtil;
 import net.minecraft.util.Util;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.projectile.Projectile;
@@ -34,8 +33,6 @@ public class Autofish {
 	private FishMonitorMP fishMonitorMP;
 
 	private boolean hookExists = false;
-	private boolean playerAlreadyAlerted = false;
-	private boolean playerOpenCheckAlreadyPassed = false;
 	private long hookRemovedAt = 0L;
 	public long timeMillis = 0L;
 
@@ -50,7 +47,7 @@ public class Autofish {
 		modAutofish.getScheduler().scheduleRepeatingAction(10000, () -> {
 			LocalPlayer player = EnvUtils.client().player;
 			if (!isRodHeld(player)) return;
-			if (!modAutofish.getConfig().isPersistentMode()) return;
+			if (!modAutofish.getConfig().persistentMode()) return;
 			if (Common.shouldNotReel(player, false)) return;
 			if (hookExists) {
 				if (isBobberInWater(player)) return;
@@ -64,7 +61,7 @@ public class Autofish {
 	public void tick(Minecraft client) {
 		if (client.level == null || client.player == null) return;
 		if (
-			modAutofish.getConfig().isAutofishEnabled()
+			modAutofish.getConfig().modEnabled()
 		) {
 			timeMillis = Util.getMillis(); // Update current working time for this tick.
 			Projectile bobber = Common.getPlayerBobber(client.player);
@@ -87,7 +84,7 @@ public class Autofish {
 	* For multiplayer detection only
 	*/
 	public void handlePacket(Packet<?> packet) {
-		if (modAutofish.getConfig().isAutofishEnabled()) {
+		if (modAutofish.getConfig().modEnabled()) {
 			fishMonitorMP.handlePacket(this, packet, EnvUtils.client());
 		}
 	}
@@ -98,7 +95,7 @@ public class Autofish {
 	*/
 	public void handleChat(ClientboundSystemChatPacket packet) {
 		if (
-			!modAutofish.getConfig().isAutofishEnabled() ||
+			!modAutofish.getConfig().modEnabled() ||
 			EnvUtils.client().isLocalServer() ||
 			!isRodHeld(EnvUtils.client().player)
 		) return;
@@ -159,67 +156,10 @@ public class Autofish {
 			ActionType.ROD_SWITCH,
 			(long) (getRandomDelay() * 0.83) + modAutofish.getConfig().getReelInDelay(),
 			() -> {
-				if (!modAutofish.getConfig().isMultiRod()) return;
+				if (!modAutofish.getConfig().multiRod()) return;
 				switchToFirstRod(EnvUtils.client().player);
 			}
 		);
-	}
-
-	/** See <code>isInOpenWater()</code>, <code>notifyOpenWater()</code> and <code>checkAndNotifyOpenWater()</code>. */
-	@Deprecated
-	private void detectOpenWater(Projectile bobber) {
-		/*
-		* To catch items in the treasure category, the bobber must be in open water,
-		* defined as the 5×4×5 vicinity around the bobber resting on the water surface
-		* (2 blocks away horizontally, 2 blocks above the water surface, and 2 blocks deep).
-		* Each horizontal layer in this area must consist only of air and lily pads or water source blocks,
-		* waterlogged blocks without collision (such as signs, kelp, or coral fans), and bubble columns.
-		* (from Minecraft wiki)
-		*/
-		if (!modAutofish.getConfig().isOpenWaterDetectEnabled()) return;
-		if (bobber == null) return;
-		int x = bobber.getBlockX();
-		int y = bobber.getBlockY();
-		int z = bobber.getBlockZ();
-		boolean flag = true;
-		// Refactor note: It seems like not all blocks listed were matched. Perhaps time to look at later?
-		for (int yi = -2; yi <= 2; yi ++) {
-			if (!(
-				BlockPos.betweenClosedStream(x - 2, y + yi, z - 2, x + 2, y + yi, z + 2).allMatch((blockPos ->
-					// Every block is water.
-					Common.isLiquidFishableTo(EnvUtils.client().player, bobber.level().getBlockState(blockPos))
-				)) ||
-				BlockPos.betweenClosedStream(x - 2, y + yi, z - 2, x + 2, y + yi, z + 2).allMatch((blockPos ->
-					// Or every block is air or lily pad.
-					Common.isBlockNegligible(bobber.level().getBlockState(blockPos))
-				))
-			)) {
-				// Didn't pass the open water check.
-				if (!playerAlreadyAlerted) {
-					Player bobberOwner = Common.getPlayerOwner(bobber);
-					if (bobberOwner != null) {
-						bobberOwner.sendOverlayMessage(
-							Component.translatable("info.autofish.open_water_detection.fail")
-						);
-						playerAlreadyAlerted = true;
-						playerOpenCheckAlreadyPassed = false;
-					}
-					LogSession.warn("Bobber wasn't in open water.");
-				}
-				flag = false;
-			}
-		}
-		if (flag && !playerOpenCheckAlreadyPassed) {
-			Player bobberOwner = Common.getPlayerOwner(bobber);
-			if (bobberOwner != null) {
-				bobberOwner.sendOverlayMessage(
-					Component.translatable("info.autofish.open_water_detection.success")
-				);
-				playerOpenCheckAlreadyPassed = true;
-				playerAlreadyAlerted = false;
-			}
-			LogSession.info("Bobber was in open water.");
-		}
 	}
 
 	/**
@@ -242,7 +182,7 @@ public class Autofish {
 			if (i >= 9) break; // Hotbar only.
 			ItemStack slotStack = mainInventory.get(i);
 			if (Common.isFishingRod(slotStack)) {
-				if (modAutofish.getConfig().isNoBreak()) {
+				if (modAutofish.getConfig().rodBreakAvoided()) {
 					if (slotStack.getDamageValue() + Common.damageSafeMargin < slotStack.getMaxDamage()) {
 						inventory.setSelectedSlot(i);
 						return;
@@ -256,7 +196,7 @@ public class Autofish {
 	}
 
 	public void setDetection() {
-		if (modAutofish.getConfig().isUseSoundDetection()) {
+		if (modAutofish.getConfig().soundUsed()) {
 			fishMonitorMP = new FishMonitorMPSound();
 		} else {
 			fishMonitorMP = new FishMonitorMPMotion();
@@ -367,10 +307,10 @@ public class Autofish {
 	}
 	// Interaction.
 	/** Notify the player of the open water check status. */
-	private void notifyOpenWater(Projectile bobber, Player player, boolean checkResult, boolean useNewerMethod) {
-		LogSession.info("Bobber " + (checkResult ? "was" : "wasn't") + " in open water.");
+	private void notifyOpenWater(Projectile bobber, Player player, boolean checkResult, boolean useNewerMethod, boolean isNoisy) {
 		Player bobberOwner = Common.getPlayerOwner(bobber);
-		if (useNewerMethod || bobberOwnerNotNotified || (checkResult ^ lastNotifyAttemptOpenWater)) {
+		if (bobberOwnerNotNotified || isNoisy || (checkResult ^ lastNotifyAttemptOpenWater)) {
+			LogSession.info("Bobber " + (checkResult ? "was" : "wasn't") + " in open water.");
 			if (bobberOwner != null && (!useNewerMethod || player == bobberOwner)) {
 				bobberOwner.sendOverlayMessage(
 					Component.translatable(checkResult ? "info.autofish.open_water_detection.success" : "info.autofish.open_water_detection.fail")
@@ -397,8 +337,9 @@ public class Autofish {
 	}
 	// Combined actions.
 	private void checkAndNotifyOpenWater(Projectile bobber, Player player) {
-		if (!modAutofish.getConfig().isOpenWaterDetectEnabled()) return;
-		boolean useNewerMethod = true; // TODO: Must be made configurable before the next release. Default to true, but allows the user to revert to compatible implementation with a single click.
-		notifyOpenWater(bobber, player, isInOpenWater(bobber, player, useNewerMethod), useNewerMethod);
+		if (!modAutofish.getConfig().openWaterDetected()) return;
+		boolean useNewerMethod = modAutofish.getConfig().openWaterNewAlgo();
+		boolean isNoisy = modAutofish.getConfig().noisyDetection();
+		notifyOpenWater(bobber, player, isInOpenWater(bobber, player, useNewerMethod), useNewerMethod, isNoisy);
 	}
 }

@@ -32,7 +32,7 @@ public class AutofishScheduler {
         }
 
         //Clear out the action queue whenever Autofish is disabled or we are not ingame
-        if (!modAutofish.getConfig().isAutofishEnabled()) queuedActions.clear();
+        if (!modAutofish.getConfig().modEnabled()) queuedActions.clear();
         //Clear out the action queue whenever world or player goes null
         //Also returns method to prevent NullPointers on any scheduled actions
         if (client.level == null || client.player == null) {

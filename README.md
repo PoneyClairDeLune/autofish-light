@@ -48,7 +48,7 @@ The built versions of the mod may already work on other versions, although it's 
 ### Modded content doesn't work in single player!
 > This mod has removed singleplayer-specific detection, making this FAQ entry obsolete. Mod compatibility problem should refer to the "request mod support" section below.
 
-Due to mixin requirements, support for modded fishing rods and liquids is only available via multiplayer detection. Please enforce multiplayer detection whenever you can.
+~~Due to mixin requirements, support for modded fishing rods and liquids is only available via multiplayer detection. Please enforce multiplayer detection whenever you can.~~
 
 ### Fishing rods constantly re-reel in the air!
 It's caused by the very old code in persistent mode that disregards the past state, only snapshots in time captured every 10 seconds. I have a plan to fix this in the future with a refined algorithm, but until then please bear with it a bit longer. If you prefer the older algorithm, there will be a new toggle for the legacy behaviour.

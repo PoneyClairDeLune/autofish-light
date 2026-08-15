@@ -3,65 +3,93 @@ package troy.autofish.config;
 import com.google.gson.annotations.Expose;
 
 public class Config {
+	@Expose boolean modEnabled = true;
+	@Expose boolean multiRod = false;
+	@Expose boolean noisyDetection = false;
+	@Expose boolean openWaterDetected = true;
+	@Expose boolean openWaterNewAlgo = true;
+	@Expose boolean rodBreakAvoided = true;
+	@Expose boolean persistentMode = false;
+	@Expose boolean soundUsed = false;
+	@Expose long recastDelay = 1500;
+	@Expose long randomPercent = 50;
+	@Expose long reelInDelay = 1;
+	@Expose String clearLagRegex = "\\[ClearLag\\] Removed [0-9]+ Entities!";
 
-    @Expose boolean isAutofishEnabled = true;
-    @Expose boolean multiRod = false;
-    @Expose boolean isOpenWaterDetectEnabled = true;
-    @Expose boolean noBreak = false;
-    @Expose boolean persistentMode = false;
-    @Expose boolean useSoundDetection = false;
-    @Expose long recastDelay = 1500;
-    @Expose long randomPercent = 50;
-    @Expose long reelInDelay = 1;
-    @Expose String clearLagRegex = "\\[ClearLag\\] Removed [0-9]+ Entities!";
+	/**
+	* @return true if anything was changed
+	*/
+	public boolean enforceConstraints() {
+		boolean changed = false;
+		if (recastDelay < 500) {
+			recastDelay = 500;
+			changed = true;
+		}
+		if (clearLagRegex == null) {
+			clearLagRegex = "";
+			changed = true;
+		}
+		return changed;
+	}
 
-    public boolean isAutofishEnabled() {
-        return isAutofishEnabled;
-    }
-    public boolean isOpenWaterDetectEnabled() {
-        return isOpenWaterDetectEnabled;
-    }
+	public boolean modEnabled() {
+		return modEnabled;
+	}
+	public boolean multiRod() {
+		return multiRod;
+	}
+	public boolean noisyDetection() {
+		return noisyDetection;
+	}
+	public boolean openWaterDetected() {
+		return openWaterDetected;
+	}
+	public boolean openWaterNewAlgo() {
+		return openWaterNewAlgo;
+	}
+	public boolean persistentMode() {
+		return persistentMode;
+	}
+	public boolean rodBreakAvoided() {
+		return rodBreakAvoided;
+	}
+	public boolean soundUsed() {
+		return soundUsed;
+	}
 
-    public boolean isMultiRod() {
-        return multiRod;
-    }
-
-    public boolean isNoBreak() {
-        return noBreak;
-    }
-
-    public boolean isPersistentMode() { return persistentMode; }
-
-    public boolean isUseSoundDetection() {
-        return useSoundDetection;
-    }
+	public void modEnabled(boolean value) {
+		modEnabled = value;
+	}
+	public void multiRod(boolean value) {
+		multiRod = value;
+	}
+	public void noisyDetection(boolean value) {
+		noisyDetection = value;
+	}
+	public void openWaterDetected(boolean value) {
+		openWaterDetected = value;
+	}
+	public void openWaterNewAlgo(boolean value) {
+		openWaterNewAlgo = value;
+	}
+	public void persistentMode(boolean value) {
+		persistentMode = value;
+	}
+	public void rodBreakAvoided(boolean value) {
+		rodBreakAvoided = value;
+	}
+	public void soundUsed(boolean value) {
+		soundUsed = value;
+	}
 
     public long getRecastDelay() {
         return recastDelay;
     }
-
     public long getRandomDelay(){
         return randomPercent;
     }
-
     public String getClearLagRegex() {
         return clearLagRegex;
-    }
-
-    public void setAutofishEnabled(boolean autofishEnabled) { isAutofishEnabled = autofishEnabled; }
-
-    public void setMultiRod(boolean multiRod) {
-        this.multiRod = multiRod;
-    }
-
-    public void setNoBreak(boolean noBreak) {
-        this.noBreak = noBreak;
-    }
-
-    public void setPersistentMode(boolean persistentMode) { this.persistentMode = persistentMode; }
-
-    public void setUseSoundDetection(boolean useSoundDetection) {
-        this.useSoundDetection = useSoundDetection;
     }
 
     public void setRecastDelay(long recastDelay) {
@@ -70,19 +98,13 @@ public class Config {
     public void setRandomDelay(long randomPercent){
         this.randomPercent = randomPercent;
     }
-
     public void setClearLagRegex(String clearLagRegex) {
         this.clearLagRegex = clearLagRegex;
-    }
-
-    public void setOpenWaterDetectEnabled(boolean openWaterDetectEnabled) {
-        isOpenWaterDetectEnabled = openWaterDetectEnabled;
     }
 
     public long getRandomPercent() {
         return randomPercent;
     }
-
     public void setRandomPercent(long randomPercent) {
         this.randomPercent = randomPercent;
     }
@@ -90,24 +112,7 @@ public class Config {
     public long getReelInDelay() {
         return reelInDelay;
     }
-
     public void setReelInDelay(long reelInDelay) {
         this.reelInDelay = reelInDelay;
-    }
-
-    /**
-     * @return true if anything was changed
-     */
-    public boolean enforceConstraints() {
-        boolean changed = false;
-        if (recastDelay < 500) {
-            recastDelay = 500;
-            changed = true;
-        }
-        if (clearLagRegex == null) {
-            clearLagRegex = "";
-            changed = true;
-        }
-        return changed;
     }
 }

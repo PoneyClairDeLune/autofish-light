@@ -191,7 +191,7 @@ public class Common {
 		boolean noReelingVerdict = false;
 		if (breakThreshold > 0) {
 			// There's little sense to not use rods that are unbreakable, right?
-			noReelingVerdict = modInstance.getConfig().isNoBreak() && currentDamage + damageSafeMargin >= breakThreshold;
+			noReelingVerdict = modInstance.getConfig().rodBreakAvoided() && currentDamage + damageSafeMargin >= breakThreshold;
 		}
 		LogSession.debug("The fishing rod shoul" + (noReelingVerdict ? "dn't" : "d") + " reel.");
 		return noReelingVerdict;
