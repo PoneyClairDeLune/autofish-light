@@ -75,7 +75,7 @@ public abstract class NamespacedContent {
 
 	/** Method used to test if the mod has been loaded at all. */
 	public boolean hasMod() {
-		boolean modExistence = EnvUtils.loader.isModLoaded(id);
+		boolean modExistence = EnvUtils.loader().isModLoaded(id);
 		Boolean oldValue = modExistOld.get(id);
 		if (oldValue == null || modExistence != oldValue) {
 			LogSession.info("Mod \"" + id + "\" " + (modExistence ? "exists" : "does not exist") + ".");

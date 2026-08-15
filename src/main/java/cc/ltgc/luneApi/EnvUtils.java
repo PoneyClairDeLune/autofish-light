@@ -44,11 +44,13 @@ public class EnvUtils {
 	/** The game version string. */
 	public static final String gameVersionString = SharedConstants.getCurrentVersion().name();
 	/** The mod loader instance. */
-	public static FabricLoader loader = FabricLoader.getInstance();
+	public static FabricLoader loader() {
+		return FabricLoader.getInstance();
+	};
 
 	static {
 		//if (client == null) client = Minecraft.getInstance();
-		String[] launchArgs = loader.getLaunchArguments(true);
+		String[] launchArgs = loader().getLaunchArguments(true);
 		String mapKey = null;
 		Map<String, String> newMap = new HashMap<>();
 		for (String e: launchArgs) {
