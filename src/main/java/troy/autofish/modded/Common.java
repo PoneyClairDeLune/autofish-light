@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import cc.ltgc.luneApi.*;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.FluidTags;
@@ -22,7 +23,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
 import troy.autofish.FabricModAutofish;
 import troy.autofish.LogSession;
-import troy.autofish.luneApi.*;
 
 /** Common methods used for allowing mod support. */
 public class Common {

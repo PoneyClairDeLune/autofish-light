@@ -3,6 +3,7 @@ package troy.autofish;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import cc.ltgc.luneApi.*;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.client.Minecraft;
@@ -24,7 +25,6 @@ import troy.autofish.monitor.FishMonitorMP;
 import troy.autofish.monitor.FishMonitorMPMotion;
 import troy.autofish.monitor.FishMonitorMPSound;
 import troy.autofish.scheduler.ActionType;
-import troy.autofish.luneApi.*;
 
 import org.apache.commons.lang3.StringUtils;
 
