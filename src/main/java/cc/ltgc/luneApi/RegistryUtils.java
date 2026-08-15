@@ -3,7 +3,7 @@
 
 package cc.ltgc.luneApi;
 
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.Map;
 
 //import net.minecraft.core.component.DataComponentMap;
@@ -14,10 +14,6 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.IdentifierException;
 import net.minecraft.resources.Identifier;
 //import net.minecraft.resources.ResourceKey;
-//import net.minecraft.tags.BlockTags;
-//import net.minecraft.tags.EntityTypeTags;
-//import net.minecraft.tags.FluidTags;
-//import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -34,13 +30,7 @@ public class RegistryUtils {
 	public static final String DEFAULT_NAMESPACE = "minecraft";
 	public static final String NAMESPACE_DELIMITER = ":";
 
-	private static final Map<String, Identifier> fullIdCache = new HashMap<>();
-	/*private static final Map<ResourceKey<? extends Registry<?>>, Map<String, TagKey<?>>> splitTagCache = new HashMap<>();
-
-	@SuppressWarnings("unchecked")
-	private static <T> TagKey<T> unsafelyRestoreType(TagKey<?> source) {
-		return (TagKey<T>) source; // Unchecked cast!
-	}*/
+	private static final Map<String, Identifier> fullIdCache = new ConcurrentHashMap<>();
 
 	/** Retrieve cached tags. Namespace "minecraft" and path "logs_that_burn" will be assembled into "minecraft:logs_that_burn" first to query the cache, before the actual identifier creation ever happens.
 	* <br/>Avoid creating ephemeral identifier objects. */
@@ -49,7 +39,8 @@ public class RegistryUtils {
 			namespace = DEFAULT_NAMESPACE;
 		}
 		String fullPath = namespace + NAMESPACE_DELIMITER + path;
-		if (fullIdCache.containsKey(fullPath)) return fullIdCache.get(fullPath);
+		Identifier cacheResult = fullIdCache.get(fullPath);
+		if (cacheResult != null) return cacheResult;
 		Identifier targetId = Identifier.fromNamespaceAndPath(namespace, path);
 		fullIdCache.put(fullPath, targetId);
 		return targetId;
@@ -65,25 +56,6 @@ public class RegistryUtils {
 		fullIdCache.put(fullPath, targetId);
 		return targetId;
 	}
-	/** Retrieve tag containers. */
-	/*public static <T> Object getTagContainer(Registry<T> registry, TagKey<T> tagKey, Identifier id) {
-		Object tagContainer = registry.get(id);
-		return tagContainer;
-	}*/
-	/** Retrieve cached tag keys. */
-	/*public static <T> TagKey<T> getTagKey(ResourceKey<Registry<T>> registry, String fullPath) {
-		// Example registry: net.minecraft.core.registries.Registries.BLOCK
-		Map<String, TagKey<?>> registryCache = splitTagCache.get(registry);
-		if (registryCache == null) {
-			registryCache = new HashMap<>();
-			splitTagCache.put(registry, registryCache);
-		}
-		TagKey<T> targetTag = unsafelyRestoreType(registryCache.get(fullPath));
-		if (targetTag != null) return targetTag; // Unchecked cast on this line!
-		targetTag = TagKey.create(registry, getId(fullPath));
-		registryCache.put(fullPath, targetTag);
-		return targetTag;
-	}*/
 	/** Retrieve registry ID keys like "minecraft:stone". */
 	public static String getIdKey(Block block) {
 		if (block == null) return null;
@@ -123,6 +95,46 @@ public class RegistryUtils {
 	public static String getIdKey(ItemStack itemStack) {
 		if (itemStack == null || itemStack == ItemStack.EMPTY) return null;
 		return getIdKey(itemStack.getItem());
+	}
+	/** Retrieve registry ID keys like "minecraft:stone". */
+	public static String getNamespace(Block block) {
+		if (block == null) return null;
+		return BuiltInRegistries.BLOCK.getKey(block).getNamespace();
+	}
+	/** Retrieve registry ID keys like "minecraft:stone". */
+	public static String getNamespace(BlockState blockState) {
+		if (blockState == null) return null;
+		return getNamespace(blockState.getBlock());
+	}
+	/** Retrieve registry ID keys like "minecraft:horse". */
+	public static String getNamespace(Entity entity) {
+		if (entity == null) return null;
+		return getNamespace(entity.getType());
+	}
+	/** Retrieve registry ID keys like "minecraft:horse". */
+	public static String getNamespace(EntityType<? extends Entity> entityType) {
+		if (entityType == null) return null;
+		return BuiltInRegistries.ENTITY_TYPE.getKey(entityType).getNamespace();
+	}
+	/** Retrieve registry ID keys like "minecraft:water". */
+	public static String getNamespace(Fluid fluid) {
+		if (fluid == null) return null;
+		return BuiltInRegistries.FLUID.getKey(fluid).getNamespace();
+	}
+	/** Retrieve registry ID keys like "minecraft:water". */
+	public static String getNamespace(FluidState fluidState) {
+		if (fluidState == null) return null;
+		return getNamespace(fluidState.getType());
+	}
+	/** Retrieve registry ID keys like "minecraft:stick". */
+	public static String getNamespace(Item item) {
+		if (item == null) return null;
+		return BuiltInRegistries.ITEM.getKey(item).getNamespace();
+	}
+	/** Retrieve registry ID keys like "minecraft:stick". */
+	public static String getNamespace(ItemStack itemStack) {
+		if (itemStack == null || itemStack == ItemStack.EMPTY) return null;
+		return getNamespace(itemStack.getItem());
 	}
 	/** Retrieve the namespace of the full identifier string when the related source object is not available, which should be avoided. Identifier objects should use the namespace attribute directly whenever available.
 	* <br/>While modded items may not always have their namespaces match the mod ID (e.g. <i>Vanilla Backport</i>, which populates <code>minecraft:*</code>), this method is still useful for a crude validation test.
