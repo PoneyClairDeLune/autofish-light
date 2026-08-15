@@ -21,8 +21,6 @@ import troy.autofish.LogSession;
 public class Common {
 	//private static final Map<String, Boolean> modExistCache = new HashMap<>();
 
-	/** How much durability should be left for rods to be safe. */
-	public static int damageSafeMargin = 1; // TODO: Make it configurable.
 	private static String lastRodItemId = null;
 	private static int lastBobberId = 0;
 	private static int lastPlayerBobberId = 0;
@@ -41,6 +39,10 @@ public class Common {
 			addContent(new GoFish());
 			addContent(new Spectrum());
 		}
+	}
+	/** How much durability should be left for rods to be safe. */
+	public static int damageSafeMargin() {
+		return modInstance.getConfig().damageSafeMargin();
 	}
 
 	private static Projectile getPlayerBobberInternal(LocalPlayer player) {
@@ -191,7 +193,7 @@ public class Common {
 		boolean noReelingVerdict = false;
 		if (breakThreshold > 0) {
 			// There's little sense to not use rods that are unbreakable, right?
-			noReelingVerdict = modInstance.getConfig().rodBreakAvoided() && currentDamage + damageSafeMargin >= breakThreshold;
+			noReelingVerdict = modInstance.getConfig().rodBreakAvoided() && currentDamage + damageSafeMargin() >= breakThreshold;
 		}
 		LogSession.debug("The fishing rod shoul" + (noReelingVerdict ? "dn't" : "d") + " reel.");
 		return noReelingVerdict;

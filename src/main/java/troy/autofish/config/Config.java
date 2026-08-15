@@ -3,13 +3,15 @@ package troy.autofish.config;
 import com.google.gson.annotations.Expose;
 
 public class Config {
+	@Expose int damageSafeMargin = 1;
+	@Expose boolean legacyPersistenceBreakMe = true; // PLACEHOLDER!
 	@Expose boolean modEnabled = true;
 	@Expose boolean multiRod = false;
 	@Expose boolean noisyDetection = false;
 	@Expose boolean openWaterDetected = true;
 	@Expose boolean openWaterNewAlgo = true;
-	@Expose boolean rodBreakAvoided = true;
 	@Expose boolean persistentMode = false;
+	@Expose boolean rodBreakAvoided = true;
 	@Expose boolean soundUsed = false;
 	@Expose long recastDelay = 1500;
 	@Expose long randomPercent = 50;
@@ -21,6 +23,13 @@ public class Config {
 	*/
 	public boolean enforceConstraints() {
 		boolean changed = false;
+		if (damageSafeMargin < 1) {
+			damageSafeMargin = 1;
+			changed = true;
+		} else if (damageSafeMargin > 32) {
+			damageSafeMargin = 32;
+			changed = true;
+		}
 		if (recastDelay < 500) {
 			recastDelay = 500;
 			changed = true;
@@ -32,6 +41,12 @@ public class Config {
 		return changed;
 	}
 
+	public int damageSafeMargin() {
+		return damageSafeMargin;
+	}
+	public boolean legacyPersistence() {
+		return legacyPersistenceBreakMe;
+	}
 	public boolean modEnabled() {
 		return modEnabled;
 	}
@@ -57,6 +72,12 @@ public class Config {
 		return soundUsed;
 	}
 
+	public void damageSafeMargin(int value) {
+		damageSafeMargin = value;
+	}
+	public void legacyPersistence(boolean value) {
+		legacyPersistenceBreakMe = value;
+	}
 	public void modEnabled(boolean value) {
 		modEnabled = value;
 	}

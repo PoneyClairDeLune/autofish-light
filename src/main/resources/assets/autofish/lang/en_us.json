@@ -24,18 +24,25 @@
 	"options.autofish.open_water_detection.tooltip" : "After 20w12a (1.16), you can only get\ntreasure loot in open water.\nThis will let you know when your hook\nis not in open water.",
 
 	"options.autofish.persistent.title": "Enable Persistent Mode",
-	"options.autofish.persistent.tooltip": "Enable this to always keep the fish hook\ncast whenever a rod is in hand.\nChecks every \u00a7610\u00a7f seconds and recasts if\nneeded. This is useful for lag issues or\nwhen fishing for long periods of time.",
+	"options.autofish.persistent.tooltip": "Keep the fish hook always in liquid\nwhenever a rod is in hand, recast when\nneeded. This is useful for lag issues or\nwhen fishing for long periods of time.",
 
 	"options.autofish.advanced.title": "Advanced Options",
 
 	"options.autofish.sound.title": "Use Sound Detection",
-	"options.autofish.sound.tooltip": "\u00A76Newer, more accurate detection based on\nbobber sounds rather than the standard\nhook movement detection.\u00a7r\n\u00a7f- You must be somewhat close to the hook\n  for this to work.\n- If other players' hooks are close by,\nit can falsely trigger a catch!",
+	"options.autofish.sound.tooltip": "\u00A76Newer, more accurate detection based on\nbobber sounds rather than the standard\nhook movement detection.\u00a7r\n\u00a7f- You must be somewhat close to the hook\n  for this to work.\n- If other players' hooks are close by,\n  it can falsely trigger a catch!",
 
 	"options.autofish.open_water_new_algorithm.title": "Use New Open Water Detection",
-	"options.autofish.open_water_new_algorithm.tooltip": "\u00A76New implementation more closely\nfollowing the documented open water\nvalidation process.\u00A7r\n\u00A7fTurn off to restore legacy behaviour.",
+	"options.autofish.open_water_new_algorithm.tooltip": "\u00A76New implementation more closely\nfollowing the documented open water\nvalidation process.\u00A7r\n\n\u00A7fTurn off to restore legacy behaviour.",
 
 	"options.autofish.noisy_detection.title": "Keep Detection Notification",
-	"options.autofish.noisy_detection.tooltip": "Keep sending notification of detection\nresults to the player, regardless of\nprevious results. Affects the following:\n- Open water detection",
+	"options.autofish.noisy_detection.tooltip": "\u00A76Keep sending notification of detection\nresults to the player, regardless of\nprevious results. Affects the following:\u00A7r\n\u00A7f- Open water detection",
+
+	"options.autofish.legacy_persistence.title": "Legacy Persistent Mode (WIP)",
+	"options.autofish.legacy_persistence.tooltip": "\u00A76Instead of using the newer state-aware\nalgorithm, switch back to the legacy\npersistent mode implementation.\u00A7r\n\n\u00A7aNew\u00A7f: Gathers various states, counts time\ndurations, and reels accordingly.\n\u00A7cOld\u00A7f: Tests every \u00A7e10\u00A7f seconds, and reels if\nthe hook isn't in fishable liquid in\nthat instant.",
+
+	"options.autofish.damage_safe_margin.title": "Damage Safe Margin",
+	"options.autofish.damage_safe_margin.value": "%d",
+	"options.autofish.damage_safe_margin.tooltip": "Adjusts at least how much durability\nshould be left for rods to be safe.\n\nUsed by \u00A7eBreak Protection\u00A7f.",
 
 	"options.autofish.recast_delay.title": "Recast Delay (ms)",
 	"options.autofish.recast_delay.value": "%d ms",
@@ -50,7 +57,7 @@
 	"options.autofish.random_delay.tooltip_3": "Set this to 0 to disable this function.",
 
 	"options.autofish.reel_in_delay.title": "Reel in delay",
-	"options.autofish.reel_in_delay.value": "%d milliseconds",
+	"options.autofish.reel_in_delay.value": "%d ms",
 	"options.autofish.reel_in_delay.tooltip_0": "Add a delay for the reel-in when a fish bites the float.",
 	"options.autofish.reel_in_delay.tooltip_1": "Set this option to 1 to disable this function.",
 

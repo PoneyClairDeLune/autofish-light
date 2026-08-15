@@ -136,7 +136,7 @@ public class AutofishScreenBuilder {
 			booleanTextComponent
 		).build();
 
-		// Should the detection .
+		// Should the detection results be reported constantly.
 		AbstractConfigListEntry<Boolean> toggleNoisyDetection = entryBuilder.startBooleanToggle(
 			Component.translatable("options.autofish.noisy_detection.title"),
 			config.noisyDetection()
@@ -148,6 +148,35 @@ public class AutofishScreenBuilder {
 			modAutofish.getConfig().noisyDetection(value);
 		}).setYesNoTextSupplier(
 			booleanTextComponent
+		).build();
+
+		// Should the persistent mode use the legacy implementation.
+		AbstractConfigListEntry<Boolean> toggleLegacyPersistence = entryBuilder.startBooleanToggle(
+			Component.translatable("options.autofish.legacy_persistence.title"),
+			config.legacyPersistence()
+		).setDefaultValue(
+			defaults.legacyPersistence()
+		).setTooltip(
+			Component.translatable("options.autofish.legacy_persistence.tooltip")
+		).setSaveConsumer(value -> {
+			modAutofish.getConfig().legacyPersistence(value);
+		}).setYesNoTextSupplier(
+			booleanTextComponent
+		).build();
+
+		// Configure the remaining durability a rod should target.
+		AbstractConfigListEntry<Integer> sliderDamageSafeMargin = entryBuilder.startIntSlider(
+			Component.translatable("options.autofish.damage_safe_margin.title"),
+			config.damageSafeMargin(),
+			1, 32
+		).setDefaultValue(
+			defaults.damageSafeMargin()
+		).setTooltip(
+			Component.translatable("options.autofish.damage_safe_margin.tooltip")
+		).setSaveConsumer(value -> {
+			modAutofish.getConfig().damageSafeMargin(value);
+		}).setTextGetter(
+			value -> Component.translatable("options.autofish.damage_safe_margin.value", value)
 		).build();
 
 		// Configure the delay between recasts.
@@ -217,6 +246,8 @@ public class AutofishScreenBuilder {
 		subCatBuilderAdvanced.add(toggleSoundDetection);
 		subCatBuilderAdvanced.add(toggleOpenWaterNewAlgo);
 		subCatBuilderAdvanced.add(toggleNoisyDetection);
+		subCatBuilderAdvanced.add(toggleLegacyPersistence);
+		subCatBuilderAdvanced.add(sliderDamageSafeMargin);
 		subCatBuilderAdvanced.add(recastDelaySlider);
 		subCatBuilderAdvanced.add(randomDelaySlider);
 		subCatBuilderAdvanced.add(reelInDelay);

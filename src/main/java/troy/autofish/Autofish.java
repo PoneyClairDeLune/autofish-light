@@ -43,19 +43,8 @@ public class Autofish {
 		LogSession.info("Autofish is now activated!");
 
 		// Initiate the repeating action for persistent mode casting.
-		// Honestly, this needs a better implementation...
-		modAutofish.getScheduler().scheduleRepeatingAction(10000, () -> {
-			LocalPlayer player = EnvUtils.client().player;
-			if (!isRodHeld(player)) return;
-			if (!modAutofish.getConfig().persistentMode()) return;
-			if (Common.shouldNotReel(player, false)) return;
-			if (hookExists) {
-				if (isBobberInWater(player)) return;
-				else useRodItem(EnvUtils.client().player);
-			}
-			if (modAutofish.getScheduler().isRecastQueued()) return;
-			useRodItem(player);
-		});
+		// Invocation of the new implementation here.
+		modAutofish.getScheduler().scheduleRepeatingAction(200, this::persistenceModeTick);
 	}
 
 	public void tick(Minecraft client) {
@@ -183,7 +172,7 @@ public class Autofish {
 			ItemStack slotStack = mainInventory.get(i);
 			if (Common.isFishingRod(slotStack)) {
 				if (modAutofish.getConfig().rodBreakAvoided()) {
-					if (slotStack.getDamageValue() + Common.damageSafeMargin < slotStack.getMaxDamage()) {
+					if (slotStack.getDamageValue() + Common.damageSafeMargin() < slotStack.getMaxDamage()) {
 						inventory.setSelectedSlot(i);
 						return;
 					}
@@ -212,11 +201,13 @@ public class Autofish {
 	}
 
 	// Rewritten sections go below.
-	// Properties for logging.
+	// Properties for state keeping.
 	private boolean bobberOwnerNotNotified = true;
 	private BlockState lastBlock = null;
 	private boolean lastHeldRod = false;
 	private boolean lastNotifyAttemptOpenWater = false;
+	private long persistenceTick = 0; // 5 ≈ 1s
+	private long persistenceTickLegacyLast = -65536;
 	// Detection.
 	/** Common method to determine if a method should return early. */
 	private boolean earlyReturn(LocalPlayer player) {
@@ -341,5 +332,28 @@ public class Autofish {
 		boolean useNewerMethod = modAutofish.getConfig().openWaterNewAlgo();
 		boolean isNoisy = modAutofish.getConfig().noisyDetection();
 		notifyOpenWater(bobber, player, isInOpenWater(bobber, player, useNewerMethod), useNewerMethod, isNoisy);
+	}
+	private void persistenceModeTick() {
+		persistenceTick ++;
+		if (persistenceTick < 0) {
+			persistenceTick = 0;
+		}
+		LocalPlayer player = EnvUtils.client().player;
+		if (earlyReturn(player)) return;
+		if (modAutofish.getConfig().legacyPersistence()) {
+			if (persistenceTick - persistenceTickLegacyLast < 50) return;
+			persistenceTickLegacyLast = persistenceTick;
+			if (!isRodHeld(player)) return;
+			if (!modAutofish.getConfig().persistentMode()) return;
+			if (Common.shouldNotReel(player, false)) return;
+			if (hookExists) {
+				if (isBobberInWater(player)) return;
+				else useRodItem(EnvUtils.client().player);
+			}
+			if (modAutofish.getScheduler().isRecastQueued()) return;
+			useRodItem(player);
+		} else {
+			// TODO: New persistence mode implementation go here.
+		}
 	}
 }
