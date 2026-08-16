@@ -1,5 +1,12 @@
 package troy.autofish.modded;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import net.minecraft.tags.FluidTags;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.level.material.Fluid;
+
 /** <i>More (Fishing) Rod Variants</i> by <i>pnku</i>. */
 public class MoreFishingRodVariants extends NamespacedContent {
 	/** <i>More (Fishing) Rod Variants</i> by <i>pnku</i>. */
@@ -23,4 +30,18 @@ public class MoreFishingRodVariants extends NamespacedContent {
 		}
 		return true;
 	}
+	protected boolean populateFluidTags() {
+		if (fluidTags.size() > 0) return true;
+		if (!populateIds()) return false;
+		for (String rodId: rodIds) {
+			Set<TagKey<Fluid>> rodFluidTags = new HashSet<>();
+			rodFluidTags.add(FluidTags.WATER);
+			// TODO: Same as Minecraft.java.
+			if (true) {
+				rodFluidTags.add(FluidTags.LAVA);
+			}
+			fluidTags.put(rodId, rodFluidTags);
+		}
+		return true;
+	};
 }

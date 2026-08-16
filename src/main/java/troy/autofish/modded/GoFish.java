@@ -32,21 +32,20 @@ public class GoFish extends NamespacedContent {
 	protected boolean populateFluidTags() {
 		//if (!hasMod()) return false;
 		if (fluidTags.size() > 0) return true;
-		if (populateIds()) {
-			for (String rodId: rodIds) {
-				Set<TagKey<Fluid>> rodFluidTags = new HashSet<>();
-				rodFluidTags.add(FluidTags.WATER);
-				switch (rodId) {
-					case "gofish:blaze_rod":
-					case "gofish:diamond_reinforced_rod":
-					case "gofish:skeletal_rod":
-					case "gofish:soul_rod": {
-						rodFluidTags.add(FluidTags.LAVA);
-						break;
-					}
+		if (!populateIds()) return false;
+		for (String rodId: rodIds) {
+			Set<TagKey<Fluid>> rodFluidTags = new HashSet<>();
+			rodFluidTags.add(FluidTags.WATER);
+			switch (rodId) {
+				case "gofish:blaze_rod":
+				case "gofish:diamond_reinforced_rod":
+				case "gofish:skeletal_rod":
+				case "gofish:soul_rod": {
+					rodFluidTags.add(FluidTags.LAVA);
+					break;
 				}
-				fluidTags.put(rodId, rodFluidTags);
 			}
+			fluidTags.put(rodId, rodFluidTags);
 		}
 		return true;
 	}

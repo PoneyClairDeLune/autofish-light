@@ -288,7 +288,12 @@ public class Autofish {
 		ItemStack heldItemStack = PlayerUtils.getHeldStack(player, this::isOffhandPredicate);
 		boolean rodHeld = Common.isFishingRod(heldItemStack);
 		if (lastHeldRod != rodHeld) {
-			LogSession.info((rodHeld ? "H" : "Not h") + "olding fishing rod: " + RegistryUtils.getIdKey(heldItemStack) + ".");
+			String message = (rodHeld ? "H" : "Not h") + "olding fishing rod: " + RegistryUtils.getIdKey(heldItemStack) + ".";
+			if (modAutofish.getConfig().noisyDetection()) {
+				LogSession.info(message);
+			} else {
+				LogSession.debug(message);
+			}
 		}
 		lastHeldRod = rodHeld;
 		return rodHeld;

@@ -35,7 +35,7 @@
 	"options.autofish.open_water_new_algorithm.tooltip": "\u00A76New implementation more closely\nfollowing the documented open water\nvalidation process on \u00A7eMinecraft Wiki\u00A76.\u00A7r\n\n\u00A7fTurn off to restore the relatively more\nlenient legacy behavior.",
 
 	"options.autofish.noisy_detection.title": "Keep Detection Notification",
-	"options.autofish.noisy_detection.tooltip": "\u00A76Keep sending notification of detection\nresults to the player, regardless of\nprevious results. Affects the following:\u00A7r\n\u00A7f- Open water detection",
+	"options.autofish.noisy_detection.tooltip": "\u00A76Keep sending notification of detection\nresults to the player, regardless of\nprevious results. Affects the following:\u00A7r\n\u00A7f- Open water detection\n- Item rod test",
 
 	"options.autofish.legacy_persistence.title": "Legacy Persistent Mode (WIP)",
 	"options.autofish.legacy_persistence.tooltip": "\u00A76Instead of using the newer state-aware\nalgorithm, switch back to the legacy\n\u00A7ePersistent Mode\u00A76 implementation.\u00A7r\n\n\u00A7aNew\u00A7f: Gathers various states, counts time\ndurations, and reels accordingly.\n\u00A7cOld\u00A7f: Tests every \u00A7e10\u00A7f seconds, and reels if\nthe hook isn't in fishable liquid in that\ninstant.",
