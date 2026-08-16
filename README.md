@@ -1,4 +1,4 @@
-# Light's Autofish
+# Light's Extensive Autofish++
 > Download from [Modrinth](https://modrinth.com/mod/autofish-light)!
 
 > This mod is currently going through a rewrite to reduce technical debt.
@@ -9,7 +9,7 @@ Annoyed that you have to focus on when to reel in your fishing rod? Frustrated t
 
 Convenient configs are available in the mod menu or by pressing a hotkey (`v` by default) in-game. Modded liquids and fishing rods are explicitly supported, with full coverage listed below. Requests welcome!
 
-Light's Autofish is a hard fork of [X+ Autofish](https://github.com/Wudji/XPlus-AutoFish), which in turn is an updated fork of [MrTroot's Autofish mod](https://www.curseforge.com/minecraft/mc-mods/autofish) for Minecraft 1.19.4+.
+Light's Extensive Autofish++ is a hard fork of [X+ Autofish](https://github.com/Wudji/XPlus-AutoFish), which in turn is an updated fork of [MrTroot's Autofish mod](https://www.curseforge.com/minecraft/mc-mods/autofish) for Minecraft 1.19.4+.
 
 ![use-fabric](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/supported/fabric_64h.png)![no-forge](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/unsupported/forge_64h.png)![no-quilt](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/unsupported/quilt_64h.png)
 
@@ -23,18 +23,18 @@ Crossed out entries indicate WIP status. Content of some mods might only be offe
 
 - [~~Fishing Frenzy~~](https://github.com/Vg34100/Minecraft-FishingFrenzy) (~~1.21.1~~) ([Modrinth](https://modrinth.com/mod/fishingfrenzy))
 - [Go Fish](https://github.com/Draylar/go-fish) (~~1.20.1~~, 1.21.1, _26.1.x_) ([CurseForge](https://www.curseforge.com/minecraft/mc-mods/go-fish), [CurseForge](https://www.curseforge.com/minecraft/mc-mods/go-fish-updated))
-- [~~More Rod Variants~~](https://github.com/pnk2u/More-Fishing-Rod-Variants) (~~1.20.1~~, 1.21.1, 1.21.11, 26.1.x) ([Modrinth](https://modrinth.com/mod/more-fishing-rod-variants))
+- [More Rod Variants](https://github.com/pnk2u/More-Fishing-Rod-Variants) (~~1.20.1~~, 1.21.1, 1.21.11, 26.1.x) ([Modrinth](https://modrinth.com/mod/more-fishing-rod-variants))
 - [~~Nether Depths Upgrade~~](https://github.com/Scouter456/Nether_Depths_Upgrade) (~~1.20.1~~, ~~1.21.1~~) ([Modrinth](https://modrinth.com/mod/nether-depths-upgrade))
 - [Spectrum](https://github.com/DaFuqs/Spectrum) (~~1.20.1~~, 1.21.1) ([Modrinth](https://modrinth.com/mod/spectrum))
 
 ### Versions
 Crossed out entries indicate WIP status.
 
-- ~~1.20.1~~ (`fabric-1.20.1`) [LTS]
-- 1.21.1 (`fabric-1.21.1`) [LTS]
-- 1.21.11 (`fabric-1.21.11`) [LTS]
-- 26.1.x (`fabric-1.22.1`)
-- 26.2.x (`fabric-1.23.1`)
+- ~~1.20.1~~ (`fabric-1.20.1`) [LTS] (WIP)
+- 1.21.1 (`fabric-1.21.1`) [LTS] (Supported)
+- 1.21.11 (`fabric-1.21.11`) [LTS] (Supported)
+- 26.1.x (`fabric-1.22.1`) (Supported)
+- 26.2.x (`fabric-1.23.1`) (Supported)
 
 ## FAQ
 ### Can I include this mod in my mod pack?
