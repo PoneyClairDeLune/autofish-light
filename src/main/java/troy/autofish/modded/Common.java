@@ -171,7 +171,7 @@ public class Common {
 		String itemId = RegistryUtils.getIdKey(itemStack);
 		NamespacedContent content = registeredContent.get(RegistryUtils.getNamespace(itemStack));
 		if (content != null) {
-			isFishable = content.isLiquidFishableTo(itemId, fluidState);
+			isFishable = content.isLiquidFishableTo(itemId, fluidState, false);
 		}
 		return isFishable;
 	}

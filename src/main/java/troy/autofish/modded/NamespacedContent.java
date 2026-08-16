@@ -30,10 +30,6 @@ public abstract class NamespacedContent {
 	public final String namespace;
 	/** List of sound IDs fish bite sounds are under. */
 	public final Set<String> biteSoundIds = new HashSet<>();
-	/** List of entity IDs bobbers are under. */
-	public final Set<String> bobberIds = new HashSet<>();
-	/** List of fluid tags rods are matched against. */
-	public final Map<String, Set<TagKey<Fluid>>> fluidTags = new ConcurrentHashMap<>();
 	/** List of negligible block IDs. */
 	public final Set<String> blockIdsNegligible = new HashSet<>();
 	/** List of valid inherently liquidlogged block IDs (liquidlog state test not required). */
@@ -42,6 +38,12 @@ public abstract class NamespacedContent {
 	public final Set<String> blockIdsLiquidlogged = new HashSet<>();
 	/** List of negligible block tags. */
 	public final Set<TagKey<Block>> blockTagsNegligible = new HashSet<>();
+	/** List of entity IDs bobbers are under. */
+	public final Set<String> bobberIds = new HashSet<>();
+	/** List of fluid tags rods are matched against. */
+	public final Map<String, Set<TagKey<Fluid>>> fluidTags = new ConcurrentHashMap<>();
+	/** List of unsafe fluid tags rods are matched against. */
+	public final Map<String, Set<TagKey<Fluid>>> fluidTagsUnsafe = new ConcurrentHashMap<>();
 	/** List of item IDs rods are under. */
 	public final Set<String> rodIds = new HashSet<>();
 	/** List of item tags rods are under. */
@@ -66,6 +68,20 @@ public abstract class NamespacedContent {
 	//@Deprecated
 	protected boolean populateItemTags() {
 		return false;
+	}
+	/** Method used to clear all currently stored data. This is useful to apply config changes if some mods use the config values to selectively populate data. */
+	public boolean flushExistingData() {
+		biteSoundIds.clear();
+		blockIdsNegligible.clear();
+		blockIdsInherentlylogged.clear();
+		blockIdsLiquidlogged.clear();
+		blockTagsNegligible.clear();
+		bobberIds.clear();
+		fluidTags.clear();
+		fluidTagsUnsafe.clear();
+		rodIds.clear();
+		rodTags.clear();
+		return true;
 	}
 
 	public NamespacedContent(String id, String namespace, String readableName) {
@@ -96,48 +112,46 @@ public abstract class NamespacedContent {
 	/** Method used to test if a given block ID is considered negligible. */
 	public boolean isBlockNegligible(String blockId) {
 		if (blockId == null) return false;
-		if (populateIds()) {
-			if (blockIdsNegligible.contains(blockId)) return true;
-		}
-		return false;
+		if (!populateIds()) return false;
+		return blockIdsNegligible.contains(blockId);
 	}
 	/** Method used to test if a given block state is considered negligible. */
 	public boolean isBlockNegligible(BlockState blockState) {
 		if (blockState == null) return false;
-		if (populateBlockTags()) {
-			for (TagKey<Block> blockTag: blockTagsNegligible) {
-				if (RegistryUtils.isIn(blockTag, blockState)) return true;
-			}
+		if (!populateBlockTags()) return false;
+		for (TagKey<Block> blockTag: blockTagsNegligible) {
+			if (RegistryUtils.isIn(blockTag, blockState)) return true;
 		}
 		return false;
 	}
 	/** Method used to test if a given projectile entity is considered a bobber. */
 	public boolean isBobber(Projectile entity) {
 		if (entity == null) return false;
-		if (populateIds()) {
-			return bobberIds.contains(RegistryUtils.getIdKey(entity));
-		}
-		return false;
+		if (!populateIds()) return false;
+		return bobberIds.contains(RegistryUtils.getIdKey(entity));
 	}
 	/** Method used to test if a given sound event is considered to be from fish biting the hook. */
 	public boolean isFishBiteSound(SoundEvent soundEvent) {
-		if (populateIds()) {
-			String soundName = soundEvent.location().toString();
-			return biteSoundIds.contains(soundName.toLowerCase());
-		}
-		return false;
+		if (!populateIds()) return false;
+		String soundName = soundEvent.location().toString();
+		return biteSoundIds.contains(soundName.toLowerCase());
 	}
 	/** Method used to test if a given fluid is considered valid for a given rod item ID. */
-	public boolean isLiquidFishableTo(String itemId, FluidState fluidState) {
+	public boolean isLiquidFishableTo(String itemId, FluidState fluidState, boolean useUnsafeFluid) {
 		if (!hasMod()) return false;
 		if (itemId == null) return false;
 		if (fluidState == null || fluidState.isEmpty()) return false;
-		if (populateFluidTags()) {
-			Set<TagKey<Fluid>> validFluidTags = fluidTags.get(itemId);
-			if (validFluidTags == null) return false;
-			for (TagKey<Fluid> fluidTag: validFluidTags) {
-				if (RegistryUtils.isIn(fluidTag, fluidState)) return true;
-			}
+		if (!populateFluidTags()) return false;
+		Set<TagKey<Fluid>> validFluidTags = fluidTags.get(itemId);
+		if (validFluidTags == null) return false;
+		for (TagKey<Fluid> fluidTag: validFluidTags) {
+			if (RegistryUtils.isIn(fluidTag, fluidState)) return true;
+		}
+		if (!useUnsafeFluid) return false;
+		Set<TagKey<Fluid>> unsafeFluidTags = fluidTagsUnsafe.get(itemId);
+		if (unsafeFluidTags == null) return false;
+		for (TagKey<Fluid> unsafeFluidTag: unsafeFluidTags) {
+			if (RegistryUtils.isIn(unsafeFluidTag, fluidState)) return true;
 		}
 		return false;
 	}
@@ -151,31 +165,26 @@ public abstract class NamespacedContent {
 	* <br/>Value of <code>liquidlogged</code> should come from a separate <code>isLiquidFishableTo()</code> test! */
 	public boolean isLiquidloggedValid(String blockId, boolean liquidlogged) {
 		if (blockId == null) return false;
-		if (populateIds()) {
-			if (blockIdsInherentlylogged.contains(blockId)) return true;
-			if (
-				liquidlogged &&
-				blockIdsLiquidlogged.contains(blockId)
-			) return true;
-		}
-		return false;
+		if (!populateIds()) return false;
+		if (blockIdsInherentlylogged.contains(blockId)) return true;
+		return (
+			liquidlogged &&
+			blockIdsLiquidlogged.contains(blockId)
+		);
 	}
 	/** Method used to test if a given item is considered a fishing rod. */
 	public boolean isRod(ItemStack itemStack) {
 		if (!hasMod()) return false;
 		if (ItemUtils.isStackEmpty(itemStack)) return false;
-		if (populateItemTags()) {
-			for (TagKey<Item> itemTag: rodTags) {
-				if (RegistryUtils.isIn(itemTag, itemStack)) return true;
-			}
+		if (!populateItemTags()) return false;
+		for (TagKey<Item> itemTag: rodTags) {
+			if (RegistryUtils.isIn(itemTag, itemStack)) return true;
 		}
 		return false;
 	}
 	/** Method used to test if a given item ID is considered a fishing rod. */
 	public boolean isRod(String itemId) {
-		if (populateIds()) {
-			return rodIds.contains(itemId);
-		}
-		return false;
+		if (!populateIds()) return false;
+		return rodIds.contains(itemId);
 	}
 }
