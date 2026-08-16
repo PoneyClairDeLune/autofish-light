@@ -47,7 +47,7 @@
 	"options.autofish.damage_safe_margin.value": "%d",
 	"options.autofish.damage_safe_margin.tooltip": "Sets the minimum durability fishing rods\nshould have before they are ignored.\n\nUsed by \u00A7eBreak Protection\u00A7f.",
 
-	"options.autofish.recast_delay.title": "Recast Delay",
+	"options.autofish.recast_delay.title": "Rod Recast Delay",
 	"options.autofish.recast_delay.value": "%d ms",
 	"options.autofish.recast_delay.tooltip": "Adjusts the delay between catching\na fish and recasting the rod.",
 
@@ -59,6 +59,6 @@
 	"options.autofish.reel_in_delay.value": "%d ms",
 	"options.autofish.reel_in_delay.tooltip": "Introduces a delay before reeling-in,\nafter a fish bites the hook.\nTo disable the delay, set this to 1.",
 
-	"options.autofish.clear_regex.title": "ClearLag Chat Pattern",
+	"options.autofish.clear_regex.title": "ClearLag Message Pattern",
 	"options.autofish.clear_regex.tooltip": "Recast the rod when a message in chat\nmatches the defined pattern.\n\u00A76This is a \u00A7aRegular Expression\u00A76."
 }

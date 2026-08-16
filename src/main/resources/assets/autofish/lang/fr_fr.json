@@ -1,0 +1,45 @@
+{
+	"key.autofish.open_gui": "Ouvrir les paramètres d'Autofish",
+
+	"info.autofish.open_water_detection.fail": "\u00A7c[Autofish] Le flotteur n'était pas en eau libre !\u00A70",
+	"info.autofish.open_water_detection.success": "\u00A7a[Autofish] Le flotteur était en eau libre !\u00A70",
+
+	"options.autofish.title": "Paramètres d'Autofish",
+
+	"options.autofish.toggle.on": "\u00A7aActivé(e)",
+	"options.autofish.toggle.off": "\u00A7eDésactivé(e)",
+
+	"options.autofish.basic.title": "Options de base",
+
+	"options.autofish.enable.title": "Activer Autofish",
+
+	"options.autofish.multirod.title": "Utiliser plusieurs cannes",
+
+	"options.autofish.break_protection.title": "Éviter la casse des cannes",
+
+	"options.autofish.open_water_detection.title": "Détecter l'eau libre",
+
+	"options.autofish.persistent.title": "Mode de pêche persistant",
+
+	"options.autofish.unsafe_fluids.title": "Inclure les liquides à risque",
+
+	"options.autofish.advanced.title": "Options avancées",
+
+	"options.autofish.sound.title": "Détecter par le son",
+
+	"options.autofish.open_water_new_algorithm.title": "Nouvelle détection d'eau libre",
+
+	"options.autofish.noisy_detection.title": "Répéter les notifications de détection",
+
+	"options.autofish.legacy_persistence.title": "Mode de pêche persistant classique",
+
+	"options.autofish.damage_safe_margin.title": "Seuil de durabilité",
+
+	"options.autofish.recast_delay.title": "Délai avant de relancer la canne",
+
+	"options.autofish.random_delay.title": "Plage de variation aléatoire du délai de relance",
+
+	"options.autofish.reel_in_delay.title": "Délai avant de remonter la ligne",
+
+	"options.autofish.clear_regex.title": "Motif des messages ClearLag"
+}
