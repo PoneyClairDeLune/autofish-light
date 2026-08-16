@@ -256,7 +256,11 @@ public class Autofish {
 			boolean liquidVerdict = BlockPos.betweenClosedStream(
 				blockX - 2, blockY + deltaY, blockZ - 2,
 				blockX + 2, blockY + deltaY, blockZ + 2
-			).allMatch(blockPos -> Common.isLiquidFishableTo(player, bobberWorld.getBlockState(blockPos)));
+			).allMatch(blockPos -> {
+				BlockState blockState = bobberWorld.getBlockState(blockPos);
+				if (useNewerMethod) return Common.isLiquidloggedValid(player, blockState);
+				return Common.isLiquidFishableTo(player, blockState);
+			});
 			boolean blockVerdict = BlockPos.betweenClosedStream(
 				blockX - 2, blockY + deltaY, blockZ - 2,
 				blockX + 2, blockY + deltaY, blockZ + 2

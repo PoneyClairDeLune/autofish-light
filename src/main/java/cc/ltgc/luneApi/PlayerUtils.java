@@ -27,22 +27,16 @@ public class PlayerUtils {
 		if (matcher == null) return ItemStack.EMPTY;
 		return getHeldStack(player, matchOffhandItem(player, matcher));
 	}
-	/** Returns <code>true</code> if the given stack is empty. */
-	public static boolean isStackEmpty(ItemStack itemStack) {
-		// Minecraft still allows negative item counts!
-		if (itemStack == null || itemStack == ItemStack.EMPTY || itemStack.count() == 0) return true;
-		return false;
-	}
 	/** Returns true when the offhand matches the given predicate while the main hand doesn't. */
 	public static boolean matchOffhandItem(Player player, Predicate<? super ItemStack> matcher) {
 		if (player == null) return false;
 		if (matcher == null) return false;
 		ItemStack offhandItemStack = player.getOffhandItem();
-		if (isStackEmpty(offhandItemStack)) return false;
+		if (ItemUtils.isStackEmpty(offhandItemStack)) return false;
 		boolean offhandMatched = matcher.test(offhandItemStack);
 		if (offhandMatched) {
 			ItemStack mainHandItemStack = player.getMainHandItem();
-			if (isStackEmpty(mainHandItemStack)) return true;
+			if (ItemUtils.isStackEmpty(mainHandItemStack)) return true;
 			return !matcher.test(mainHandItemStack);
 		};
 		return false;

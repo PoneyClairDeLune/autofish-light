@@ -108,31 +108,6 @@ public class Common {
 		lastBobberId = entityId;
 		return bobberVerdict;
 	}
-	/** Returns true if the liquid is fishable to the given rod. */
-	public static boolean isLiquidFishableTo(ItemStack itemStack, BlockState blockState) {
-		if (blockState == null) return false;
-		if (itemStack == null || itemStack.count() <= 0) return false;
-		FluidState fluidState = blockState.getFluidState();
-		return isLiquidFishableTo(itemStack, fluidState);
-	}
-	/** Returns true if the liquid is fishable to the given rod. */
-	public static boolean isLiquidFishableTo(ItemStack itemStack, FluidState fluidState) {
-		if (fluidState == null) return false;
-		if (itemStack == null || itemStack.count() <= 0) return false;
-		boolean isFishable = false;
-		String itemId = RegistryUtils.getIdKey(itemStack);
-		NamespacedContent content = registeredContent.get(RegistryUtils.getNamespace(itemStack));
-		if (content != null) {
-			isFishable = content.isLiquidFishableTo(itemId, fluidState);
-		}
-		return isFishable;
-	}
-	/** Returns true if the liquid is fishable to the rod held by the given player. */
-	public static boolean isLiquidFishableTo(Player player, BlockState blockState) {
-		if (player == null) return false;
-		if (blockState == null) return false;
-		return isLiquidFishableTo(PlayerUtils.getHeldStack(player, false), blockState);
-	}
 	private static boolean isFishingRodInternal(Item rodItem) {
 		if (rodItem == null) return false;
 		determinedByTag = false;
@@ -175,6 +150,51 @@ public class Common {
 		}
 		lastRodItemId = currentRodId;
 		return isRod;
+	}
+	/** Returns true if the liquid is fishable to the given rod. */
+	public static boolean isLiquidFishableTo(ItemStack itemStack, BlockState blockState) {
+		if (blockState == null) return false;
+		if (itemStack == null || itemStack.count() <= 0) return false;
+		FluidState fluidState = blockState.getFluidState();
+		return isLiquidFishableTo(itemStack, fluidState);
+	}
+	/** Returns true if the liquid is fishable to the given rod. */
+	public static boolean isLiquidFishableTo(ItemStack itemStack, FluidState fluidState) {
+		if (fluidState == null) return false;
+		if (itemStack == null || itemStack.count() <= 0) return false;
+		boolean isFishable = false;
+		String itemId = RegistryUtils.getIdKey(itemStack);
+		NamespacedContent content = registeredContent.get(RegistryUtils.getNamespace(itemStack));
+		if (content != null) {
+			isFishable = content.isLiquidFishableTo(itemId, fluidState);
+		}
+		return isFishable;
+	}
+	/** Returns true if the liquid is fishable to the rod held by the given player. */
+	public static boolean isLiquidFishableTo(Player player, BlockState blockState) {
+		if (player == null) return false;
+		if (blockState == null) return false;
+		return isLiquidFishableTo(PlayerUtils.getHeldStack(player, false), blockState);
+	}
+	/** Returns true if the liquid is fishable to the rod held by the given player. */
+	public static boolean isLiquidFishableTo(Player player, FluidState fluidState) {
+		if (player == null) return false;
+		if (fluidState == null) return false;
+		return isLiquidFishableTo(PlayerUtils.getHeldStack(player, false), fluidState);
+	}
+	/** Returns true if the liquidlogged block qualifies as fishable liquid. */
+	public static boolean isLiquidloggedValid(Player player, BlockState blockState) {
+		if (blockState == null) return false;
+		FluidState liquidState = blockState.getFluidState();
+		boolean liquidlogged = isLiquidFishableTo(player, liquidState);
+		if (liquidlogged && RegistryUtils.getIdKey(blockState).equals(RegistryUtils.getIdKey(liquidState))) {
+			return true;
+		}
+		NamespacedContent content = registeredContent.get(RegistryUtils.getNamespace(blockState));
+		if (content != null) {
+			return content.isLiquidloggedValid(RegistryUtils.getIdKey(blockState), liquidlogged) || content.isLiquidloggedValid(blockState, liquidlogged);
+		}
+		return false;
 	}
 	/** Returns true if the sound event is bobber splash. */
 	public static boolean isSplashSound(SoundEvent soundEvent) {

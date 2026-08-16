@@ -34,10 +34,14 @@ public abstract class NamespacedContent {
 	public final Set<String> bobberIds = new HashSet<>();
 	/** List of fluid tags rods are matched against. */
 	public final Map<String, Set<TagKey<Fluid>>> fluidTags = new ConcurrentHashMap<>();
+	/** List of negligible block IDs. */
+	public final Set<String> blockIdsNegligible = new HashSet<>();
+	/** List of valid inherently liquidlogged block IDs (liquidlog state test not required). */
+	public final Set<String> blockIdsInherentlylogged = new HashSet<>();
+	/** List of valid liquidloggable block IDs (liquidlog state test required). */
+	public final Set<String> blockIdsLiquidlogged = new HashSet<>();
 	/** List of negligible block tags. */
-	public final Set<String> blockIds = new HashSet<>();
-	/** List of negligible block tags. */
-	public final Set<TagKey<Block>> blockTags = new HashSet<>();
+	public final Set<TagKey<Block>> blockTagsNegligible = new HashSet<>();
 	/** List of item IDs rods are under. */
 	public final Set<String> rodIds = new HashSet<>();
 	/** List of item tags rods are under. */
@@ -91,15 +95,17 @@ public abstract class NamespacedContent {
 	};
 	/** Method used to test if a given block ID is considered negligible. */
 	public boolean isBlockNegligible(String blockId) {
+		if (blockId == null) return false;
 		if (populateIds()) {
-			if (blockIds.contains(blockId)) return true;
+			if (blockIdsNegligible.contains(blockId)) return true;
 		}
 		return false;
 	}
 	/** Method used to test if a given block state is considered negligible. */
 	public boolean isBlockNegligible(BlockState blockState) {
+		if (blockState == null) return false;
 		if (populateBlockTags()) {
-			for (TagKey<Block> blockTag: blockTags) {
+			for (TagKey<Block> blockTag: blockTagsNegligible) {
 				if (RegistryUtils.isIn(blockTag, blockState)) return true;
 			}
 		}
@@ -107,6 +113,7 @@ public abstract class NamespacedContent {
 	}
 	/** Method used to test if a given projectile entity is considered a bobber. */
 	public boolean isBobber(Projectile entity) {
+		if (entity == null) return false;
 		if (populateIds()) {
 			return bobberIds.contains(RegistryUtils.getIdKey(entity));
 		}
@@ -123,6 +130,8 @@ public abstract class NamespacedContent {
 	/** Method used to test if a given fluid is considered valid for a given rod item ID. */
 	public boolean isLiquidFishableTo(String itemId, FluidState fluidState) {
 		if (!hasMod()) return false;
+		if (itemId == null) return false;
+		if (fluidState == null || fluidState.isEmpty()) return false;
 		if (populateFluidTags()) {
 			Set<TagKey<Fluid>> validFluidTags = fluidTags.get(itemId);
 			if (validFluidTags == null) return false;
@@ -132,9 +141,29 @@ public abstract class NamespacedContent {
 		}
 		return false;
 	}
+	/** Method used to test if a given liquid-logged block is liquidlogged and considered valid (no collision).
+	* <br/>Value of <code>liquidlogged</code> should come from a separate <code>isLiquidFishableTo()</code> test! */
+	public boolean isLiquidloggedValid(BlockState blockState, boolean liquidlogged) {
+		// Requires getCollision, unsure how to use yet.
+		return false;
+	}
+	/** Method used to test if a given liquid-logged block is liquidlogged and considered valid (no collision).
+	* <br/>Value of <code>liquidlogged</code> should come from a separate <code>isLiquidFishableTo()</code> test! */
+	public boolean isLiquidloggedValid(String blockId, boolean liquidlogged) {
+		if (blockId == null) return false;
+		if (populateIds()) {
+			if (blockIdsInherentlylogged.contains(blockId)) return true;
+			if (
+				liquidlogged &&
+				blockIdsLiquidlogged.contains(blockId)
+			) return true;
+		}
+		return false;
+	}
 	/** Method used to test if a given item is considered a fishing rod. */
 	public boolean isRod(ItemStack itemStack) {
 		if (!hasMod()) return false;
+		if (ItemUtils.isStackEmpty(itemStack)) return false;
 		if (populateItemTags()) {
 			for (TagKey<Item> itemTag: rodTags) {
 				if (RegistryUtils.isIn(itemTag, itemStack)) return true;

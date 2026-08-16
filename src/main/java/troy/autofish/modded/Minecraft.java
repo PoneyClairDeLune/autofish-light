@@ -23,8 +23,43 @@ public class Minecraft extends NamespacedContent {
 			biteSoundIds.add("entity.fishing_bobber.splash");
 			biteSoundIds.add("minecraft:entity.fishing_bobber.splash");
 		}
-		if (blockIds.isEmpty()) {
-			blockIds.add("minecraft:lily_pad");
+		if (blockIdsInherentlylogged.isEmpty()) {
+			blockIdsInherentlylogged.add("minecraft:bubble_column");
+			blockIdsInherentlylogged.add("minecraft:kelp");
+			blockIdsInherentlylogged.add("minecraft:kelp_plant");
+			blockIdsInherentlylogged.add("minecraft:seagrass");
+			blockIdsInherentlylogged.add("minecraft:tall_seagrass");
+		}
+		if (blockIdsLiquidlogged.isEmpty()) {
+			blockIdsLiquidlogged.add("minecraft:brain_coral_fan");
+			blockIdsLiquidlogged.add("minecraft:brain_coral_wall_fan");
+			blockIdsLiquidlogged.add("minecraft:bubble_coral_fan");
+			blockIdsLiquidlogged.add("minecraft:bubble_coral_wall_fan");
+			blockIdsLiquidlogged.add("minecraft:dead_brain_coral_fan");
+			blockIdsLiquidlogged.add("minecraft:dead_brain_coral_wall_fan");
+			blockIdsLiquidlogged.add("minecraft:dead_bubble_coral_fan");
+			blockIdsLiquidlogged.add("minecraft:dead_bubble_coral_wall_fan");
+			blockIdsLiquidlogged.add("minecraft:dead_fire_coral_fan");
+			blockIdsLiquidlogged.add("minecraft:dead_fire_coral_wall_fan");
+			blockIdsLiquidlogged.add("minecraft:dead_horn_coral_fan");
+			blockIdsLiquidlogged.add("minecraft:dead_horn_coral_wall_fan");
+			blockIdsLiquidlogged.add("minecraft:dead_tube_coral_fan");
+			blockIdsLiquidlogged.add("minecraft:dead_tube_coral_wall_fan");
+			blockIdsLiquidlogged.add("minecraft:fire_coral_fan");
+			blockIdsLiquidlogged.add("minecraft:fire_coral_wall_fan");
+			blockIdsLiquidlogged.add("minecraft:glow_lichen");
+			blockIdsLiquidlogged.add("minecraft:hanging_roots");
+			blockIdsLiquidlogged.add("minecraft:horn_coral_fan");
+			blockIdsLiquidlogged.add("minecraft:horn_coral_wall_fan");
+			blockIdsLiquidlogged.add("minecraft:light");
+			blockIdsLiquidlogged.add("minecraft:mangrove_propagule");
+			blockIdsLiquidlogged.add("minecraft:resin_clump");
+			blockIdsLiquidlogged.add("minecraft:sculk_vein");
+			blockIdsLiquidlogged.add("minecraft:tube_coral_fan");
+			blockIdsLiquidlogged.add("minecraft:tube_coral_wall_fan");
+		}
+		if (blockIdsNegligible.isEmpty()) {
+			blockIdsNegligible.add("minecraft:lily_pad");
 		}
 		if (bobberIds.isEmpty()) {
 			bobberIds.add("minecraft:fishing_bobber");
@@ -35,8 +70,8 @@ public class Minecraft extends NamespacedContent {
 		return true;
 	}
 	protected boolean populateBlockTags() {
-		if (blockTags.isEmpty()) {
-			blockTags.add(BlockTags.AIR);
+		if (blockTagsNegligible.isEmpty()) {
+			blockTagsNegligible.add(BlockTags.AIR);
 		}
 		return true;
 	}
