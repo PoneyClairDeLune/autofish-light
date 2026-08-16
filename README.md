@@ -30,11 +30,11 @@ Crossed out entries indicate WIP status. Content of some mods might only be offe
 ### Versions
 Crossed out entries indicate WIP status.
 
-- ~~1.20.1~~ (`fabric-1.20.1`) [LTS]
-- 1.21.1 (`fabric-1.21.1`) [LTS]
-- 1.21.11 (`fabric-1.21.11`) [LTS]
-- 26.1.x (`fabric-1.22.1`)
-- 26.2.x (`fabric-1.23.1`)
+- ~~1.20.1~~ (`fabric-1.20.1`) [LTS] (WIP)
+- 1.21.1 (`fabric-1.21.1`) [LTS] (Supported)
+- 1.21.11 (`fabric-1.21.11`) [LTS] (Supported)
+- 26.1.x (`fabric-1.22.1`) (Supported)
+- 26.2.x (`fabric-1.23.1`) (Supported)
 
 ## FAQ
 ### Can I include this mod in my mod pack?

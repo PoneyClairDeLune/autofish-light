@@ -89,19 +89,21 @@ public abstract class NamespacedContent {
 	public Projectile getBobber(LocalPlayer player) {
 		return null;
 	};
-	/** Method used to test if a given block is considered negligible. */
-	public boolean isBlockNegligible(BlockState blockState) {
-		boolean verdict = false;
+	/** Method used to test if a given block ID is considered negligible. */
+	public boolean isBlockNegligible(String blockId) {
 		if (populateIds()) {
-			verdict = blockIds.contains(RegistryUtils.getIdKey(blockState));
+			if (blockIds.contains(blockId)) return true;
 		}
-		if (!verdict && populateBlockTags()) {
+		return false;
+	}
+	/** Method used to test if a given block state is considered negligible. */
+	public boolean isBlockNegligible(BlockState blockState) {
+		if (populateBlockTags()) {
 			for (TagKey<Block> blockTag: blockTags) {
-				verdict = RegistryUtils.isIn(blockTag, blockState);
-				if (verdict) break;
+				if (RegistryUtils.isIn(blockTag, blockState)) return true;
 			}
 		}
-		return verdict;
+		return false;
 	}
 	/** Method used to test if a given projectile entity is considered a bobber. */
 	public boolean isBobber(Projectile entity) {

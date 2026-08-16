@@ -77,9 +77,10 @@ public class Common {
 	/** Returns true if the block does not obstruct fishing, like a lily pad. */
 	public static boolean isBlockNegligible(BlockState blockState) {
 		if (blockState == null) return false;
+		String blockId = RegistryUtils.getIdKey(blockState);
 		NamespacedContent content = registeredContent.get(RegistryUtils.getNamespace(blockState));
 		if (content != null) {
-			return content.isBlockNegligible(blockState);
+			return content.isBlockNegligible(blockState) || content.isBlockNegligible(blockId);
 		}
 		return false;
 	}
