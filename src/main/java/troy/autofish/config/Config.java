@@ -1,8 +1,15 @@
 package troy.autofish.config;
 
+import java.util.regex.Pattern;
+
 import com.google.gson.annotations.Expose;
 
+import troy.autofish.LogSession;
+
 public class Config {
+	private Pattern clearLagMatcherCompiled;
+	private String clearLagRegexOld = "\\[ClearLag\\] Removed [0-9]+ Entities!";
+
 	@Expose int damageSafeMargin = 1;
 	@Expose boolean legacyPersistenceBreakMe = true; // PLACEHOLDER!
 	@Expose boolean modEnabled = true;
@@ -75,6 +82,9 @@ public class Config {
 	public boolean unsafeFluids() {
 		return unsafeFluids;
 	}
+	public String clearLagRegexString() {
+		return clearLagRegex;
+	}
 
 	public void damageSafeMargin(int value) {
 		damageSafeMargin = value;
@@ -109,6 +119,40 @@ public class Config {
 	public void unsafeFluids(boolean value) {
 		unsafeFluids = value;
 	}
+	// Can I compile as soon as GSON populates it?
+	public void clearLagRegexString(String value) {
+		// TODO: Make the compilation and caching proper. The current approach is bloody awkward. Also make the pattern retriever methods attempt recompilation if the compiled pattern is not yet populated.
+		String revertableOld = clearLagRegexOld;
+		clearLagRegexOld = clearLagRegex;
+		clearLagRegex = value;
+		if (!compileRegex()) {
+			clearLagRegexOld = revertableOld;
+			clearLagRegex = clearLagRegexOld;
+		};
+	}
+
+	/** Returns <code>true</code> when a new RegEx is compiled. */
+	public boolean compileRegex() {
+		if (clearLagRegex == null) return false;
+		if (clearLagRegex.isBlank()) return true;
+		if (clearLagRegexOld != null && clearLagRegex.equals(clearLagRegexOld)) return false;
+		try {
+			clearLagMatcherCompiled = Pattern.compile(clearLagRegex, Pattern.CASE_INSENSITIVE);
+		} catch (Exception e) {
+			LogSession.error("RegEx compile error:\n" + e.getMessage());
+			return false;
+		}
+		return true;
+	}
+	public Pattern getClearLagPattern() {
+		return clearLagMatcherCompiled;
+	}
+	public boolean matchClearLagPattern(String input) {
+		if (input == null || clearLagRegex == null) return false;
+		if (clearLagRegex.isBlank()) return false;
+		if (clearLagMatcherCompiled == null) return false;
+		return clearLagMatcherCompiled.matcher(input).find();
+	}
 
     public long getRecastDelay() {
         return recastDelay;
@@ -116,18 +160,12 @@ public class Config {
     public long getRandomDelay(){
         return randomPercent;
     }
-    public String getClearLagRegex() {
-        return clearLagRegex;
-    }
 
     public void setRecastDelay(long recastDelay) {
         this.recastDelay = recastDelay;
     }
     public void setRandomDelay(long randomPercent){
         this.randomPercent = randomPercent;
-    }
-    public void setClearLagRegex(String clearLagRegex) {
-        this.clearLagRegex = clearLagRegex;
     }
 
     public long getRandomPercent() {

@@ -1,8 +1,5 @@
 package troy.autofish;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import cc.ltgc.luneApi.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -25,8 +22,6 @@ import troy.autofish.monitor.FishMonitorMP;
 import troy.autofish.monitor.FishMonitorMPMotion;
 import troy.autofish.monitor.FishMonitorMPSound;
 import troy.autofish.scheduler.ActionType;
-
-import org.apache.commons.lang3.StringUtils;
 
 public class Autofish {
 	private FabricModAutofish modAutofish;
@@ -91,20 +86,14 @@ public class Autofish {
 		// Check if the hook either exists or was just removed.
 		// This prevents false casts if a rod is held but isn't used for fishing.
 		if (hookExists || (timeMillis - hookRemovedAt < 2000)) {
-			//make sure there is actually something there in the regex field
-			if (
-				StringUtils.deleteWhitespace(
-					modAutofish.getConfig().getClearLagRegex()
-				).isEmpty()
-			) return;
+			// No-op if the matcher string is blank.
+			if (modAutofish.getConfig().clearLagRegexString().isBlank()) return;
 			// Check if it matches.
-			Matcher matcher = Pattern.compile(
-				modAutofish.getConfig().getClearLagRegex(),
-				Pattern.CASE_INSENSITIVE
-			).matcher(StringUtil.stripColor(
-				packet.content().getString()
-			));
-			if (matcher.find()) {
+			if (modAutofish.getConfig().matchClearLagPattern(
+				StringUtil.stripColor(
+					packet.content().getString()
+				)
+			)) {
 				queueRecast();
 			}
 		}

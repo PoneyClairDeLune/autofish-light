@@ -21,6 +21,7 @@ public class AutofishScreenBuilder {
 		Config defaults = new Config();
 		Config config = modAutofish.getConfig();
 
+
 		ConfigBuilder builder = ConfigBuilder.create()
 		.setParentScreen(parentScreen)
 		.setTitle(
@@ -36,6 +37,7 @@ public class AutofishScreenBuilder {
 		ConfigCategory configCat = builder.getOrCreateCategory(
 			Component.translatable("options.autofish.config")
 		);
+
 
 		// If the mod should be enabled.
 		AbstractConfigListEntry<Boolean> toggleAutofish = entryBuilder.startBooleanToggle(
@@ -242,13 +244,13 @@ public class AutofishScreenBuilder {
 		// RegEx pattern for ClearLag.
 		AbstractConfigListEntry<String> clearLagRegexField = entryBuilder.startTextField(
 			Component.translatable("options.autofish.clear_regex.title"),
-			config.getClearLagRegex()
+			config.clearLagRegexString()
 		).setDefaultValue(
-			defaults.getClearLagRegex()
+			defaults.clearLagRegexString()
 		).setTooltip(
 			Component.translatable("options.autofish.clear_regex.tooltip")
-		).setSaveConsumer(newValue -> {
-			modAutofish.getConfig().setClearLagRegex(newValue);
+		).setSaveConsumer(value -> {
+			modAutofish.getConfig().clearLagRegexString(value);
 		}).build();
 
 		SubCategoryBuilder subCatBuilderBasic = entryBuilder.startSubCategory(Component.translatable("options.autofish.basic.title"));

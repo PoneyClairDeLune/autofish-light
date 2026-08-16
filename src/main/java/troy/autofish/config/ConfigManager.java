@@ -55,10 +55,11 @@ public class ConfigManager {
         else task.run();
     }
 
-    public void writeNewConfig() {
-        config = new Config();
-        writeConfig(false);
-    }
+	public void writeNewConfig() {
+		config = new Config();
+		config.compileRegex();
+		writeConfig(false);
+	}
 
     public void writeConfig(boolean async) {
         Runnable task = () -> {
