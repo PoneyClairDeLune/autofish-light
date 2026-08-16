@@ -31,11 +31,11 @@
 
 	"options.autofish.advanced.title": "Advanced Options",
 
-	"options.autofish.sound.title": "Use Sound Detection",
+	"options.autofish.sound.title": "Detect By Sound",
 	"options.autofish.sound.tooltip": "\u00A76Newer, more accurate detection based on\nbobber sounds rather than the standard\nbobber movement detection.\u00a7r\n\u00a7f- You must be close to your bobber.\n- If other players' bobbers are close by,\n  it can falsely trigger a catch!",
 
-	"options.autofish.open_water_new_algorithm.title": "Use New Open Water Detection",
-	"options.autofish.open_water_new_algorithm.tooltip": "\u00A76New implementation more closely\nfollowing the documented open water\nvalidation process on \u00A7eMinecraft Wiki\u00A76.\u00A7r\n\n\u00A7fTurn off to restore the relatively more\nlenient legacy behavior.",
+	"options.autofish.open_water_new_algorithm.title": "New Open Water Detection",
+	"options.autofish.open_water_new_algorithm.tooltip": "\u00A76New implementation more closely\nfollowing the documented open water\nvalidation process on \u00A7eMinecraft Wiki\u00A76.\u00A7r\n\n\u00A7fTurn off to restore legacy behavior.",
 
 	"options.autofish.noisy_detection.title": "Noisy Detection Notification",
 	"options.autofish.noisy_detection.tooltip": "\u00A76Keep notifying the player of detection\nresults, regardless of previous status.\nAffects the following:\u00A7r\n\u00A7f- Open water detection\n- Item rod test",
@@ -47,7 +47,7 @@
 	"options.autofish.damage_safe_margin.value": "%d",
 	"options.autofish.damage_safe_margin.tooltip": "Sets the minimum durability fishing rods\nshould have before they are ignored.\n\nUsed by \u00A7eBreak Protection\u00A7f.",
 
-	"options.autofish.recast_delay.title": "Recast Delay (ms)",
+	"options.autofish.recast_delay.title": "Recast Delay",
 	"options.autofish.recast_delay.value": "%d ms",
 	"options.autofish.recast_delay.tooltip": "Adjusts the delay between catching\na fish and recasting the rod.",
 
@@ -55,7 +55,7 @@
 	"options.autofish.random_delay.value": "%d percent",
 	"options.autofish.random_delay.tooltip": "Introduces constrained randomness in\neither direction to \u00A7eRecast Delay\u00A7f.\nFor example, if the base value is set to\n1500 ms, setting the randomization range\nto 20% will make the value vary between\n1200 ms and 1800 ms.\nTo disable randomization, set this to 0.",
 
-	"options.autofish.reel_in_delay.title": "Reel-in delay",
+	"options.autofish.reel_in_delay.title": "Reel-in Delay",
 	"options.autofish.reel_in_delay.value": "%d ms",
 	"options.autofish.reel_in_delay.tooltip": "Introduces a delay before reeling-in,\nafter a fish bites the hook.\nTo disable the delay, set this to 1.",
 
