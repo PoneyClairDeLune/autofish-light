@@ -3,8 +3,8 @@
 	"id": "autofish-light",
 	"version": "${version}",
 	"license": "GPL-3.0-only",
-	"name": "Light's Autofish",
-	"description": "Automatically catches fish for you when holding a fishing rod. Now with explicit mod support.",
+	"name": "Light's Extensive Autofish++",
+	"description": "Automatically catches fish for you when holding a fishing rod. Now with explicit mod support!",
 	"authors": [
 		"troyboy50",
 		"Wudji",

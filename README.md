@@ -1,4 +1,4 @@
-# Light's Autofish
+# Light's Extensive Autofish++
 > Download from [Modrinth](https://modrinth.com/mod/autofish-light)!
 
 > This mod is currently going through a rewrite to reduce technical debt.
@@ -9,7 +9,7 @@ Annoyed that you have to focus on when to reel in your fishing rod? Frustrated t
 
 Convenient configs are available in the mod menu or by pressing a hotkey (`v` by default) in-game. Modded liquids and fishing rods are explicitly supported, with full coverage listed below. Requests welcome!
 
-Light's Autofish is a hard fork of [X+ Autofish](https://github.com/Wudji/XPlus-AutoFish), which in turn is an updated fork of [MrTroot's Autofish mod](https://www.curseforge.com/minecraft/mc-mods/autofish) for Minecraft 1.19.4+.
+Light's Extensive Autofish++ is a hard fork of [X+ Autofish](https://github.com/Wudji/XPlus-AutoFish), which in turn is an updated fork of [MrTroot's Autofish mod](https://www.curseforge.com/minecraft/mc-mods/autofish) for Minecraft 1.19.4+.
 
 ![use-fabric](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/supported/fabric_64h.png)![no-forge](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/unsupported/forge_64h.png)![no-quilt](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/unsupported/quilt_64h.png)
 
