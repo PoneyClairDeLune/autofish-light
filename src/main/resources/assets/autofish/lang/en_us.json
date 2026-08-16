@@ -26,6 +26,9 @@
 	"options.autofish.persistent.title": "Enable Persistent Mode",
 	"options.autofish.persistent.tooltip": "Keep the fish hook always in liquid\nwhenever a rod is in hand, recast when\nneeded. This is useful for lag issues or\nwhen fishing for long periods of time.",
 
+	"options.autofish.unsafe_fluids.title": "Consider Unsafe Fluids",
+	"options.autofish.unsafe_fluids.tooltip": "Also test fluids outside of known safe\nones for certain fishing rods, which may\nforce certain modded rods to work.\nFor example, this enables \u00A7clava\u00A7f fishing\nfor vanilla rods and its direct variants.",
+
 	"options.autofish.advanced.title": "Advanced Options",
 
 	"options.autofish.sound.title": "Use Sound Detection",

@@ -157,41 +157,41 @@ public class Common {
 		return isRod;
 	}
 	/** Returns true if the liquid is fishable to the given rod. */
-	public static boolean isLiquidFishableTo(ItemStack itemStack, BlockState blockState) {
+	public static boolean isLiquidFishableTo(ItemStack itemStack, BlockState blockState, boolean useUnsafeFluid) {
 		if (blockState == null) return false;
 		if (itemStack == null || itemStack.count() <= 0) return false;
 		FluidState fluidState = blockState.getFluidState();
-		return isLiquidFishableTo(itemStack, fluidState);
+		return isLiquidFishableTo(itemStack, fluidState, useUnsafeFluid);
 	}
 	/** Returns true if the liquid is fishable to the given rod. */
-	public static boolean isLiquidFishableTo(ItemStack itemStack, FluidState fluidState) {
+	public static boolean isLiquidFishableTo(ItemStack itemStack, FluidState fluidState, boolean useUnsafeFluid) {
 		if (fluidState == null) return false;
 		if (itemStack == null || itemStack.count() <= 0) return false;
 		boolean isFishable = false;
 		String itemId = RegistryUtils.getIdKey(itemStack);
 		NamespacedContent content = registeredContent.get(RegistryUtils.getNamespace(itemStack));
 		if (content != null) {
-			isFishable = content.isLiquidFishableTo(itemId, fluidState, false);
+			isFishable = content.isLiquidFishableTo(itemId, fluidState, useUnsafeFluid);
 		}
 		return isFishable;
 	}
 	/** Returns true if the liquid is fishable to the rod held by the given player. */
-	public static boolean isLiquidFishableTo(Player player, BlockState blockState) {
+	public static boolean isLiquidFishableTo(Player player, BlockState blockState, boolean useUnsafeFluid) {
 		if (player == null) return false;
 		if (blockState == null) return false;
-		return isLiquidFishableTo(PlayerUtils.getHeldStack(player, false), blockState);
+		return isLiquidFishableTo(PlayerUtils.getHeldStack(player, false), blockState, useUnsafeFluid);
 	}
 	/** Returns true if the liquid is fishable to the rod held by the given player. */
-	public static boolean isLiquidFishableTo(Player player, FluidState fluidState) {
+	public static boolean isLiquidFishableTo(Player player, FluidState fluidState, boolean useUnsafeFluid) {
 		if (player == null) return false;
 		if (fluidState == null) return false;
-		return isLiquidFishableTo(PlayerUtils.getHeldStack(player, false), fluidState);
+		return isLiquidFishableTo(PlayerUtils.getHeldStack(player, false), fluidState, useUnsafeFluid);
 	}
 	/** Returns true if the liquidlogged block qualifies as fishable liquid. */
-	public static boolean isLiquidloggedValid(Player player, BlockState blockState) {
+	public static boolean isLiquidloggedValid(Player player, BlockState blockState, boolean useUnsafeFluid) {
 		if (blockState == null) return false;
 		FluidState liquidState = blockState.getFluidState();
-		boolean liquidlogged = isLiquidFishableTo(player, liquidState);
+		boolean liquidlogged = isLiquidFishableTo(player, liquidState, useUnsafeFluid);
 		if (liquidlogged && RegistryUtils.getIdKey(blockState).equals(RegistryUtils.getIdKey(liquidState))) {
 			return true;
 		}

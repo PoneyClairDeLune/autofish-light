@@ -80,11 +80,10 @@ public class Minecraft extends NamespacedContent {
 		if (fluidTags.isEmpty()) {
 			Set<TagKey<Fluid>> vanillaFluidTags = new HashSet<>();
 			vanillaFluidTags.add(FluidTags.WATER);
-			// TODO: Add a config entry allowing lava blocks to be used on vanilla rods. May require implementing conditional mod content flushes and rebuilds.
-			if (true) {
-				vanillaFluidTags.add(FluidTags.LAVA);
-			}
 			fluidTags.put("minecraft:fishing_rod", vanillaFluidTags);
+			Set<TagKey<Fluid>> vanillaUnsafeFluidTags = new HashSet<>();
+			vanillaUnsafeFluidTags.add(FluidTags.LAVA);
+			fluidTagsUnsafe.put("minecraft:fishing_rod", vanillaUnsafeFluidTags);
 		}
 		return true;
 	}

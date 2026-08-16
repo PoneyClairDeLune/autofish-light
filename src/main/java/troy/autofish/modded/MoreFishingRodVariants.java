@@ -36,11 +36,10 @@ public class MoreFishingRodVariants extends NamespacedContent {
 		for (String rodId: rodIds) {
 			Set<TagKey<Fluid>> rodFluidTags = new HashSet<>();
 			rodFluidTags.add(FluidTags.WATER);
-			// TODO: Same as Minecraft.java.
-			if (true) {
-				rodFluidTags.add(FluidTags.LAVA);
-			}
 			fluidTags.put(rodId, rodFluidTags);
+			Set<TagKey<Fluid>> rodUnsafeFluidTags = new HashSet<>();
+			rodUnsafeFluidTags.add(FluidTags.LAVA);
+			fluidTagsUnsafe.put(rodId, rodUnsafeFluidTags);
 		}
 		return true;
 	};

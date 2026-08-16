@@ -44,6 +44,11 @@ public class GoFish extends NamespacedContent {
 					rodFluidTags.add(FluidTags.LAVA);
 					break;
 				}
+				default: {
+					Set<TagKey<Fluid>> rodUnsafeFluidTags = new HashSet<>();
+					rodUnsafeFluidTags.add(FluidTags.LAVA);
+					fluidTagsUnsafe.put(rodId, rodUnsafeFluidTags);
+				}
 			}
 			fluidTags.put(rodId, rodFluidTags);
 		}

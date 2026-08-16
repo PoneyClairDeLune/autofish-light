@@ -226,7 +226,7 @@ public class Autofish {
 		Projectile bobber = Common.getPlayerBobber(player);
 		if (bobber == null) return false;
 		BlockState currentBlock = EnvUtils.client().level.getBlockState(bobber.blockPosition());
-		boolean waterVerdict = Common.isLiquidFishableTo(player, currentBlock);
+		boolean waterVerdict = Common.isLiquidFishableTo(player, currentBlock, false);
 		if (currentBlock != lastBlock) {
 			LogSession.info("Block " + RegistryUtils.getIdKey(currentBlock) + (waterVerdict ? " is" : " isn't") + " fishable liquid.");
 		}
@@ -258,8 +258,8 @@ public class Autofish {
 				blockX + 2, blockY + deltaY, blockZ + 2
 			).allMatch(blockPos -> {
 				BlockState blockState = bobberWorld.getBlockState(blockPos);
-				if (useNewerMethod) return Common.isLiquidloggedValid(player, blockState);
-				return Common.isLiquidFishableTo(player, blockState);
+				if (useNewerMethod) return Common.isLiquidloggedValid(player, blockState, false);
+				return Common.isLiquidFishableTo(player, blockState, false);
 			});
 			boolean blockVerdict = BlockPos.betweenClosedStream(
 				blockX - 2, blockY + deltaY, blockZ - 2,
