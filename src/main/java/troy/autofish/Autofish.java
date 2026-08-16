@@ -348,7 +348,9 @@ public class Autofish {
 		if (persistenceTick < 0) {
 			persistenceTick = 0;
 		}
-		LocalPlayer player = EnvUtils.client().player;
+		Minecraft client = EnvUtils.client();
+		if (client.isPaused()) return;
+		LocalPlayer player = client.player;
 		if (earlyReturn(player)) return;
 		if (modAutofish.getConfig().legacyPersistence()) {
 			if (persistenceTick - persistenceTickLegacyLast < 50) return;
