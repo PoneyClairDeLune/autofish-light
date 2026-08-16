@@ -11,9 +11,9 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.level.material.Fluid;
 
-/** The vanilla <i>Minecraft</i> game and <i>Vanilla Backport</i>. */
+/** The vanilla <i>Minecraft</i> game by <i>Mojang AB</i> and <i>Vanilla Backport</i> by <i>ItsBlackGear</i>. */
 public class Minecraft extends NamespacedContent {
-	/** The vanilla <i>Minecraft</i> game and <i>Vanilla Backport</i>. */
+	/** The vanilla <i>Minecraft</i> game by <i>Mojang AB</i> and <i>Vanilla Backport</i> by <i>ItsBlackGear</i>. */
 	public Minecraft() {
 		super("minecraft", "minecraft", "Minecraft");
 	}

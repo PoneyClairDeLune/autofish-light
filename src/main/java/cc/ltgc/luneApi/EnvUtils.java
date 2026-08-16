@@ -40,17 +40,25 @@ public class EnvUtils {
 		return Minecraft.getInstance().getVersionType();
 	}
 	/** The game version ID. */
-	public static final String gameVersion = SharedConstants.getCurrentVersion().id();
+	public static String gameVersion() {
+		return SharedConstants.getCurrentVersion().id();
+	}
 	/** The game version string. */
-	public static final String gameVersionString = SharedConstants.getCurrentVersion().name();
+	public static String gameVersionString() {
+		return SharedConstants.getCurrentVersion().name();
+	}
 	/** The mod loader instance. */
 	public static FabricLoader loader() {
 		return FabricLoader.getInstance();
-	};
+	}
 
-	static {
-		//if (client == null) client = Minecraft.getInstance();
-		String[] launchArgs = loader().getLaunchArguments(true);
+	/** Reusable initialization for launch arguments. */
+	public static boolean populate() {
+		if (arguments != null && !arguments.isEmpty()) return true;
+		FabricLoader loader = loader();
+		if (loader == null) return false;
+		String[] launchArgs = loader.getLaunchArguments(true);
+		if (launchArgs == null) return false;
 		String mapKey = null;
 		Map<String, String> newMap = new HashMap<>();
 		for (String e: launchArgs) {
@@ -72,18 +80,27 @@ public class EnvUtils {
 			newMap.put(mapKey, null);
 		}
 		arguments = Collections.unmodifiableMap(newMap);
+		return true;
 	}
 
-	/** Retrive a specific launch argument. */
-	public static String getArgumentValue(String arg) {
+	static {
+		//if (client == null) client = Minecraft.getInstance();
+		populate();
+	}
+
+	/** Retrive the value of a specific launch argument. */
+	public static String getArgument(String arg) {
+		if (!populate()) return null;
 		return arguments.get(arg);
 	}
 	/** See if a launch argument is present. */
 	public static boolean hasArgument(String arg) {
+		if (!populate()) return false;
 		return arguments.containsKey(arg);
 	}
 	/** List all launch arguments. */
 	public static Set<String> listArguments() {
+		if (!populate()) return null;
 		return arguments.keySet();
 	}
 }

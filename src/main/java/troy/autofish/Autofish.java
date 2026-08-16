@@ -284,11 +284,11 @@ public class Autofish {
 		if (earlyReturn(player)) {
 			lastHeldRod = false;
 			return false;
-		};
+		}
 		ItemStack heldItemStack = PlayerUtils.getHeldStack(player, this::isOffhandPredicate);
 		boolean rodHeld = Common.isFishingRod(heldItemStack);
 		if (lastHeldRod != rodHeld) {
-			LogSession.debug((rodHeld ? "H" : "Not h") + "olding fishing rod: " + RegistryUtils.getIdKey(heldItemStack) + ".");
+			LogSession.info((rodHeld ? "H" : "Not h") + "olding fishing rod: " + RegistryUtils.getIdKey(heldItemStack) + ".");
 		}
 		lastHeldRod = rodHeld;
 		return rodHeld;

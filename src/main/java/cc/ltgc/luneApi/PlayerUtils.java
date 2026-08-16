@@ -38,7 +38,7 @@ public class PlayerUtils {
 			ItemStack mainHandItemStack = player.getMainHandItem();
 			if (ItemUtils.isStackEmpty(mainHandItemStack)) return true;
 			return !matcher.test(mainHandItemStack);
-		};
+		}
 		return false;
 	}
 	/** Change the selected hotbar slot (<code>[0, 8]</code>). */

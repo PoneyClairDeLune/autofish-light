@@ -7,9 +7,9 @@ import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.material.Fluid;
 
-/** <i>Go Fish</i> by Draylar and Elis Kvitka. */
+/** <i>Go Fish</i> by <i>Draylar</i> and <i>Elis Kvitka</i>. */
 public class GoFish extends NamespacedContent {
-	/** <i>Go Fish</i> by Draylar and Elis Kvitka. */
+	/** <i>Go Fish</i> by <i>Draylar</i> and <i>Elis Kvitka</i>. */
 	public GoFish() {
 		super("gofish", "gofish", "Go Fish");
 	}

@@ -25,18 +25,22 @@ public class Common {
 	private static int lastBobberId = 0;
 	private static int lastPlayerBobberId = 0;
 	private static boolean determinedByTag = false;
+	private static NamespacedContent minecraftContent;
 	private static final Map<String, NamespacedContent> registeredContent = new ConcurrentHashMap<>();
 	private static final Iterable<NamespacedContent> registeredContentList = registeredContent.values();
 
 	private static FabricModAutofish modInstance = null;
 	private static void addContent(NamespacedContent content) {
 		registeredContent.put(content.namespace, content);
+		LogSession.info("Registered content \"" + content.name + "\" (" + content.id + ").");
 	}
 	public static void initialize(FabricModAutofish mod) {
 		modInstance = mod;
 		if (registeredContent.isEmpty()) {
-			addContent(new Minecraft());
+			minecraftContent = new Minecraft();
+			addContent(minecraftContent);
 			addContent(new GoFish());
+			addContent(new MoreFishingRodVariants());
 			addContent(new Spectrum());
 		}
 	}
@@ -123,7 +127,8 @@ public class Common {
 		determinedByTag = true;
 		NamespacedContent content = registeredContent.get(RegistryUtils.getNamespace(rodItemStack));
 		if (content != null) {
-			return content.isRod(rodItemStack);
+			//return content.isRod(rodItemStack);
+			return content.isRod(rodItemStack) || minecraftContent.isRod(rodItemStack);
 		}
 		return false;
 	}

@@ -51,22 +51,22 @@ public abstract class NamespacedContent {
 	//@Deprecated
 	protected boolean populateIds() {
 		return false;
-	};
+	}
 	/** Method used to populate block tags, which may call reflectors. Should return <code>true</code> if the fields are populated. Don't use it if not implemented. */
 	//@Deprecated
 	protected boolean populateBlockTags() {
 		return false;
-	};
+	}
 	/** Method used to populate fluid tags, which may call reflectors. Should return <code>true</code> if the fields are populated. Don't use it if not implemented. */
 	//@Deprecated
 	protected boolean populateFluidTags() {
 		return false;
-	};
+	}
 	/** Method used to populate item tags, which may call reflectors. Should return <code>true</code> if the fields are populated. Don't use it if not implemented. */
 	//@Deprecated
 	protected boolean populateItemTags() {
 		return false;
-	};
+	}
 
 	public NamespacedContent(String id, String namespace, String readableName) {
 		this.id = id;
@@ -92,7 +92,7 @@ public abstract class NamespacedContent {
 	//@Deprecated
 	public Projectile getBobber(LocalPlayer player) {
 		return null;
-	};
+	}
 	/** Method used to test if a given block ID is considered negligible. */
 	public boolean isBlockNegligible(String blockId) {
 		if (blockId == null) return false;

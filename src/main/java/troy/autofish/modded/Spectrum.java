@@ -11,9 +11,9 @@ import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.level.material.Fluid;
 import troy.autofish.LogSession;
 
-/** <i>Spectrum</i> by DaFuqs. */
+/** <i>Spectrum</i> by <i>DaFuqs</i>. */
 public class Spectrum extends NamespacedContent {
-	/** <i>Spectrum</i> by DaFuqs. */
+	/** <i>Spectrum</i> by <i>DaFuqs</i>. */
 	public Spectrum() {
 		super("spectrum", "spectrum", "Spectrum");
 	}
