@@ -67,20 +67,6 @@ public class AutofishScreenBuilder {
 			booleanTextComponent
 		).build();
 
-		// Should the mod detect open water.
-		AbstractConfigListEntry<Boolean> toggleOpenWaterDetection = entryBuilder.startBooleanToggle(
-			Component.translatable("options.autofish.open_water_detection.title"),
-			config.openWaterDetected()
-		).setDefaultValue(
-			defaults.openWaterDetected()
-		).setTooltip(
-			Component.translatable("options.autofish.open_water_detection.tooltip")
-		).setSaveConsumer(newValue -> {
-			modAutofish.getConfig().openWaterDetected(newValue);
-		}).setYesNoTextSupplier(
-			booleanTextComponent
-		).build();
-
 		// Should the mod prevent rods from breaking.
 		AbstractConfigListEntry<Boolean> toggleBreakProtection = entryBuilder.startBooleanToggle(
 			Component.translatable("options.autofish.break_protection.title"),
@@ -91,6 +77,20 @@ public class AutofishScreenBuilder {
 			Component.translatable("options.autofish.break_protection.tooltip")
 		).setSaveConsumer(newValue -> {
 			modAutofish.getConfig().rodBreakAvoided(newValue);
+		}).setYesNoTextSupplier(
+			booleanTextComponent
+		).build();
+
+		// Should the mod detect open water.
+		AbstractConfigListEntry<Boolean> toggleOpenWaterDetection = entryBuilder.startBooleanToggle(
+			Component.translatable("options.autofish.open_water_detection.title"),
+			config.openWaterDetected()
+		).setDefaultValue(
+			defaults.openWaterDetected()
+		).setTooltip(
+			Component.translatable("options.autofish.open_water_detection.tooltip")
+		).setSaveConsumer(newValue -> {
+			modAutofish.getConfig().openWaterDetected(newValue);
 		}).setYesNoTextSupplier(
 			booleanTextComponent
 		).build();

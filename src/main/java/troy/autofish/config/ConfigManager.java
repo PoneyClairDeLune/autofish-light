@@ -57,7 +57,6 @@ public class ConfigManager {
 
 	public void writeNewConfig() {
 		config = new Config();
-		config.compileRegex();
 		writeConfig(false);
 	}
 

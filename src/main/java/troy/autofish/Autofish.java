@@ -87,7 +87,7 @@ public class Autofish {
 		// This prevents false casts if a rod is held but isn't used for fishing.
 		if (hookExists || (timeMillis - hookRemovedAt < 2000)) {
 			// No-op if the matcher string is blank.
-			if (modAutofish.getConfig().clearLagRegexString().isBlank()) return;
+			if (modAutofish.getConfig().isClearLagRegexEmpty()) return;
 			// Check if it matches.
 			if (modAutofish.getConfig().matchClearLagPattern(
 				StringUtil.stripColor(

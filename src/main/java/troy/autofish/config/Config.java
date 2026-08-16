@@ -7,8 +7,8 @@ import com.google.gson.annotations.Expose;
 import troy.autofish.LogSession;
 
 public class Config {
-	private Pattern clearLagMatcherCompiled;
-	private String clearLagRegexOld = "\\[ClearLag\\] Removed [0-9]+ Entities!";
+	private Pattern compiledClearLagMatcher;
+	private String clearLagRegexOld;
 
 	@Expose int damageSafeMargin = 1;
 	@Expose boolean legacyPersistenceBreakMe = true; // PLACEHOLDER!
@@ -87,6 +87,8 @@ public class Config {
 	}
 
 	public void damageSafeMargin(int value) {
+		if (value < 1) value = 1;
+		if (value > 32) value = 32;
 		damageSafeMargin = value;
 	}
 	public void legacyPersistence(boolean value) {
@@ -119,39 +121,43 @@ public class Config {
 	public void unsafeFluids(boolean value) {
 		unsafeFluids = value;
 	}
-	// Can I compile as soon as GSON populates it?
 	public void clearLagRegexString(String value) {
-		// TODO: Make the compilation and caching proper. The current approach is bloody awkward. Also make the pattern retriever methods attempt recompilation if the compiled pattern is not yet populated.
-		String revertableOld = clearLagRegexOld;
-		clearLagRegexOld = clearLagRegex;
-		clearLagRegex = value;
-		if (!compileRegex()) {
-			clearLagRegexOld = revertableOld;
-			clearLagRegex = clearLagRegexOld;
-		};
+		triggerClearLagRegexCompile(value, true);
 	}
 
-	/** Returns <code>true</code> when a new RegEx is compiled. */
-	public boolean compileRegex() {
-		if (clearLagRegex == null) return false;
-		if (clearLagRegex.isBlank()) return true;
-		if (clearLagRegexOld != null && clearLagRegex.equals(clearLagRegexOld)) return false;
-		try {
-			clearLagMatcherCompiled = Pattern.compile(clearLagRegex, Pattern.CASE_INSENSITIVE);
-		} catch (Exception e) {
-			LogSession.error("RegEx compile error:\n" + e.getMessage());
-			return false;
+	private void triggerClearLagRegexCompile(String regex, boolean updateIfSucceeded) {
+		if (regex == null) return;
+		boolean compilePassed = false;
+		Pattern compiledIntermediate = null;
+		if (regex.isBlank()) {
+			compilePassed = true;
+		} else {
+			try {
+				compiledIntermediate = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
+				compilePassed = true;
+			} catch (Exception e) {
+				LogSession.error("RegEx compile error:\n" + e.getMessage());
+				return;
+			}
 		}
-		return true;
+		if (!compilePassed) return;
+		compiledClearLagMatcher = compiledIntermediate;
+		if (updateIfSucceeded) {
+			clearLagRegexOld = clearLagRegex;
+			clearLagRegex = regex;
+		}
 	}
-	public Pattern getClearLagPattern() {
-		return clearLagMatcherCompiled;
+	public boolean isClearLagRegexEmpty() {
+		if (clearLagRegex == null || clearLagRegex.isBlank()) return true;
+		if (compiledClearLagMatcher == null) triggerClearLagRegexCompile(clearLagRegex, false);
+		return false;
 	}
 	public boolean matchClearLagPattern(String input) {
 		if (input == null || clearLagRegex == null) return false;
 		if (clearLagRegex.isBlank()) return false;
-		if (clearLagMatcherCompiled == null) return false;
-		return clearLagMatcherCompiled.matcher(input).find();
+		if (compiledClearLagMatcher == null) triggerClearLagRegexCompile(clearLagRegex, false);
+		if (compiledClearLagMatcher == null) return false;
+		return compiledClearLagMatcher.matcher(input).find();
 	}
 
     public long getRecastDelay() {
