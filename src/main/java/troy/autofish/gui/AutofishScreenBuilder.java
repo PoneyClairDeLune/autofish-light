@@ -195,58 +195,61 @@ public class AutofishScreenBuilder {
 		).build();
 
 		// Configure the delay between recasts.
-		AbstractConfigListEntry<Long> recastDelaySlider = entryBuilder.startLongSlider(Component.translatable("options.autofish.recast_delay.title"), config.getRecastDelay(), 500, 5000)
-			.setDefaultValue(defaults.getRecastDelay())
-			.setTooltip(
-				Component.translatable("options.autofish.recast_delay.tooltip_0"),
-				Component.translatable("options.autofish.recast_delay.tooltip_1")
-			)
-			.setTextGetter(value -> Component.translatable("options.autofish.recast_delay.value", value))
-			.setSaveConsumer(newValue -> {
-				modAutofish.getConfig().setRecastDelay(newValue);
-			})
-			.build();
+		AbstractConfigListEntry<Long> recastDelaySlider = entryBuilder.startLongSlider(
+			Component.translatable("options.autofish.recast_delay.title"),
+			config.getRecastDelay(),
+			500, 5000
+		).setDefaultValue(
+			defaults.getRecastDelay()
+		).setTooltip(
+			Component.translatable("options.autofish.recast_delay.tooltip")
+		).setTextGetter(
+			value -> Component.translatable("options.autofish.recast_delay.value", value)
+		).setSaveConsumer(newValue -> {
+			modAutofish.getConfig().setRecastDelay(newValue);
+		}).build();
 
 		// Configure the maximum delta between randomised recasts.
-		AbstractConfigListEntry<Long> randomDelaySlider = entryBuilder.startLongSlider(Component.translatable("options.autofish.random_delay.title"), config.getRandomDelay(), 0, 75)
-			.setDefaultValue(defaults.getRandomPercent())
-			.setTooltip(
-				Component.translatable("options.autofish.random_delay.tooltip_0"),
-				Component.translatable("options.autofish.random_delay.tooltip_1"),
-				Component.translatable("options.autofish.random_delay.tooltip_2"),
-				Component.translatable("options.autofish.random_delay.tooltip_3")
-			)
-			.setTextGetter(value -> Component.translatable("options.autofish.random_delay.value", value))
-			.setSaveConsumer(newValue -> {
-				modAutofish.getConfig().setRandomDelay(newValue);
-			})
-			.build();
+		AbstractConfigListEntry<Long> randomDelaySlider = entryBuilder.startLongSlider(
+			Component.translatable("options.autofish.random_delay.title"),
+			config.getRandomDelay(),
+			0, 75
+		).setDefaultValue(
+			defaults.getRandomPercent()
+		).setTooltip(
+			Component.translatable("options.autofish.random_delay.tooltip")
+		).setTextGetter(
+			value -> Component.translatable("options.autofish.random_delay.value", value)
+		).setSaveConsumer(newValue -> {
+			modAutofish.getConfig().setRandomDelay(newValue);
+		}).build();
 
 		// Configure a delay upon reeling in the rod.
-		AbstractConfigListEntry<Long> reelInDelay = entryBuilder.startLongSlider(Component.translatable("options.autofish.reel_in_delay.title"), config.getReelInDelay(), 1, 2000)
-			.setDefaultValue(defaults.getReelInDelay())
-			.setTooltip(
-				Component.translatable("options.autofish.reel_in_delay.tooltip_0"),
-				Component.translatable("options.autofish.reel_in_delay.tooltip_1")
-			)
-			.setTextGetter(value -> Component.translatable("options.autofish.reel_in_delay.value", value))
-			.setSaveConsumer(newValue -> {
-				modAutofish.getConfig().setReelInDelay(newValue);
-			})
-			.build();
+		AbstractConfigListEntry<Long> reelInDelay = entryBuilder.startLongSlider(
+			Component.translatable("options.autofish.reel_in_delay.title"),
+			config.getReelInDelay(),
+			1, 2000
+		).setDefaultValue(
+			defaults.getReelInDelay()
+		).setTooltip(
+			Component.translatable("options.autofish.reel_in_delay.tooltip")
+		).setTextGetter(
+			value -> Component.translatable("options.autofish.reel_in_delay.value", value)
+		).setSaveConsumer(newValue -> {
+			modAutofish.getConfig().setReelInDelay(newValue);
+		}).build();
 
 		// RegEx pattern for ClearLag.
-		AbstractConfigListEntry<String> clearLagRegexField = entryBuilder.startTextField(Component.translatable("options.autofish.clear_regex.title"), config.getClearLagRegex())
-			.setDefaultValue(defaults.getClearLagRegex())
-			.setTooltip(
-				Component.translatable("options.autofish.clear_regex.tooltip_0"),
-				Component.translatable("options.autofish.clear_regex.tooltip_1"),
-				Component.translatable("options.autofish.clear_regex.tooltip_2")
-			)
-			.setSaveConsumer(newValue -> {
-				modAutofish.getConfig().setClearLagRegex(newValue);
-			})
-			.build();
+		AbstractConfigListEntry<String> clearLagRegexField = entryBuilder.startTextField(
+			Component.translatable("options.autofish.clear_regex.title"),
+			config.getClearLagRegex()
+		).setDefaultValue(
+			defaults.getClearLagRegex()
+		).setTooltip(
+			Component.translatable("options.autofish.clear_regex.tooltip")
+		).setSaveConsumer(newValue -> {
+			modAutofish.getConfig().setClearLagRegex(newValue);
+		}).build();
 
 		SubCategoryBuilder subCatBuilderBasic = entryBuilder.startSubCategory(Component.translatable("options.autofish.basic.title"));
 		subCatBuilderBasic.add(toggleAutofish);
