@@ -226,7 +226,7 @@ public class Autofish {
 		Projectile bobber = Common.getPlayerBobber(player);
 		if (bobber == null) return false;
 		BlockState currentBlock = EnvUtils.client().level.getBlockState(bobber.blockPosition());
-		boolean waterVerdict = Common.isLiquidFishableTo(player, currentBlock, false);
+		boolean waterVerdict = Common.isLiquidFishableTo(player, currentBlock, modAutofish.getConfig().unsafeFluids());
 		if (currentBlock != lastBlock) {
 			LogSession.info("Block " + RegistryUtils.getIdKey(currentBlock) + (waterVerdict ? " is" : " isn't") + " fishable liquid.");
 		}
@@ -250,6 +250,7 @@ public class Autofish {
 		int blockX = bobber.getBlockX();
 		int blockY = bobber.getBlockY();
 		int blockZ = bobber.getBlockZ();
+		boolean useUnsafeFluid = modAutofish.getConfig().unsafeFluids();
 		boolean verdict = false;
 		// Bounding box check
 		for (int deltaY = (useNewerMethod ? -1 : -2); deltaY <= 2; deltaY ++) {
@@ -258,8 +259,8 @@ public class Autofish {
 				blockX + 2, blockY + deltaY, blockZ + 2
 			).allMatch(blockPos -> {
 				BlockState blockState = bobberWorld.getBlockState(blockPos);
-				if (useNewerMethod) return Common.isLiquidloggedValid(player, blockState, false);
-				return Common.isLiquidFishableTo(player, blockState, false);
+				if (useNewerMethod) return Common.isLiquidloggedValid(player, blockState, useUnsafeFluid);
+				return Common.isLiquidFishableTo(player, blockState, useUnsafeFluid);
 			});
 			boolean blockVerdict = BlockPos.betweenClosedStream(
 				blockX - 2, blockY + deltaY, blockZ - 2,

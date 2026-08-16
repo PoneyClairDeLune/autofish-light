@@ -106,6 +106,21 @@ public class AutofishScreenBuilder {
 			booleanTextComponent
 		).build();
 
+		// Should the liquids present in the unsafe set be included into consideration.
+		AbstractConfigListEntry<Boolean> toggleUnsafeFluids = entryBuilder.startBooleanToggle(
+			Component.translatable("options.autofish.unsafe_fluids.title"),
+			config.unsafeFluids()
+		).setDefaultValue(
+			defaults.unsafeFluids()
+		).setTooltip(
+			Component.translatable("options.autofish.unsafe_fluids.tooltip")
+		).setSaveConsumer(value -> {
+			modAutofish.getConfig().unsafeFluids(value);
+		}).setYesNoTextSupplier(
+			booleanTextComponent
+		).build();
+
+
 
 		// Should the mod use sound-based detection.
 		AbstractConfigListEntry<Boolean> toggleSoundDetection = entryBuilder.startBooleanToggle(
@@ -239,6 +254,7 @@ public class AutofishScreenBuilder {
 		subCatBuilderBasic.add(toggleOpenWaterDetection);
 		subCatBuilderBasic.add(toggleBreakProtection);
 		subCatBuilderBasic.add(togglePersistentMode);
+		subCatBuilderBasic.add(toggleUnsafeFluids);
 		subCatBuilderBasic.setExpanded(true);
 		configCat.addEntry(subCatBuilderBasic.build());
 

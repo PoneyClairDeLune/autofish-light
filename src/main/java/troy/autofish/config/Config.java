@@ -13,6 +13,7 @@ public class Config {
 	@Expose boolean persistentMode = false;
 	@Expose boolean rodBreakAvoided = true;
 	@Expose boolean soundUsed = false;
+	@Expose boolean unsafeFluids = false;
 	@Expose long recastDelay = 1500;
 	@Expose long randomPercent = 50;
 	@Expose long reelInDelay = 1;
@@ -71,6 +72,9 @@ public class Config {
 	public boolean soundUsed() {
 		return soundUsed;
 	}
+	public boolean unsafeFluids() {
+		return unsafeFluids;
+	}
 
 	public void damageSafeMargin(int value) {
 		damageSafeMargin = value;
@@ -101,6 +105,9 @@ public class Config {
 	}
 	public void soundUsed(boolean value) {
 		soundUsed = value;
+	}
+	public void unsafeFluids(boolean value) {
+		unsafeFluids = value;
 	}
 
     public long getRecastDelay() {
