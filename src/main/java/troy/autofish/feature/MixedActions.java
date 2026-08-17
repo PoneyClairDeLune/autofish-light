@@ -27,10 +27,12 @@ public class MixedActions {
 	/** Was the held item a fishing rod. */
 	private boolean wasRodHeld = false;
 
-	/** Cancel fishing rod usage by attempting to switch away from fishing rods, and returns <code>true</code> when successful. Useful to prevent avoidable durability drop with this method, while still allowing hard cancellation via explicit usage. */
-	public boolean cancelRodUsage(LocalPlayer player) {
+	/** Cancel fishing rod usage by attempting to switch away from fishing rods, and returns <code>true</code> when the attempt has begun successfully. Actions after the specified cancel duration should expect the fishing line to be broken already.
+	* <br/>For main hand only, because this measure does not make sense for the offhand at all, and the method will immediately refuse. Useful to prevent avoidable durability drop with this method, while still allowing hard cancellation via explicit usage. */
+	public boolean cancelRodUsage(LocalPlayer player, long cancelDuration) {
 		// TODO: Implement natural slot shifting - Detect closest unmatched slot on either direction of scrolling, then decide which direction to scroll to accordingly. Should be useful to help evade overly stringent server-side anti-cheat.
 		if (player == null) return true; // No need to prompt further actions.
+		if (cancelDuration <= 0) return false;
 		final byte rodHandMatchResult = PlayerUtils.matchItemOnHands(player, Detections::isPredicateFishingRod);
 		if ((rodHandMatchResult & 2) > 0) return false; // You can't switch the active slots from the offhand anyway.
 		if (rodHandMatchResult == 0) return true; // Already with no rods held, no need to do anything.
@@ -42,15 +44,16 @@ public class MixedActions {
 		PlayerUtils.selectHotbarSlot(inventoryPlayer, chosenSlot);
 		modInstance.getScheduler().scheduleAction(
 			ActionType.RESTORE_SLOT,
-			100,
+			cancelDuration,
 			() -> {
 				boolean attemptSuccess = true;
 				PlayerUtils.selectHotbarSlot(inventoryPlayer, currentSlot);
 				if (Common.getPlayerBobber(player) != null) {
+					// The line hasn't been broken yet. Reel it in.
 					Interactions.useRodItem(player);
 					attemptSuccess = false;
 				}
-				LogSession.info("Attempt to cancel the current fishing process by switching to slot " + String.valueOf(chosenSlot) + " temporarily: " + (attemptSuccess ? "succeeded" : "failed") + ".");
+				LogSession.info("Cancelling fishing by switching to slot " + String.valueOf(chosenSlot) + " temporarily: " + (attemptSuccess ? "success" : "fail") + ".");
 			}
 		);
 		return true;

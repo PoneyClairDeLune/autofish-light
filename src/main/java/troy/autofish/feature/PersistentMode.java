@@ -1,9 +1,11 @@
 package troy.autofish.feature;
 
+import cc.ltgc.luneApi.PlayerUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import troy.autofish.FabricModAutofish;
 import troy.autofish.modded.Common;
+import troy.autofish.scheduler.ActionType;
 
 public class PersistentMode {
 	private FabricModAutofish modInstance = null;
@@ -19,6 +21,8 @@ public class PersistentMode {
 	// Constants.
 	/** How many checks per second should persistent mode use. */
 	public final long checkInterval = 5L;
+	/** How long should one cycle of the two-cycle rod canceller take. */
+	public final long rodCancelDelay = 200; // TODO: Delay should be scheduled to accomodate the observed server latency as well, capped at 1000ms.
 	/** How many ticks should pass for the old persistent mode to kick in. */
 	private final long legacyTickCycle = checkInterval * 10;
 
@@ -53,10 +57,25 @@ public class PersistentMode {
 					modInstance.getConfig().openWaterNewAlgo(),
 					modInstance.getConfig().unsafeFluids()
 				)) return;
-				if (mixedActions.cancelRodUsage(player)) return;
-				Interactions.useRodItem(player);
+				// TODO: Allow the player to disable natural rod cancellation.
+				if (true && mixedActions.cancelRodUsage(player, rodCancelDelay)) {
+					modInstance.getScheduler().scheduleAction(
+						ActionType.RESTORE_ROD_STATUS,
+						rodCancelDelay + 50,
+						() -> {
+							if (modInstance.getScheduler().isRecastQueued()) return;
+							// The line from the rod on the main hand should be reeled-in regardless. Time to recast!
+							if (Common.isFishingRod(PlayerUtils.getHeldStack(player, false))) Interactions.useRodItem(player);
+						}
+					);
+					return;
+				} else {
+					// Failed to use the slot switch strategy, but still needs to reel the line in.
+					Interactions.useRodItem(player);
+				}
 			}
 			if (modInstance.getScheduler().isRecastQueued()) return;
+			// Line should now be broken. Time to restore the bobber.
 			Interactions.useRodItem(player);
 		} else {
 			// TODO: New persistence mode implementation go here.
