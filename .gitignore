@@ -24,3 +24,6 @@ bin/
 
 run/
 remappedSrc/
+
+# Linux
+*.swp
