@@ -8,7 +8,7 @@
 
 	"options.autofish.sound.tooltip": "\u00A76Newer, more accurate detection based on\nfloat sounds rather than the standard\nfloat movement detection.\u00a7r\n\u00a7f- You must be close to your float.\n- If other players' floats are close by,\n  it can falsely trigger a catch!",
 
-	"options.autofish.open_water_new_algorithm.tooltip": "\u00A76New implementation more closely\nfollowing the documented open water\nvalidation process on \u00A7eMinecraft Wiki\u00A76.\u00A7r\n\n\u00A7fTurn off to restore legacy behaviour.",
+	"options.autofish.open_water_new_algorithm.tooltip": "\u00A76New implementation more closely\nfollowing the documented open water\nvalidation process on \u00A7eMinecraft Wiki\u00A76.\u00A7r\n\n\u00A7fAffects fish float block test as well.\nTurn off to restore legacy behaviour.",
 
 	"options.autofish.legacy_persistence.tooltip": "\u00A76Instead of using the newer state-aware\nalgorithm, switch back to the legacy\n\u00A7ePersistent Mode\u00A76 implementation.\u00A7r\n\n\u00A7aNew\u00A7f: Gathers various states, counts time\ndurations, and reels-in accordingly.\n\u00A7cOld\u00A7f: Scans every \u00A7e10\u00A7f seconds, and reels if\nthe float isn't in fishable liquid at that\ninstant.",
 

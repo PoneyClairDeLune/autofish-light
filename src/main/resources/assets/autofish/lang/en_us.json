@@ -35,7 +35,7 @@
 	"options.autofish.sound.tooltip": "\u00A76Newer, more accurate detection based on\nbobber sounds rather than the standard\nbobber movement detection.\u00a7r\n\u00a7f- You must be close to your bobber.\n- If other players' bobbers are close by,\n  it can falsely trigger a catch!",
 
 	"options.autofish.open_water_new_algorithm.title": "New Open Water Detection",
-	"options.autofish.open_water_new_algorithm.tooltip": "\u00A76New implementation more closely\nfollowing the documented open water\nvalidation process on \u00A7eMinecraft Wiki\u00A76.\u00A7r\n\n\u00A7fTurn off to restore legacy behavior.",
+	"options.autofish.open_water_new_algorithm.tooltip": "\u00A76New implementation more closely\nfollowing the documented open water\nvalidation process on \u00A7eMinecraft Wiki\u00A76.\u00A7r\n\n\u00A7fAffects bobber block test as well.\nTurn off to restore legacy behavior.",
 
 	"options.autofish.noisy_detection.title": "Noisy Detection Notification",
 	"options.autofish.noisy_detection.tooltip": "\u00A76Keep notifying the player of detection\nresults, regardless of previous status.\nAffects the following:\u00A7r\n\u00A7f- Open water detection\n- Item rod test",
