@@ -26,7 +26,7 @@ public class MixedActions {
 	public boolean cancelRodUsage(LocalPlayer player) {
 		// TODO: Implement natural slot shifting - Detect closest unmatched slot on either direction of scrolling, then decide which direction to scroll to accordingly. Should be useful to help evade overly stringent server-side anti-cheat.
 		if (player == null) return true; // No need to prompt further actions.
-		byte rodHandMatchResult = PlayerUtils.matchItemOnHands(player, Detections::isPredicateFishingRod);
+		final byte rodHandMatchResult = PlayerUtils.matchItemOnHands(player, Detections::isPredicateFishingRod);
 		if ((rodHandMatchResult & 2) > 0) return false; // You can't switch the active slots from the offhand anyway.
 		final Inventory inventoryPlayer = player.getInventory();
 		final NonNullList<ItemStack> inventoryMain = inventoryPlayer.getNonEquipmentItems();
@@ -54,6 +54,27 @@ public class MixedActions {
 			}
 		}
 		LogSession.info("Closest rightwards slot matched: " + String.valueOf(closestSlotRight));
+		int chosenFinalSlot = currentSlot;
+		if (closestSlotLeft == closestSlotRight) {
+			// The only case this can be true is when both are 127, the magic value of failure.
+			LogSession.info("Slot match failed: All items are rods.");
+		} else if (closestSlotLeft == 127) {
+			chosenFinalSlot = closestSlotRight;
+			LogSession.info("Chosen slot: The left one.");
+			return false;
+		} else if (closestSlotRight == 127) {
+			chosenFinalSlot = closestSlotLeft;
+			LogSession.info("Chosen slot: The right one.");
+			return false;
+		}
+		final int distanceLeft = currentSlot - closestSlotLeft;
+		final int distanceRight = closestSlotRight - currentSlot;
+		if (distanceLeft == distanceRight) {
+			chosenFinalSlot = (Math.random() < 0.5 ? closestSlotLeft : closestSlotRight);
+		} else {
+			chosenFinalSlot = (distanceLeft < distanceRight ? closestSlotLeft : closestSlotRight);
+		}
+		LogSession.info("Chosen slot: " + String.valueOf(chosenFinalSlot));
 		return false;
 	}
 	public boolean isBobberInWaterThenNotify(LocalPlayer player, boolean useNewerMethod, boolean useUnsafeFluid) {

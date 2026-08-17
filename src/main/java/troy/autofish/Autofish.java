@@ -42,7 +42,7 @@ public class Autofish {
 
 		// Initiate the repeating action for persistent mode casting.
 		// Invocation of the new implementation here.
-		modAutofish.getScheduler().scheduleRepeatingAction(200, this::persistenceModeTick);
+		modAutofish.getScheduler().scheduleRepeatingAction(1000 / persistentMode.checkInterval, this::persistenceModeTick);
 	}
 
 	public void tick(Minecraft client) {

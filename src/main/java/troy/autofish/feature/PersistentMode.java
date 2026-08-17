@@ -26,13 +26,13 @@ public class PersistentMode {
 	/** The current tick value increased by the persistence mode checker. Not a Minecraft tick. */
 	private long tickCurrent = 0L; // 5 ≈ 1s
 	/** The last tick the legacy persistent mode check was run on. */
-	private long tickLegacyLast = -9223372036854775808L;
+	private long tickLegacyLast = -4611686018427387904L;
 
 	public void tick(boolean hookExists, Minecraft client) {
 		tickCurrent ++;
-		if (tickCurrent < -4611686018427387904L) {
-			tickCurrent = -4611686018427387904L;
-			tickLegacyLast = Long.MIN_VALUE;
+		if (tickCurrent < -2305843009213693952L) {
+			tickCurrent = -2305843009213693952L;
+			tickLegacyLast = -4611686018427387904L;
 		}
 		if (!modInstance.getConfig().modEnabled()) return;
 		if (!modInstance.getConfig().persistentMode()) return;
