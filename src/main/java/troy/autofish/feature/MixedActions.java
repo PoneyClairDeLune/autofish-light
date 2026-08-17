@@ -3,8 +3,11 @@ package troy.autofish.feature;
 import cc.ltgc.luneApi.PlayerUtils;
 import cc.ltgc.luneApi.RegistryUtils;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.NonNullList;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import troy.autofish.LogSession;
 import troy.autofish.modded.Common;
@@ -19,6 +22,40 @@ public class MixedActions {
 	/** Was the held item a fishing rod. */
 	private boolean wasRodHeld = false;
 
+	/** Cancel fishing rod usage by attempting to switch away from fishing rods, and returns <code>true</code> when successful. Useful to prevent avoidable durability drop with this method, while still allowing hard cancellation via explicit usage. */
+	public boolean cancelRodUsage(LocalPlayer player) {
+		// TODO: Implement natural slot shifting - Detect closest unmatched slot on either direction of scrolling, then decide which direction to scroll to accordingly. Should be useful to help evade overly stringent server-side anti-cheat.
+		if (player == null) return true; // No need to prompt further actions.
+		byte rodHandMatchResult = PlayerUtils.matchItemOnHands(player, Detections::isPredicateFishingRod);
+		if ((rodHandMatchResult & 2) > 0) return false; // You can't switch the active slots from the offhand anyway.
+		final Inventory inventoryPlayer = player.getInventory();
+		final NonNullList<ItemStack> inventoryMain = inventoryPlayer.getNonEquipmentItems();
+		final int currentSlot = inventoryPlayer.getSelectedSlot();
+		if (rodHandMatchResult == 0) return true; // Already with no rods held, no need to do anything.
+		final int hotbarSize = Math.min(9, inventoryMain.size()); // Only go through the hotbar.
+		int closestSlotLeft = 127, closestSlotRight = 127; // Initialize to clearly invalid values.
+		final int boundSlotLeft = currentSlot - 4;
+		final int boundSlotRight = currentSlot + 4;
+		for (int slot = currentSlot - 1; slot >= boundSlotLeft; slot --) {
+			final int actualSlot = PlayerUtils.wrapHotbarSlot(slot, hotbarSize);
+			ItemStack items = inventoryMain.get(actualSlot);
+			if (!Common.isFishingRod(items)) {
+				closestSlotLeft = actualSlot;
+				break;
+			}
+		}
+		LogSession.info("Closest leftwards slot matched: " + String.valueOf(closestSlotLeft));
+		for (int slot = currentSlot + 1; slot <= boundSlotRight; slot ++) {
+			final int actualSlot = PlayerUtils.wrapHotbarSlot(slot, hotbarSize);
+			ItemStack items = inventoryMain.get(actualSlot);
+			if (!Common.isFishingRod(items)) {
+				closestSlotRight = actualSlot;
+				break;
+			}
+		}
+		LogSession.info("Closest rightwards slot matched: " + String.valueOf(closestSlotRight));
+		return false;
+	}
 	public boolean isBobberInWaterThenNotify(LocalPlayer player, boolean useNewerMethod, boolean useUnsafeFluid) {
 		if (Detections.earlyReturn(player)) {
 			lastBlock = null;
@@ -63,7 +100,7 @@ public class MixedActions {
 					player,
 					PlayerUtils.matchOffhandItem(
 						player,
-						Detections::isOffhandPredicate
+						Detections::isPredicateFishingRod
 					)
 				)
 			) + ".";

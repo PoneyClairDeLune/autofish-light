@@ -126,7 +126,7 @@ public class Autofish {
 			() -> {
 				if (hookExists) return;
 				if (!isRodHeld(EnvUtils.client().player)) return;
-				ItemStack heldOnHand = PlayerUtils.getHeldStack(EnvUtils.client().player, Detections::isOffhandPredicate);
+				ItemStack heldOnHand = PlayerUtils.getHeldStack(EnvUtils.client().player, Detections::isPredicateFishingRod);
 				if (Common.shouldNotReel(heldOnHand)) return;
 				Interactions.useRodItem(EnvUtils.client().player);
 			}

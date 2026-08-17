@@ -23,9 +23,4 @@ public class Interactions {
 		PlayerUtils.useItem(player, targetHand);
 		return;
 	}
-	/** Cancel fishing rod usage by attempting to switch away from fishing rods, and returns <code>true</code> when successful. Useful for avoiding rod usage when avoidable with this method, while still allowing hard cancellation via explicit usage. */
-	public static boolean cancelRodUsage(LocalPlayer player) {
-		// TODO: Implement natural slot shifting - Detect closest unmatched slot on either direction of scrolling, then decide which direction to scroll to accordingly. Should be useful to help evade overly stringent server-side anti-cheat.
-		return false;
-	}
 }

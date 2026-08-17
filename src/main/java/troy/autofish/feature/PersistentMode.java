@@ -53,7 +53,8 @@ public class PersistentMode {
 					modInstance.getConfig().openWaterNewAlgo(),
 					modInstance.getConfig().unsafeFluids()
 				)) return;
-				else Interactions.useRodItem(client.player);
+				if (mixedActions.cancelRodUsage(player)) return;
+				Interactions.useRodItem(player);
 			}
 			if (modInstance.getScheduler().isRecastQueued()) return;
 			Interactions.useRodItem(player);
