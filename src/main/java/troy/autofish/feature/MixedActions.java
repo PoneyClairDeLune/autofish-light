@@ -33,13 +33,13 @@ public class MixedActions {
 		// TODO: Implement natural slot shifting - Detect closest unmatched slot on either direction of scrolling, then decide which direction to scroll to accordingly. Should be useful to help evade overly stringent server-side anti-cheat.
 		if (player == null) return true; // No need to prompt further actions.
 		if (cancelDuration <= 0) return false;
-		final byte rodHandMatchResult = PlayerUtils.matchItemOnHands(player, Detections::isPredicateFishingRod);
+		final byte rodHandMatchResult = PlayerUtils.matchItemOnHands(player, Common::isFishingRod);
 		if ((rodHandMatchResult & 2) > 0) return false; // You can't switch the active slots from the offhand anyway.
 		if (rodHandMatchResult == 0) return true; // Already with no rods held, no need to do anything.
 		// This is a search implementation I'm satisfied with.
 		final Inventory inventoryPlayer = player.getInventory();
 		final int currentSlot = inventoryPlayer.getSelectedSlot();
-		final int chosenSlot = PlayerUtils.getClosestMatchInHotbar(inventoryPlayer, Detections::isPredicateFishingRod, true);
+		final int chosenSlot = PlayerUtils.getClosestMatchInHotbar(inventoryPlayer, Common::isFishingRod, true);
 		if (chosenSlot < 0) return false;
 		PlayerUtils.selectHotbarSlot(inventoryPlayer, chosenSlot);
 		modInstance.getScheduler().scheduleAction(
@@ -102,7 +102,7 @@ public class MixedActions {
 					player,
 					PlayerUtils.matchOffhandItem(
 						player,
-						Detections::isPredicateFishingRod
+						Common::isFishingRod
 					)
 				)
 			) + ".";

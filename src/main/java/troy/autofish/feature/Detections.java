@@ -78,16 +78,16 @@ public class Detections {
 	}
 	/** Determine if the item on the offhand should be used. */
 	public static boolean isOffhand(Player player) {
-		return PlayerUtils.matchOffhandItem(player, Detections::isPredicateFishingRod);
+		return PlayerUtils.matchOffhandItem(player, Detections::isPredicateSafeFishingRod);
 	}
-	/** The predicate used to determine if the offhand should be used. */
-	public static boolean isPredicateFishingRod(ItemStack itemStack) {
-		return Common.isFishingRod(itemStack);
+	/** The predicate used to determine if the offhand should be used. Do not use this method for item type tests! */
+	public static boolean isPredicateSafeFishingRod(ItemStack itemStack) {
+		return Common.isFishingRod(itemStack) && (Common.damageSafeMargin() + itemStack.getDamageValue() < itemStack.getMaxDamage());
 	}
 	/** Detect if a fishing rod is held. */
 	public static boolean isRodHeld(Player player) {
 		if (earlyReturn(player)) return false;
-		ItemStack heldItemStack = PlayerUtils.getHeldStack(player, Detections::isPredicateFishingRod);
+		ItemStack heldItemStack = PlayerUtils.getHeldStack(player, Detections::isPredicateSafeFishingRod);
 		return Common.isFishingRod(heldItemStack);
 	}
 }
