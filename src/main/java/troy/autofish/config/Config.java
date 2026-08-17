@@ -8,7 +8,6 @@ import troy.autofish.LogSession;
 
 public class Config {
 	private Pattern compiledClearLagMatcher;
-	private String clearLagRegexOld;
 
 	@Expose int damageSafeMargin = 1;
 	@Expose boolean legacyPersistenceBreakMe = true; // PLACEHOLDER!
@@ -143,7 +142,6 @@ public class Config {
 		if (!compilePassed) return;
 		compiledClearLagMatcher = compiledIntermediate;
 		if (updateIfSucceeded) {
-			clearLagRegexOld = clearLagRegex;
 			clearLagRegex = regex;
 		}
 	}
