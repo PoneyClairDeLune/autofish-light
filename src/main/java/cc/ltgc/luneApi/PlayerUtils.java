@@ -32,11 +32,23 @@ public class PlayerUtils {
 		if (matcher == null) return ItemStack.EMPTY;
 		return getHeldStack(player, matchOffhandItem(player, matcher));
 	}
-	/** Returns the closest slot in the player's hotbar that matches the given predicate. Any negative value should be considered invalid. Returns <code>-1</code> when none matched. */
+	/** Returns the closest slot in the player's hotbar that matches the given predicate, including the current one. Any negative value should be considered invalid. Returns <code>-1</code> when none matched. */
+	public static int getClosestAllMatchInHotbar(Inventory playerInventory, Predicate<? super ItemStack> matcher, boolean invertResult) {
+		return getClosestAllMatchInHotbar(playerInventory, matcher, PlayerUtils.MAX_HOTBAR_SLOTS, invertResult);
+	}
+	/** Returns the closest slot in the player's hotbar that matches the given predicate, including the current one. Any negative value should be considered invalid. Returns <code>-1</code> when none matched. */
+	public static int getClosestAllMatchInHotbar(Inventory playerInventory, Predicate<? super ItemStack> matcher, int customHotbarSize, boolean invertResult) {
+		if (playerInventory == null || matcher == null) return -1;
+		if (customHotbarSize <= 0) return -1;
+		int currentSlot = playerInventory.getSelectedSlot();
+		if (matcher.test(playerInventory.getItem(currentSlot)) != invertResult) return currentSlot;
+		return getClosestMatchInHotbar(playerInventory, matcher, customHotbarSize, invertResult);
+	}
+	/** Returns the closest slot in the player's hotbar that matches the given predicate, excluding the current one. Any negative value should be considered invalid. Returns <code>-1</code> when none matched. */
 	public static int getClosestMatchInHotbar(Inventory playerInventory, Predicate<? super ItemStack> matcher, boolean invertResult) {
 		return getClosestMatchInHotbar(playerInventory, matcher, PlayerUtils.MAX_HOTBAR_SLOTS, invertResult);
 	}
-	/** Returns the closest slot in the player's hotbar that matches the given predicate. Any negative value should be considered invalid. Returns <code>-1</code> when none matched. */
+	/** Returns the closest slot in the player's hotbar that matches the given predicate, excluding the current one. Any negative value should be considered invalid. Returns <code>-1</code> when none matched. */
 	public static int getClosestMatchInHotbar(Inventory playerInventory, Predicate<? super ItemStack> matcher, int customHotbarSize, boolean invertResult) {
 		if (playerInventory == null || matcher == null) return -1;
 		if (customHotbarSize <= 0) return -1;

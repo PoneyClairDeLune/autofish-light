@@ -7,10 +7,17 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.level.block.state.BlockState;
+import troy.autofish.FabricModAutofish;
 import troy.autofish.LogSession;
 import troy.autofish.modded.Common;
+import troy.autofish.scheduler.ActionType;
 
 public class MixedActions {
+	private FabricModAutofish modInstance;
+	public MixedActions(FabricModAutofish modInstance) {
+		this.modInstance = modInstance;
+	}
+
 	/** Is the bobber owner not notified prior. */
 	private boolean bobberOwnerNotNotified = true;
 	/** The last block checked against. */
@@ -29,10 +36,24 @@ public class MixedActions {
 		if (rodHandMatchResult == 0) return true; // Already with no rods held, no need to do anything.
 		// This is a search implementation I'm satisfied with.
 		final Inventory inventoryPlayer = player.getInventory();
-		int chosenSlot = PlayerUtils.getClosestMatchInHotbar(inventoryPlayer, Detections::isPredicateFishingRod, true);
-		LogSession.info("Chosen slot: " + String.valueOf(chosenSlot));
+		final int currentSlot = inventoryPlayer.getSelectedSlot();
+		final int chosenSlot = PlayerUtils.getClosestMatchInHotbar(inventoryPlayer, Detections::isPredicateFishingRod, true);
 		if (chosenSlot < 0) return false;
-		return false;
+		PlayerUtils.selectHotbarSlot(inventoryPlayer, chosenSlot);
+		modInstance.getScheduler().scheduleAction(
+			ActionType.RESTORE_SLOT,
+			100,
+			() -> {
+				boolean attemptSuccess = true;
+				PlayerUtils.selectHotbarSlot(inventoryPlayer, currentSlot);
+				if (Common.getPlayerBobber(player) != null) {
+					Interactions.useRodItem(player);
+					attemptSuccess = false;
+				}
+				LogSession.info("Attempt to cancel the current fishing process by switching to slot " + String.valueOf(chosenSlot) + " temporarily: " + (attemptSuccess ? "succeeded" : "failed") + ".");
+			}
+		);
+		return true;
 	}
 	public boolean isBobberInWaterThenNotify(LocalPlayer player, boolean useNewerMethod, boolean useUnsafeFluid) {
 		if (Detections.earlyReturn(player)) {

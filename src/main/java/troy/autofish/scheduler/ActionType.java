@@ -1,8 +1,9 @@
 package troy.autofish.scheduler;
 
 public enum ActionType {
-    RECAST,
-    ROD_SWITCH,
-    REPEATING_ACTION,
-    REEL_IN
+	RECAST,
+	REEL_IN,
+	REPEATING_ACTION,
+	RESTORE_SLOT,
+	ROD_SWITCH
 }

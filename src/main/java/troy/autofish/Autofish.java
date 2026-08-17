@@ -36,7 +36,7 @@ public class Autofish {
 		this.modAutofish = modAutofish;
 		setDetection();
 		Common.initialize(modAutofish);
-		mixedActions = new MixedActions();
+		mixedActions = new MixedActions(modAutofish);
 		persistentMode = new PersistentMode(modAutofish, mixedActions);
 		LogSession.info("Autofish is now activated!");
 
