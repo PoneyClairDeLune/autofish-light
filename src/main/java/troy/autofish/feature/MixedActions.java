@@ -3,11 +3,9 @@ package troy.autofish.feature;
 import cc.ltgc.luneApi.PlayerUtils;
 import cc.ltgc.luneApi.RegistryUtils;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.core.NonNullList;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import troy.autofish.LogSession;
 import troy.autofish.modded.Common;
@@ -28,57 +26,12 @@ public class MixedActions {
 		if (player == null) return true; // No need to prompt further actions.
 		final byte rodHandMatchResult = PlayerUtils.matchItemOnHands(player, Detections::isPredicateFishingRod);
 		if ((rodHandMatchResult & 2) > 0) return false; // You can't switch the active slots from the offhand anyway.
-		// Actual selection process will be relocated under Detections once I'm satisfied.
-		final Inventory inventoryPlayer = player.getInventory();
-		final NonNullList<ItemStack> inventoryMain = inventoryPlayer.getNonEquipmentItems();
-		final int currentSlot = inventoryPlayer.getSelectedSlot();
 		if (rodHandMatchResult == 0) return true; // Already with no rods held, no need to do anything.
-		final int hotbarSize = Math.min(9, inventoryMain.size()); // Only go through the hotbar.
-		int closestSlotLeft = 127, closestSlotRight = 127; // Initialize to clearly invalid values.
-		final int boundSlotLeft = currentSlot - 4;
-		final int boundSlotRight = currentSlot + 4;
-		for (int slot = currentSlot - 1; slot >= boundSlotLeft; slot --) {
-			final int actualSlot = PlayerUtils.wrapHotbarSlot(slot, hotbarSize);
-			ItemStack items = inventoryMain.get(actualSlot);
-			if (!Common.isFishingRod(items)) {
-				closestSlotLeft = actualSlot;
-				break;
-			}
-		}
-		LogSession.info("Closest leftwards slot matched: " + String.valueOf(closestSlotLeft));
-		for (int slot = currentSlot + 1; slot <= boundSlotRight; slot ++) {
-			final int actualSlot = PlayerUtils.wrapHotbarSlot(slot, hotbarSize);
-			ItemStack items = inventoryMain.get(actualSlot);
-			if (!Common.isFishingRod(items)) {
-				closestSlotRight = actualSlot;
-				break;
-			}
-		}
-		LogSession.info("Closest rightwards slot matched: " + String.valueOf(closestSlotRight));
-		int chosenFinalSlot = currentSlot;
-		if (closestSlotLeft == closestSlotRight) {
-			// The only case this can be true is when both are 127, the magic value of failure.
-			LogSession.info("Slot match failed: All items are rods.");
-			return false;
-		} else if (closestSlotLeft == 127) {
-			chosenFinalSlot = closestSlotRight;
-			LogSession.info("Chosen slot: The right one.");
-			return false;
-		} else if (closestSlotRight == 127) {
-			chosenFinalSlot = closestSlotLeft;
-			LogSession.info("Chosen slot: The left one.");
-			return false;
-		}
-		int distanceLeft = currentSlot - closestSlotLeft;
-		if (distanceLeft < 0) distanceLeft += 9;
-		int distanceRight = closestSlotRight - currentSlot;
-		if (distanceRight < 0) distanceRight += 9;
-		if (distanceLeft == distanceRight) {
-			chosenFinalSlot = (Math.random() < 0.5 ? closestSlotLeft : closestSlotRight);
-		} else {
-			chosenFinalSlot = (distanceLeft < distanceRight ? closestSlotLeft : closestSlotRight);
-		}
-		LogSession.info("Chosen slot: " + String.valueOf(chosenFinalSlot));
+		// This is a search implementation I'm satisfied with.
+		final Inventory inventoryPlayer = player.getInventory();
+		int chosenSlot = PlayerUtils.getClosestMatchInHotbar(inventoryPlayer, Detections::isPredicateFishingRod, true);
+		LogSession.info("Chosen slot: " + String.valueOf(chosenSlot));
+		if (chosenSlot < 0) return false;
 		return false;
 	}
 	public boolean isBobberInWaterThenNotify(LocalPlayer player, boolean useNewerMethod, boolean useUnsafeFluid) {

@@ -5,15 +5,17 @@ package cc.ltgc.luneApi;
 
 import java.util.function.Predicate;
 
+import net.minecraft.core.NonNullList;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 
 /** Utility methods for players. Should only be used in worlds. */
 public class PlayerUtils {
 	/** The vanilla hotbar size default. */
-	private static final int maxHotbarSlots = 9;
+	public static final int MAX_HOTBAR_SLOTS = 9;
 
 	/** Retrieve the correct hand from a boolean. */
 	public static InteractionHand getHand(boolean isOffhand) {
@@ -29,6 +31,54 @@ public class PlayerUtils {
 	public static ItemStack getHeldStack(Player player, Predicate<? super ItemStack> matcher) {
 		if (matcher == null) return ItemStack.EMPTY;
 		return getHeldStack(player, matchOffhandItem(player, matcher));
+	}
+	/** Returns the closest slot in the player's hotbar that matches the given predicate. Any negative value should be considered invalid. Returns <code>-1</code> when none matched. */
+	public static int getClosestMatchInHotbar(Inventory playerInventory, Predicate<? super ItemStack> matcher, boolean invertResult) {
+		return getClosestMatchInHotbar(playerInventory, matcher, PlayerUtils.MAX_HOTBAR_SLOTS, invertResult);
+	}
+	/** Returns the closest slot in the player's hotbar that matches the given predicate. Any negative value should be considered invalid. Returns <code>-1</code> when none matched. */
+	public static int getClosestMatchInHotbar(Inventory playerInventory, Predicate<? super ItemStack> matcher, int customHotbarSize, boolean invertResult) {
+		if (playerInventory == null || matcher == null) return -1;
+		if (customHotbarSize <= 0) return -1;
+		final NonNullList<ItemStack> inventoryMain = playerInventory.getNonEquipmentItems();
+		final int currentSlot = playerInventory.getSelectedSlot();
+		final int hotbarSize = Math.min(customHotbarSize, inventoryMain.size()); // Only go through the hotbar.
+		int closestSlotLeft = 127, closestSlotRight = 127; // Initialize to clearly invalid values.
+		final int boundSlotLeft = currentSlot - (hotbarSize >> 1);
+		final int boundSlotRight = currentSlot + (hotbarSize >> 1);
+		for (int slot = currentSlot - 1; slot >= boundSlotLeft; slot --) {
+			final int actualSlot = PlayerUtils.wrapHotbarSlot(slot, hotbarSize);
+			ItemStack items = inventoryMain.get(actualSlot);
+			if (matcher.test(items) != invertResult) {
+				closestSlotLeft = actualSlot;
+				break;
+			}
+		}
+		for (int slot = currentSlot + 1; slot <= boundSlotRight; slot ++) {
+			final int actualSlot = PlayerUtils.wrapHotbarSlot(slot, hotbarSize);
+			ItemStack items = inventoryMain.get(actualSlot);
+			if (matcher.test(items) != invertResult) {
+				closestSlotRight = actualSlot;
+				break;
+			}
+		}
+		if (closestSlotLeft == closestSlotRight) {
+			// The only case this can be true is when both are 127, the magic value of failure.
+			return -1;
+		} else if (closestSlotLeft == 127) {
+			return closestSlotRight;
+		} else if (closestSlotRight == 127) {
+			return closestSlotLeft;
+		}
+		int distanceLeft = currentSlot - closestSlotLeft;
+		if (distanceLeft < 0) distanceLeft += hotbarSize;
+		int distanceRight = closestSlotRight - currentSlot;
+		if (distanceRight < 0) distanceRight += hotbarSize;
+		if (distanceLeft == distanceRight) {
+			return Math.random() < 0.5 ? closestSlotLeft : closestSlotRight;
+		} else {
+			return distanceLeft < distanceRight ? closestSlotLeft : closestSlotRight;
+		}
 	}
 	/** Returns a number about the matching state. 0b01 is main, 0b10 is off. */
 	public static byte matchItemOnHands(Player player, Predicate<? super ItemStack> matcher) {
@@ -59,7 +109,12 @@ public class PlayerUtils {
 	/** Change the selected hotbar slot (<code>[0, 8]</code>). */
 	public static void selectHotbarSlot(Player player, int slotIndex) {
 		if (player == null) return;
-		player.getInventory().setSelectedSlot(slotIndex);
+		selectHotbarSlot(player.getInventory(), slotIndex);
+	}
+	/** Change the selected hotbar slot (<code>[0, 8]</code>). */
+	public static void selectHotbarSlot(Inventory playerInventory, int slotIndex) {
+		if (playerInventory == null) return;
+		playerInventory.setSelectedSlot(slotIndex);
 	}
 	/** Returns true when the item stack on the defined hand is used. */
 	public static boolean useItem(Player player, boolean isOffhand) {
@@ -77,7 +132,7 @@ public class PlayerUtils {
 	}
 	/** Wraps the input around valid hotbar slots. */
 	public static int wrapHotbarSlot(int slot) {
-		return wrapHotbarSlot(slot, maxHotbarSlots);
+		return wrapHotbarSlot(slot, MAX_HOTBAR_SLOTS);
 	}
 	/** Wraps the input around valid hotbar slots with a customized size. */
 	public static int wrapHotbarSlot(int slot, int size) {

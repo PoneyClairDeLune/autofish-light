@@ -20,6 +20,7 @@ public class Detections {
 		if (EnvUtils.client().gameMode == null) return true;
 		return false;
 	}
+
 	/** Detect if the bobber is in water. */
 	public static boolean isBobberInWater(LocalPlayer player, Projectile bobber, BlockState containedBlock, boolean useNewerMethod, boolean useUnsafeFluid) {
 		if (
