@@ -28,6 +28,7 @@ public class MixedActions {
 		if (player == null) return true; // No need to prompt further actions.
 		final byte rodHandMatchResult = PlayerUtils.matchItemOnHands(player, Detections::isPredicateFishingRod);
 		if ((rodHandMatchResult & 2) > 0) return false; // You can't switch the active slots from the offhand anyway.
+		// Actual selection process will be relocated under Detections once I'm satisfied.
 		final Inventory inventoryPlayer = player.getInventory();
 		final NonNullList<ItemStack> inventoryMain = inventoryPlayer.getNonEquipmentItems();
 		final int currentSlot = inventoryPlayer.getSelectedSlot();
@@ -58,17 +59,20 @@ public class MixedActions {
 		if (closestSlotLeft == closestSlotRight) {
 			// The only case this can be true is when both are 127, the magic value of failure.
 			LogSession.info("Slot match failed: All items are rods.");
+			return false;
 		} else if (closestSlotLeft == 127) {
 			chosenFinalSlot = closestSlotRight;
-			LogSession.info("Chosen slot: The left one.");
+			LogSession.info("Chosen slot: The right one.");
 			return false;
 		} else if (closestSlotRight == 127) {
 			chosenFinalSlot = closestSlotLeft;
-			LogSession.info("Chosen slot: The right one.");
+			LogSession.info("Chosen slot: The left one.");
 			return false;
 		}
-		final int distanceLeft = currentSlot - closestSlotLeft;
-		final int distanceRight = closestSlotRight - currentSlot;
+		int distanceLeft = currentSlot - closestSlotLeft;
+		if (distanceLeft < 0) distanceLeft += 9;
+		int distanceRight = closestSlotRight - currentSlot;
+		if (distanceRight < 0) distanceRight += 9;
 		if (distanceLeft == distanceRight) {
 			chosenFinalSlot = (Math.random() < 0.5 ? closestSlotLeft : closestSlotRight);
 		} else {
