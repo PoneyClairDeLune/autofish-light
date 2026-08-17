@@ -213,13 +213,11 @@ public class Common {
 	/** If true, the rod should not be either reeled or thrown. */
 	public static boolean shouldNotReel(ItemStack selectedItem) {
 		if (selectedItem == null) return true;
-		int currentDamage = selectedItem.getDamageValue();
 		int breakThreshold = selectedItem.getMaxDamage();
-		LogSession.debug("Item " + RegistryUtils.getIdKey(selectedItem.getItem()) + " has damage at " + currentDamage + "/" + (breakThreshold) + ".");
 		boolean noReelingVerdict = false;
 		if (breakThreshold > 0) {
 			// There's little sense to not use rods that are unbreakable, right?
-			noReelingVerdict = modInstance.getConfig().rodBreakAvoided() && currentDamage + damageSafeMargin() >= breakThreshold;
+			noReelingVerdict = modInstance.getConfig().rodBreakAvoided() && ItemUtils.isUnsafeStack(selectedItem, damageSafeMargin());
 		}
 		LogSession.debug("The fishing rod shoul" + (noReelingVerdict ? "dn't" : "d") + " reel.");
 		return noReelingVerdict;

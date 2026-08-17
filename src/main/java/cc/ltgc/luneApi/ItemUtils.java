@@ -12,4 +12,12 @@ public class ItemUtils {
 		if (itemStack == null || itemStack == ItemStack.EMPTY || itemStack.count() == 0) return true;
 		return false;
 	}
+	/** Returns <code>true</code> if the item stack is too damaged to use. */
+	public static boolean isUnsafeStack(ItemStack itemStack, int safeMargin) {
+		if (isStackEmpty(itemStack)) return false;
+		int maxDamage = itemStack.getMaxDamage();
+		if (maxDamage <= 0) return false;  // In regards to durability, it has unlimited uses!
+		if (safeMargin < 0) return true; // There cannot be negative safe margins!
+		return safeMargin + itemStack.getDamageValue() >= maxDamage;
+	}
 }

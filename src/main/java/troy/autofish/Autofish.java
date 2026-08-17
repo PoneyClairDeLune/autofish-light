@@ -167,14 +167,12 @@ public class Autofish {
 			ItemStack slotStack = mainInventory.get(i);
 			if (Common.isFishingRod(slotStack)) {
 				if (modAutofish.getConfig().rodBreakAvoided()) {
-					if (slotStack.getDamageValue() + Common.damageSafeMargin() < slotStack.getMaxDamage()) {
-						inventory.setSelectedSlot(i);
-						return;
-					}
+					if (ItemUtils.isUnsafeStack(slotStack, Common.damageSafeMargin())) continue;
+					inventory.setSelectedSlot(i);
 				} else {
 					inventory.setSelectedSlot(i);
-					return;
 				}
+				break;
 			}
 		}
 	}

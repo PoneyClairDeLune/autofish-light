@@ -1,6 +1,7 @@
 package troy.autofish.feature;
 
 import cc.ltgc.luneApi.EnvUtils;
+import cc.ltgc.luneApi.ItemUtils;
 import cc.ltgc.luneApi.PlayerUtils;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
@@ -82,7 +83,7 @@ public class Detections {
 	}
 	/** The predicate used to determine if the offhand should be used. Do not use this method for item type tests! */
 	public static boolean isPredicateSafeFishingRod(ItemStack itemStack) {
-		return Common.isFishingRod(itemStack) && (Common.damageSafeMargin() + itemStack.getDamageValue() < itemStack.getMaxDamage());
+		return Common.isFishingRod(itemStack) && (!ItemUtils.isUnsafeStack(itemStack, Common.damageSafeMargin()));
 	}
 	/** Detect if a fishing rod is held. */
 	public static boolean isRodHeld(Player player) {
