@@ -155,6 +155,8 @@ public class Autofish {
 		}
 	}
 
+	/** This method shouldn't be used, as it very likely restores fishing to the wrong rod. Should use the new match-near methods. */
+	@Deprecated
 	public void switchToFirstRod(LocalPlayer player) {
 		if (player == null) return;
 		Inventory inventory = player.getInventory();
